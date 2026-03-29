@@ -3,35 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PupPlate | Smart Dog Food Planner</title>
+    <title>PupPlate | Dog Food Scan App</title>
     <meta
       name="description"
-      content="PupPlate builds dog meal plans, recommends foods by budget and needs, and scans food photos with confirmation and ingredient safety explanations."
+      content="PupPlate is a mobile-style dog food scan app with danger alerts, quick-reference food checks, and budget-aware meal planning."
     />
     <style>
       :root {
-        --green-700: #3f9d20;
+        --green-700: #42a41f;
         --green-600: #58cc02;
-        --green-500: #79e329;
-        --mint-100: #f5ffea;
-        --mint-200: #dcffc5;
-        --sky-500: #45b7ff;
-        --sky-200: #dff4ff;
-        --sun-400: #ffd85a;
-        --sun-200: #fff1a6;
-        --danger-600: #e73c42;
-        --danger-500: #ff5f66;
-        --danger-100: #ffe7ea;
-        --warning-500: #ffb300;
-        --ink: #24303a;
-        --muted: #667786;
+        --green-500: #77e52a;
+        --green-100: #efffe6;
+        --green-050: #f8fff2;
+        --red-700: #d41111;
+        --red-600: #ef1e1e;
+        --red-500: #ff4a4a;
+        --red-100: #ffe7e7;
+        --yellow-100: #fff5cc;
+        --blue-100: #eaf7ff;
+        --ink: #1f252b;
+        --muted: #78838f;
         --white: #ffffff;
-        --paper: #fffef8;
-        --line: rgba(36, 48, 58, 0.08);
-        --shadow-xl: 0 28px 90px rgba(41, 87, 30, 0.14);
-        --shadow-lg: 0 18px 50px rgba(36, 48, 58, 0.12);
-        --shadow-md: 0 12px 28px rgba(36, 48, 58, 0.08);
-        --radius-xl: 36px;
+        --line: rgba(31, 37, 43, 0.08);
+        --shadow-xl: 0 28px 80px rgba(39, 52, 64, 0.14);
+        --shadow-lg: 0 18px 40px rgba(39, 52, 64, 0.12);
+        --shadow-md: 0 10px 24px rgba(39, 52, 64, 0.08);
+        --radius-xl: 34px;
         --radius-lg: 26px;
         --radius-md: 18px;
       }
@@ -49,21 +46,8 @@
         font-family: "Avenir Next", "Trebuchet MS", sans-serif;
         color: var(--ink);
         background:
-          radial-gradient(circle at top left, rgba(121, 227, 41, 0.26), transparent 28%),
-          radial-gradient(circle at top right, rgba(69, 183, 255, 0.24), transparent 28%),
-          linear-gradient(180deg, #f7ffef 0%, #fffef8 48%, #f6fff7 100%);
-      }
-
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        background-image:
-          linear-gradient(rgba(88, 204, 2, 0.04) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(88, 204, 2, 0.04) 1px, transparent 1px);
-        background-size: 34px 34px;
-        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 78%);
+          radial-gradient(circle at top left, rgba(119, 229, 42, 0.16), transparent 25%),
+          linear-gradient(180deg, #f6fff2 0%, #ffffff 48%, #f8fffb 100%);
       }
 
       a {
@@ -77,38 +61,38 @@
       }
 
       .shell {
-        width: min(1240px, calc(100% - 32px));
+        width: min(1180px, calc(100% - 28px));
         margin: 0 auto;
       }
 
       .topbar {
         position: sticky;
         top: 0;
-        z-index: 80;
-        backdrop-filter: blur(18px);
-        background: rgba(255, 254, 248, 0.86);
-        border-bottom: 1px solid rgba(36, 48, 58, 0.06);
+        z-index: 60;
+        backdrop-filter: blur(16px);
+        background: rgba(255, 255, 255, 0.88);
+        border-bottom: 1px solid var(--line);
       }
 
       .topbar-inner {
-        min-height: 84px;
+        min-height: 78px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 20px;
+        gap: 18px;
       }
 
       .brand {
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 12px;
       }
 
       .brand-mark {
         position: relative;
-        width: 58px;
-        height: 58px;
-        border-radius: 20px;
+        width: 54px;
+        height: 54px;
+        border-radius: 18px;
         background: linear-gradient(145deg, var(--green-500), var(--green-600));
         box-shadow: var(--shadow-md);
       }
@@ -117,9 +101,9 @@
       .brand-mark::after {
         content: "";
         position: absolute;
-        top: -8px;
-        width: 18px;
-        height: 22px;
+        top: -7px;
+        width: 16px;
+        height: 20px;
         border-radius: 14px 14px 6px 6px;
         background: var(--green-600);
       }
@@ -136,40 +120,39 @@
 
       .brand-core {
         position: absolute;
-        inset: 14px;
-        border-radius: 18px;
-        background: var(--paper);
+        inset: 13px;
+        border-radius: 16px;
+        background: white;
       }
 
       .brand-copy {
         display: grid;
-        gap: 3px;
+        gap: 2px;
       }
 
       .eyebrow {
         font-size: 0.72rem;
-        letter-spacing: 0.26em;
+        letter-spacing: 0.24em;
         text-transform: uppercase;
-        color: #4b8e30;
+        color: #54a02f;
       }
 
       .brand-name {
         font-weight: 900;
-        font-size: clamp(1.35rem, 2vw, 1.8rem);
+        font-size: 1.45rem;
       }
 
-      .nav {
+      .desktop-nav {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 14px;
         flex-wrap: wrap;
-        justify-content: flex-end;
       }
 
-      .nav-link {
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
+      .desktop-nav a {
         font-size: 0.9rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
       }
 
       .button {
@@ -177,13 +160,12 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
-        min-height: 50px;
+        min-height: 52px;
         padding: 0 22px;
         border: 0;
         border-radius: 999px;
         font-weight: 900;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
+        letter-spacing: 0.04em;
         cursor: pointer;
         transition: transform 0.18s ease, box-shadow 0.18s ease;
       }
@@ -193,372 +175,421 @@
       }
 
       .button-primary {
-        color: #173107;
+        color: #173208;
         background: linear-gradient(145deg, var(--green-500), var(--green-600));
-        box-shadow: 0 16px 34px rgba(88, 204, 2, 0.28);
+        box-shadow: 0 16px 32px rgba(88, 204, 2, 0.26);
       }
 
       .button-secondary {
         color: var(--ink);
-        background: var(--white);
-        border: 1px solid rgba(36, 48, 58, 0.08);
+        background: white;
+        border: 1px solid var(--line);
         box-shadow: var(--shadow-md);
       }
 
-      .button-danger {
-        color: var(--white);
-        background: linear-gradient(145deg, var(--danger-500), var(--danger-600));
-        box-shadow: 0 16px 34px rgba(231, 60, 66, 0.24);
-      }
-
       .hero {
-        padding: 30px 0 24px;
+        padding: 24px 0;
       }
 
       .hero-grid {
         display: grid;
-        grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
-        gap: 24px;
+        grid-template-columns: minmax(300px, 430px) minmax(0, 1fr);
+        gap: 28px;
+        align-items: start;
       }
 
-      .hero-copy,
-      .hero-stage,
-      .surface,
-      .plan-output,
-      .scan-output,
-      .history-card,
-      .feature-card,
-      .recommend-card,
-      .ingredient-card,
-      .confirm-card,
-      .danger-banner {
-        border-radius: var(--radius-xl);
-        box-shadow: var(--shadow-xl);
+      .phone-shell {
+        position: sticky;
+        top: 104px;
+        width: min(100%, 430px);
+        margin: 0 auto;
+        padding: 14px;
+        border-radius: 46px;
+        background: linear-gradient(180deg, #2b2f34, #111317);
+        box-shadow: 0 32px 80px rgba(17, 19, 23, 0.28);
       }
 
-      .hero-copy {
-        position: relative;
+      .phone-screen {
         overflow: hidden;
-        padding: 56px clamp(24px, 4vw, 58px);
-        background:
-          radial-gradient(circle at top left, rgba(255, 241, 166, 0.7), transparent 28%),
-          linear-gradient(160deg, #f4ffe1 0%, #e5ffd2 40%, #cff8c5 100%);
+        border-radius: 34px;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfff7 100%);
+        min-height: 820px;
       }
 
-      .hero-copy::after {
-        content: "";
+      .statusbar {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 18px 10px;
+        font-weight: 800;
+      }
+
+      .notch {
         position: absolute;
-        right: -40px;
-        bottom: -40px;
-        width: 200px;
-        height: 200px;
-        border-radius: 50%;
-        background: rgba(69, 183, 255, 0.15);
+        left: 50%;
+        top: 10px;
+        transform: translateX(-50%);
+        width: 144px;
+        height: 34px;
+        border-radius: 999px;
+        background: #050607;
       }
 
-      .hero-copy h1 {
-        position: relative;
-        margin: 10px 0 18px;
-        font-size: clamp(3.2rem, 6vw, 5.8rem);
-        line-height: 0.92;
-        letter-spacing: -0.05em;
-        max-width: 9ch;
+      .screen-inner {
+        padding: 8px 18px 22px;
       }
 
-      .hero-copy p {
-        position: relative;
-        max-width: 62ch;
-        margin: 0 0 26px;
+      .screen-title {
+        text-align: center;
+        font-size: 1.9rem;
+        font-weight: 900;
+        margin: 4px 0 14px;
+      }
+
+      .segmented {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .segmented button {
+        flex: 1;
+        min-height: 44px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
         color: var(--muted);
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .segmented button.is-active {
+        border-color: transparent;
+        color: #173208;
+        background: linear-gradient(145deg, #bff79c, var(--green-500));
+      }
+
+      .scan-cta {
+        width: 100%;
+        min-height: 58px;
+        border-radius: 22px;
+        background: linear-gradient(145deg, #73e64f, #51ca00);
+        color: white;
+        font-weight: 900;
+        font-size: 1.1rem;
+        border: 0;
+        box-shadow: 0 16px 34px rgba(88, 204, 2, 0.26);
+        cursor: pointer;
+      }
+
+      .scan-card,
+      .danger-card,
+      .reference-card,
+      .surface,
+      .planner-card,
+      .result-card,
+      .history-card,
+      .ingredient-card,
+      .recommend-card {
+        background: white;
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .scan-card {
+        margin-top: 18px;
+        padding: 18px;
+        border-radius: 28px;
+      }
+
+      .scan-label {
+        text-align: center;
+        color: #4eb52f;
+        font-weight: 900;
+        margin-bottom: 10px;
+      }
+
+      .scan-card h2 {
+        margin: 0 0 8px;
+        text-align: center;
+        font-size: 2rem;
+        line-height: 1.05;
+      }
+
+      .scan-card p {
+        margin: 0;
+        color: var(--muted);
+        text-align: center;
+        line-height: 1.55;
+      }
+
+      .preview-frame {
+        position: relative;
+        margin-top: 18px;
+        min-height: 270px;
+        border-radius: 28px;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at top, rgba(119, 229, 42, 0.12), transparent 30%),
+          linear-gradient(180deg, #fcfff8, #f3fff0);
+        border: 1px solid rgba(31, 37, 43, 0.06);
+        display: grid;
+        place-items: center;
+      }
+
+      .preview-frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .camera-guides {
+        position: absolute;
+        inset: 18% 18%;
+        border: 4px dashed rgba(255, 255, 255, 0.95);
+        border-radius: 26px;
+        pointer-events: none;
+      }
+
+      .preview-caption {
+        position: absolute;
+        bottom: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(31, 37, 43, 0.45);
+        color: white;
+        font-weight: 700;
+        font-size: 0.88rem;
+      }
+
+      .preview-empty {
+        max-width: 22ch;
+        text-align: center;
+        color: var(--muted);
+        line-height: 1.55;
+        padding: 24px;
+      }
+
+      .danger-card {
+        margin-top: 18px;
+        padding: 24px 22px;
+        border-radius: 28px;
+        background: linear-gradient(180deg, var(--red-600), var(--red-700));
+        color: white;
+      }
+
+      .danger-card.hidden {
+        display: none;
+      }
+
+      .danger-icon {
+        font-size: 2.2rem;
+        text-align: center;
+        margin-bottom: 8px;
+      }
+
+      .danger-card h3 {
+        margin: 0;
+        text-align: center;
+        font-size: 3rem;
+        line-height: 1;
+      }
+
+      .danger-card strong {
+        display: block;
+        margin: 16px 0 10px;
+        text-align: center;
+        font-size: 1.9rem;
+      }
+
+      .danger-card p {
+        margin: 0;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.93);
+        line-height: 1.58;
         font-size: 1.05rem;
-        line-height: 1.72;
+      }
+
+      .reference-card {
+        margin-top: 16px;
+        padding: 18px;
+        border-radius: 26px;
+      }
+
+      .reference-card h4 {
+        margin: 0 0 14px;
+        font-size: 1.35rem;
+      }
+
+      .reference-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .reference-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .food-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        font-size: 1.35rem;
+        background: #f6f8fb;
+      }
+
+      .reference-copy strong {
+        display: block;
+        font-size: 1rem;
+      }
+
+      .state-line {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.9rem;
+        font-weight: 800;
+        margin-top: 3px;
+      }
+
+      .state-line.safe {
+        color: #39ab25;
+      }
+
+      .state-line.toxic {
+        color: #eb3d45;
+      }
+
+      .phone-nav {
+        position: sticky;
+        bottom: 12px;
+        margin: 18px auto 0;
+        width: min(100%, 310px);
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow-md);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .phone-nav a {
+        display: grid;
+        gap: 4px;
+        justify-items: center;
+        min-width: 72px;
+        font-size: 0.86rem;
+        font-weight: 800;
+      }
+
+      .phone-nav a.active {
+        color: var(--green-600);
+      }
+
+      .desktop-content {
+        display: grid;
+        gap: 22px;
+      }
+
+      .intro-card,
+      .surface,
+      .planner-card,
+      .result-card,
+      .history-card,
+      .ingredient-card,
+      .recommend-card {
+        border-radius: 30px;
+        padding: 24px;
+      }
+
+      .intro-card {
+        background: linear-gradient(180deg, #f8fff0, #ffffff);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .intro-card h1 {
+        margin: 8px 0 12px;
+        font-size: clamp(2.8rem, 5vw, 4.4rem);
+        line-height: 0.95;
+        letter-spacing: -0.05em;
+      }
+
+      .intro-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.68;
+        max-width: 64ch;
       }
 
       .chip-row,
-      .hero-actions,
-      .hero-stats,
-      .feature-grid,
-      .app-grid,
-      .history-grid,
-      .tips-grid,
       .score-row,
       .tag-list,
-      .plan-grid,
       .recommend-grid,
       .ingredient-grid,
-      .confirm-actions {
+      .history-grid {
         display: flex;
         gap: 12px;
         flex-wrap: wrap;
       }
 
       .chip,
-      .tag {
+      .tag,
+      .score-pill {
         display: inline-flex;
         align-items: center;
         min-height: 38px;
         padding: 0 14px;
         border-radius: 999px;
         font-weight: 800;
-        font-size: 0.82rem;
       }
 
       .chip {
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        background: rgba(255, 255, 255, 0.72);
-        border: 1px solid rgba(36, 48, 58, 0.08);
-        color: #2d5d11;
+        margin-top: 16px;
+        background: var(--green-050);
+        color: #3d9f1a;
+        border: 1px solid rgba(88, 204, 2, 0.12);
       }
 
       .tag {
-        background: rgba(69, 183, 255, 0.12);
-        color: #146595;
+        background: var(--blue-100);
+        color: #1870a8;
       }
 
-      .hero-stats {
-        margin-top: 30px;
+      .score-pill.score-good {
+        background: rgba(88, 204, 2, 0.16);
+        color: #38941e;
       }
 
-      .stat {
-        flex: 1 1 180px;
-        min-width: 180px;
-        padding: 18px;
-        border-radius: 24px;
-        background: rgba(255, 255, 255, 0.66);
-        border: 1px solid rgba(36, 48, 58, 0.06);
-        box-shadow: var(--shadow-md);
+      .score-pill.score-warning {
+        background: rgba(255, 179, 0, 0.18);
+        color: #946000;
       }
 
-      .stat strong {
-        display: block;
-        margin-bottom: 6px;
-        font-size: 1.18rem;
+      .score-pill.score-danger {
+        background: rgba(255, 74, 74, 0.16);
+        color: #c61c22;
       }
 
-      .stat span {
+      .section-title {
+        margin: 0 0 14px;
+        font-size: 1.55rem;
+      }
+
+      .section-copy {
+        margin: 0 0 16px;
         color: var(--muted);
-        line-height: 1.5;
-      }
-
-      .hero-stage {
-        overflow: hidden;
-        padding: 22px;
-        background:
-          radial-gradient(circle at top right, rgba(255, 216, 90, 0.36), transparent 32%),
-          linear-gradient(180deg, #ffffff 0%, #f3fff1 100%);
-      }
-
-      .stage-grid {
-        display: grid;
-        gap: 16px;
-        min-height: 100%;
-      }
-
-      .stage-blob {
-        position: relative;
-        min-height: 240px;
-        border-radius: 32px;
-        background:
-          radial-gradient(circle at 30% 24%, rgba(255, 241, 166, 0.8), transparent 22%),
-          linear-gradient(145deg, #5ed419 0%, #58cc02 46%, #3db7ff 100%);
-        overflow: hidden;
-      }
-
-      .stage-blob::before,
-      .stage-blob::after {
-        content: "";
-        position: absolute;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.18);
-      }
-
-      .stage-blob::before {
-        width: 180px;
-        height: 180px;
-        top: -28px;
-        right: -24px;
-      }
-
-      .stage-blob::after {
-        width: 120px;
-        height: 120px;
-        left: -22px;
-        bottom: -18px;
-      }
-
-      .dog-face {
-        position: absolute;
-        inset: 34px;
-        border-radius: 30px;
-        background: rgba(255, 255, 255, 0.94);
-      }
-
-      .dog-face::before,
-      .dog-face::after {
-        content: "";
-        position: absolute;
-        top: 70px;
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        background: var(--ink);
-      }
-
-      .dog-face::before {
-        left: 70px;
-      }
-
-      .dog-face::after {
-        right: 70px;
-      }
-
-      .dog-snout {
-        position: absolute;
-        left: 50%;
-        bottom: 54px;
-        transform: translateX(-50%);
-        width: 92px;
-        height: 70px;
-        border-radius: 40px;
-        background: #ffe0c8;
-      }
-
-      .dog-snout::before {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: 16px;
-        transform: translateX(-50%);
-        width: 24px;
-        height: 18px;
-        border-radius: 16px;
-        background: var(--ink);
-      }
-
-      .stage-cards {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 14px;
-      }
-
-      .mini-card,
-      .feature-card,
-      .surface,
-      .plan-output,
-      .scan-output,
-      .history-card,
-      .recommend-card,
-      .ingredient-card,
-      .confirm-card {
-        background: rgba(255, 255, 255, 0.88);
-        border: 1px solid rgba(36, 48, 58, 0.06);
-        box-shadow: var(--shadow-md);
-      }
-
-      .mini-card {
-        padding: 18px;
-        border-radius: 22px;
-      }
-
-      .mini-card strong {
-        display: block;
-        margin-bottom: 8px;
-      }
-
-      .mini-card p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.58;
-      }
-
-      .section {
-        padding: 30px 0;
-      }
-
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-        align-items: end;
-        margin-bottom: 24px;
-      }
-
-      .section-header h2 {
-        margin: 8px 0 0;
-        font-size: clamp(2.1rem, 4vw, 3.9rem);
-        line-height: 0.98;
-        letter-spacing: -0.04em;
-      }
-
-      .section-header p {
-        max-width: 580px;
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.72;
-      }
-
-      .feature-card {
-        flex: 1 1 220px;
-        min-width: 220px;
-        padding: 22px;
-        border-radius: var(--radius-lg);
-      }
-
-      .feature-card strong {
-        display: block;
-        margin-bottom: 10px;
-      }
-
-      .feature-card p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.62;
-      }
-
-      .app-grid {
-        align-items: start;
-      }
-
-      .panel {
-        flex: 1 1 560px;
-        min-width: 320px;
-      }
-
-      .surface,
-      .plan-output,
-      .scan-output,
-      .history-card,
-      .recommend-card,
-      .ingredient-card,
-      .confirm-card {
-        padding: 24px;
-      }
-
-      .panel-title {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        align-items: start;
-        margin-bottom: 18px;
-      }
-
-      .panel-title h3,
-      .plan-output h3,
-      .scan-output h3,
-      .history-card h3 {
-        margin: 0;
-        font-size: 1.3rem;
-      }
-
-      .panel-title p,
-      .plan-output p,
-      .scan-output p,
-      .history-card p,
-      .field-help {
-        margin: 6px 0 0;
-        color: var(--muted);
-        line-height: 1.6;
+        line-height: 1.65;
       }
 
       form {
@@ -584,92 +615,21 @@
         width: 100%;
         min-height: 52px;
         border-radius: 18px;
-        border: 1px solid rgba(36, 48, 58, 0.1);
+        border: 1px solid var(--line);
         padding: 14px 16px;
         font: inherit;
+        background: white;
         color: var(--ink);
-        background: var(--white);
-        box-shadow: inset 0 2px 0 rgba(36, 48, 58, 0.03);
       }
 
       textarea {
-        min-height: 132px;
+        min-height: 126px;
         resize: vertical;
       }
 
-      .tabs {
-        display: inline-flex;
-        gap: 8px;
-        padding: 6px;
-        border-radius: 999px;
-        background: #eef7e6;
-        border: 1px solid rgba(36, 48, 58, 0.06);
-      }
-
-      .tab-button {
-        min-height: 42px;
-        padding: 0 16px;
-        border: 0;
-        border-radius: 999px;
-        background: transparent;
+      .subtle {
         color: var(--muted);
-        font-weight: 900;
-        cursor: pointer;
-      }
-
-      .tab-button.is-active {
-        background: linear-gradient(145deg, var(--green-500), var(--green-600));
-        color: #173108;
-      }
-
-      .score-pill {
-        display: inline-flex;
-        align-items: center;
-        min-height: 42px;
-        padding: 0 14px;
-        border-radius: 999px;
-        font-weight: 900;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-      }
-
-      .score-good {
-        color: #1f5411;
-        background: rgba(121, 227, 41, 0.2);
-      }
-
-      .score-warning {
-        color: #7c4f00;
-        background: rgba(255, 179, 0, 0.2);
-      }
-
-      .score-danger {
-        color: #8d1b1b;
-        background: rgba(255, 95, 102, 0.18);
-      }
-
-      .danger-banner {
-        display: none;
-        padding: 24px;
-        background: linear-gradient(145deg, var(--danger-500), var(--danger-600));
-        color: var(--white);
-        border: 1px solid rgba(255, 255, 255, 0.16);
-      }
-
-      .danger-banner.is-visible {
-        display: block;
-      }
-
-      .danger-banner strong {
-        display: block;
-        font-size: 1.55rem;
-        margin-bottom: 8px;
-      }
-
-      .danger-banner p {
-        margin: 0;
-        color: rgba(255, 255, 255, 0.92);
-        line-height: 1.65;
+        line-height: 1.6;
       }
 
       .metric-grid {
@@ -681,14 +641,14 @@
       .metric-card {
         padding: 18px;
         border-radius: 22px;
-        background: linear-gradient(180deg, #f9fff4, #fff);
-        border: 1px solid rgba(36, 48, 58, 0.06);
+        background: linear-gradient(180deg, #f9fff5, #ffffff);
+        border: 1px solid var(--line);
       }
 
       .metric-card strong {
         display: block;
         margin-bottom: 6px;
-        font-size: 1.35rem;
+        font-size: 1.4rem;
       }
 
       .metric-card span {
@@ -696,52 +656,48 @@
       }
 
       .plan-grid {
-        align-items: stretch;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 14px;
       }
 
-      .plan-column {
-        flex: 1 1 240px;
-        min-width: 240px;
-      }
-
-      .day-card {
+      .plan-box {
         padding: 20px;
         border-radius: 24px;
-        background: linear-gradient(180deg, #f9fff3, #ffffff);
-        border: 1px solid rgba(36, 48, 58, 0.06);
+        background: linear-gradient(180deg, #f9fff5, #ffffff);
+        border: 1px solid var(--line);
       }
 
-      .day-card strong {
+      .plan-box strong {
         display: block;
         margin-bottom: 10px;
       }
 
-      .schedule-list,
-      .detail-list {
-        display: grid;
-        gap: 10px;
+      .plan-box ul {
         margin: 0;
         padding-left: 18px;
         color: var(--muted);
+        line-height: 1.6;
       }
 
-      .recommend-grid {
-        align-items: stretch;
+      .recommend-card,
+      .ingredient-card,
+      .history-card {
+        flex: 1 1 250px;
+        min-width: 250px;
       }
 
-      .recommend-card {
-        flex: 1 1 260px;
-        min-width: 260px;
-        border-radius: var(--radius-lg);
-      }
-
-      .recommend-card h4 {
+      .recommend-card h4,
+      .ingredient-card h4 {
         margin: 0 0 10px;
-        font-size: 1.1rem;
+        font-size: 1.08rem;
       }
 
-      .recommend-card p {
-        margin: 0 0 14px;
+      .recommend-card p,
+      .ingredient-card p,
+      .history-card p {
+        margin: 0;
         color: var(--muted);
         line-height: 1.62;
       }
@@ -750,133 +706,35 @@
         display: flex;
         gap: 10px;
         flex-wrap: wrap;
-        margin-bottom: 14px;
+        margin-bottom: 12px;
       }
 
       .recommend-meta span {
         display: inline-flex;
         align-items: center;
-        min-height: 34px;
+        min-height: 32px;
         padding: 0 12px;
         border-radius: 999px;
-        background: rgba(69, 183, 255, 0.12);
-        color: #146595;
+        background: var(--blue-100);
+        color: #1870a8;
+        font-size: 0.82rem;
         font-weight: 800;
-        font-size: 0.8rem;
-      }
-
-      .photo-box {
-        display: grid;
-        gap: 14px;
-      }
-
-      .preview-frame {
-        display: grid;
-        place-items: center;
-        min-height: 230px;
-        border-radius: 24px;
-        border: 2px dashed rgba(36, 48, 58, 0.12);
-        background:
-          radial-gradient(circle at top, rgba(255, 216, 90, 0.18), transparent 30%),
-          linear-gradient(180deg, #fcfff8, #f2fff0);
-        overflow: hidden;
-      }
-
-      .preview-frame img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .preview-empty {
-        max-width: 28ch;
-        text-align: center;
-        color: var(--muted);
-        line-height: 1.6;
-      }
-
-      .confirm-card {
-        border-radius: var(--radius-lg);
-        background: linear-gradient(180deg, #f7fff4, #ffffff);
-      }
-
-      .confirm-card h4,
-      .ingredient-card h4 {
-        margin: 0 0 10px;
-        font-size: 1.06rem;
-      }
-
-      .confirm-card p,
-      .ingredient-card p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.6;
-      }
-
-      .status-line {
-        min-height: 22px;
-        color: var(--muted);
-        font-size: 0.95rem;
-      }
-
-      .ingredient-grid {
-        align-items: stretch;
-      }
-
-      .ingredient-card {
-        flex: 1 1 260px;
-        min-width: 240px;
-        border-radius: var(--radius-lg);
       }
 
       .ingredient-card.positive {
-        background: linear-gradient(180deg, #f4ffe9, #ffffff);
+        background: linear-gradient(180deg, #f5ffe9, #ffffff);
       }
 
       .ingredient-card.caution {
-        background: linear-gradient(180deg, #fff8de, #ffffff);
+        background: linear-gradient(180deg, #fff9de, #ffffff);
       }
 
       .ingredient-card.danger {
-        background: linear-gradient(180deg, #fff0f2, #ffffff);
-      }
-
-      .history-grid {
-        flex-direction: column;
-      }
-
-      .history-card {
-        display: grid;
-        gap: 10px;
-      }
-
-      .tips-grid {
-        justify-content: stretch;
-      }
-
-      .tip-card {
-        flex: 1 1 260px;
-        min-width: 240px;
-        padding: 24px;
-        border-radius: 26px;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(246, 255, 242, 0.94));
-        border: 1px solid rgba(36, 48, 58, 0.06);
-        box-shadow: var(--shadow-md);
-      }
-
-      .tip-card strong {
-        display: block;
-        margin-bottom: 10px;
-      }
-
-      .tip-card p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.62;
+        background: linear-gradient(180deg, #fff0f0, #ffffff);
       }
 
       footer {
-        padding: 28px 0 48px;
+        padding: 30px 0 46px;
         color: var(--muted);
       }
 
@@ -885,70 +743,34 @@
         justify-content: space-between;
         gap: 12px;
         flex-wrap: wrap;
-        align-items: center;
       }
 
-      .reveal {
-        opacity: 0;
-        transform: translateY(18px);
-        animation: rise 0.7s ease forwards;
-      }
-
-      .reveal:nth-child(2) {
-        animation-delay: 0.08s;
-      }
-
-      .reveal:nth-child(3) {
-        animation-delay: 0.16s;
-      }
-
-      .reveal:nth-child(4) {
-        animation-delay: 0.24s;
-      }
-
-      @keyframes rise {
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @media (max-width: 1080px) {
-        .hero-grid,
-        .app-grid,
-        .stage-cards {
+      @media (max-width: 1100px) {
+        .hero-grid {
           grid-template-columns: 1fr;
         }
 
-        .metric-grid {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
+        .phone-shell {
+          position: static;
         }
       }
 
       @media (max-width: 760px) {
         .topbar-inner,
-        .section-header,
         .footer-line {
           flex-direction: column;
           align-items: start;
         }
 
-        .nav {
+        .desktop-nav {
           width: 100%;
           justify-content: flex-start;
         }
 
         .field-grid,
-        .metric-grid {
+        .metric-grid,
+        .plan-grid {
           grid-template-columns: 1fr;
-        }
-
-        .hero-copy {
-          padding: 38px 22px;
-        }
-
-        .hero-copy h1 {
-          font-size: 3.2rem;
         }
       }
     </style>
@@ -957,19 +779,16 @@
     <header class="topbar">
       <div class="shell topbar-inner">
         <a class="brand" href="#top">
-          <div class="brand-mark">
-            <div class="brand-core"></div>
-          </div>
+          <div class="brand-mark"><div class="brand-core"></div></div>
           <div class="brand-copy">
-            <span class="eyebrow">Dog Food AI</span>
+            <span class="eyebrow">Food Scan For Dogs</span>
             <span class="brand-name">PupPlate</span>
           </div>
         </a>
-        <nav class="nav">
-          <a class="nav-link" href="#planner">Meal Plan</a>
-          <a class="nav-link" href="#scanner">Scan Food</a>
-          <a class="nav-link" href="#history">History</a>
-          <a class="button button-primary" href="#planner">Start Now</a>
+        <nav class="desktop-nav">
+          <a href="#scan-ui">Scan</a>
+          <a href="#plan-ui">Meal Plan</a>
+          <a href="#history">History</a>
         </nav>
       </div>
     </header>
@@ -977,333 +796,269 @@
     <main id="top">
       <section class="hero">
         <div class="shell hero-grid">
-          <article class="hero-copy">
-            <div class="eyebrow">Smart Feeding Assistant</div>
-            <h1>Know what to feed. Catch what could hurt.</h1>
-            <p>
-              PupPlate now does both sides of the job: it builds a detailed meal plan
-              with food recommendations, schedule, cost, and buying links, and it scans
-              photos of food even when the food is out of the package, then asks you to
-              confirm or correct what it detected before giving the final verdict.
-            </p>
-            <div class="chip-row">
-              <span class="chip">Photo-based food detection</span>
-              <span class="chip">Big red toxic alerts</span>
-              <span class="chip">Ingredient-by-ingredient reasons</span>
-              <span class="chip">Budget-aware meal plans</span>
-            </div>
-            <div class="hero-actions" style="margin-top: 26px">
-              <a class="button button-primary" href="#planner">Build Meal Plan</a>
-              <a class="button button-secondary" href="#scanner">Scan A Food</a>
-            </div>
-            <div class="hero-stats">
-              <div class="stat">
-                <strong>Detects food from the photo</strong>
-                <span>Works on packaged labels, plated meals, snacks, meats, and common dangerous foods.</span>
+          <aside class="phone-shell" id="scan-ui">
+            <div class="phone-screen">
+              <div class="statusbar">
+                <span>21:00</span>
+                <div class="notch"></div>
+                <span>▮▮▮ 5G</span>
               </div>
-              <div class="stat">
-                <strong>Always asks you to confirm</strong>
-                <span>The app shows what it thinks it found, then lets you fix misses like “with tomatoes and peppers.”</span>
-              </div>
-              <div class="stat">
-                <strong>Meal plans you can actually use</strong>
-                <span>Shows product, meal timing, serving sizes, monthly budget, and where to buy.</span>
-              </div>
-            </div>
-          </article>
-
-          <aside class="hero-stage">
-            <div class="stage-grid">
-              <div class="stage-blob">
-                <div class="dog-face">
-                  <div class="dog-snout"></div>
+              <div class="screen-inner">
+                <div class="screen-title">Scan</div>
+                <div class="segmented">
+                  <button class="is-active" type="button">Food Check</button>
+                  <button type="button">Health Check</button>
                 </div>
-              </div>
-              <div class="stage-cards">
-                <article class="mini-card reveal">
-                  <strong>1. Upload or snap food</strong>
-                  <p>Camera roll works too, so you can choose old photos from your phone.</p>
-                </article>
-                <article class="mini-card reveal">
-                  <strong>2. Confirm the AI guess</strong>
-                  <p>PupPlate tells you what it sees, and you can edit it before analysis.</p>
-                </article>
-                <article class="mini-card reveal">
-                  <strong>3. Get the real call</strong>
-                  <p>Safe, caution, or danger with reasons for every ingredient that matters.</p>
-                </article>
+
+                <label class="scan-cta" for="foodPhoto" style="display:grid;place-items:center;">
+                  Take Photo / Choose Image
+                </label>
+
+                <div class="scan-card">
+                  <div class="scan-label">Treat Scan</div>
+                  <h2>Frame the food to check if your dog can eat it</h2>
+                  <p>Keep the item centered and well lit. Then confirm what the app detected.</p>
+
+                  <div class="preview-frame" id="previewFrame">
+                    <div class="preview-empty">Upload a snack, meal, ingredient, or package label.</div>
+                    <div class="camera-guides"></div>
+                    <div class="preview-caption">Frame the food clearly</div>
+                  </div>
+                </div>
+
+                <div class="danger-card hidden" id="dangerCard">
+                  <div class="danger-icon">🍫</div>
+                  <h3>NO!</h3>
+                  <strong>This could kill your dog!</strong>
+                  <p id="dangerText">Chocolate contains theobromine which is toxic to dogs. Symptoms can include vomiting, diarrhea, rapid breathing, and seizures.</p>
+                </div>
+
+                <div class="reference-card">
+                  <h4>Quick Reference</h4>
+                  <div class="reference-grid" id="quickReference">
+                    <div class="reference-item">
+                      <div class="food-icon">🥕</div>
+                      <div class="reference-copy">
+                        <strong>Carrot</strong>
+                        <div class="state-line safe">✓ Safe</div>
+                      </div>
+                    </div>
+                    <div class="reference-item">
+                      <div class="food-icon">🍫</div>
+                      <div class="reference-copy">
+                        <strong>Chocolate</strong>
+                        <div class="state-line toxic">✕ Toxic</div>
+                      </div>
+                    </div>
+                    <div class="reference-item">
+                      <div class="food-icon">🍎</div>
+                      <div class="reference-copy">
+                        <strong>Apple</strong>
+                        <div class="state-line safe">✓ Safe</div>
+                      </div>
+                    </div>
+                    <div class="reference-item">
+                      <div class="food-icon">🍇</div>
+                      <div class="reference-copy">
+                        <strong>Grapes</strong>
+                        <div class="state-line toxic">✕ Toxic</div>
+                      </div>
+                    </div>
+                    <div class="reference-item">
+                      <div class="food-icon">🥜</div>
+                      <div class="reference-copy">
+                        <strong>Peanut Butter</strong>
+                        <div class="state-line safe">✓ Safe</div>
+                      </div>
+                    </div>
+                    <div class="reference-item">
+                      <div class="food-icon">🧅</div>
+                      <div class="reference-copy">
+                        <strong>Onion</strong>
+                        <div class="state-line toxic">✕ Toxic</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="phone-nav">
+                  <a href="#plan-ui">
+                    <span>🐾</span>
+                    <span>Learn</span>
+                  </a>
+                  <a class="active" href="#scan-ui">
+                    <span>📸</span>
+                    <span>Scan</span>
+                  </a>
+                  <a href="#history">
+                    <span>👤</span>
+                    <span>Profile</span>
+                  </a>
+                </div>
               </div>
             </div>
           </aside>
-        </div>
-      </section>
 
-      <section class="section">
-        <div class="shell feature-grid">
-          <article class="feature-card reveal">
-            <strong>Better scanner</strong>
-            <p>Uses image models for appearance-based guesses and OCR for labels, then merges them with your corrections.</p>
-          </article>
-          <article class="feature-card reveal">
-            <strong>Stronger safety logic</strong>
-            <p>Chocolate, xylitol, onions, grapes, and other major red flags trigger prominent danger states.</p>
-          </article>
-          <article class="feature-card reveal">
-            <strong>Real meal guidance</strong>
-            <p>The planner recommends specific foods for puppy, adult, senior, sensitive stomach, active dogs, and weight control.</p>
-          </article>
-          <article class="feature-card reveal">
-            <strong>Budget-aware</strong>
-            <p>You can steer recommendations toward lower-cost, balanced choices or more premium formulas.</p>
-          </article>
-        </div>
-      </section>
+          <div class="desktop-content">
+            <section class="intro-card">
+              <div class="eyebrow">Visual Direction</div>
+              <h1>Scan-first, simple, bright, and instantly readable.</h1>
+              <p>
+                I matched your mockup direction much more closely here: strong green scan CTA,
+                a huge red danger answer, quick-reference safe vs toxic foods with icons, and
+                a phone-app style layout instead of a normal website dashboard. The scan flow
+                still keeps the smarter logic underneath: AI guess, user correction, ingredient
+                reasoning, history, and meal planning.
+              </p>
+              <div class="chip-row">
+                <span class="chip">Quick reference</span>
+                <span class="chip">Big yes / no states</span>
+                <span class="chip">Food icons</span>
+                <span class="chip">Mobile app feel</span>
+              </div>
+            </section>
 
-      <section class="section" id="planner">
-        <div class="shell">
-          <div class="section-header">
-            <div>
-              <div class="eyebrow">Meal Plan</div>
-              <h2>Tell PupPlate about your dog and get a real feeding plan.</h2>
-            </div>
-            <p>
-              The planner now recommends actual products, gives exact meal timing,
-              estimates monthly cost, and tells you where to buy the food based on your dog’s needs and budget.
-            </p>
-          </div>
-
-          <div class="app-grid">
-            <section class="panel">
-              <div class="surface">
-                <div class="panel-title">
-                  <div>
-                    <h3>Dog Profile</h3>
-                    <p>Your last profile is saved locally in the browser.</p>
-                  </div>
-                  <div class="tabs">
-                    <button class="tab-button is-active" type="button" data-tab="plan">Meal Plan</button>
-                    <button class="tab-button" type="button" data-tab="scan">Scan Food</button>
-                  </div>
+            <section class="surface">
+              <h2 class="section-title">Smart Scan</h2>
+              <p class="section-copy">
+                Upload from camera or camera roll, let PupPlate detect what it sees, then confirm or correct it before the final verdict.
+              </p>
+              <form id="scannerForm">
+                <div class="field-grid">
+                  <label>
+                    What are you checking?
+                    <select id="scanType">
+                      <option value="dog-food" selected>Dog food</option>
+                      <option value="treat">Dog treat</option>
+                      <option value="human-food">Human food item</option>
+                    </select>
+                  </label>
+                  <label>
+                    Upload photo
+                    <input id="foodPhoto" type="file" accept="image/*" />
+                  </label>
                 </div>
 
-                <form id="plannerForm">
-                  <div class="field-grid">
-                    <label>
-                      Dog name
-                      <input id="dogName" type="text" placeholder="Milo" />
-                    </label>
-                    <label>
-                      Weight (lb)
-                      <input id="dogWeight" type="number" min="2" step="0.1" value="35" />
-                    </label>
-                  </div>
-
-                  <div class="field-grid">
-                    <label>
-                      Age stage
-                      <select id="dogAge">
-                        <option value="puppy">Puppy</option>
-                        <option value="adult" selected>Adult</option>
-                        <option value="senior">Senior</option>
-                      </select>
-                    </label>
-                    <label>
-                      Activity
-                      <select id="dogActivity">
-                        <option value="low">Low</option>
-                        <option value="normal" selected>Normal</option>
-                        <option value="high">High</option>
-                      </select>
-                    </label>
-                  </div>
-
-                  <div class="field-grid">
-                    <label>
-                      Goal
-                      <select id="dogGoal">
-                        <option value="maintain" selected>Maintain weight</option>
-                        <option value="lose">Lose weight</option>
-                        <option value="gain">Gain weight</option>
-                      </select>
-                    </label>
-                    <label>
-                      Sensitivity
-                      <select id="dogSensitivity">
-                        <option value="none" selected>None</option>
-                        <option value="sensitive">Sensitive stomach</option>
-                        <option value="allergy">Possible food allergy</option>
-                        <option value="weight-control">Needs weight control</option>
-                      </select>
-                    </label>
-                  </div>
-
-                  <div class="field-grid">
-                    <label>
-                      Budget
-                      <select id="budgetTier">
-                        <option value="budget">Budget-friendly</option>
-                        <option value="balanced" selected>Balanced</option>
-                        <option value="premium">Premium</option>
-                      </select>
-                    </label>
-                    <label>
-                      Preferred texture
-                      <select id="foodStyle">
-                        <option value="dry" selected>Dry</option>
-                        <option value="wet">Wet / moist</option>
-                        <option value="mixed">Mixed feeding</option>
-                      </select>
-                    </label>
-                  </div>
-
-                  <div class="field-help">
-                    PupPlate estimates calories with a resting energy requirement formula and then matches that profile to product data and price data.
-                    Use this as a planning tool, not a replacement for a veterinarian.
-                  </div>
-
-                  <button class="button button-primary" type="submit">Build Full Meal Plan</button>
-                </form>
-              </div>
-            </section>
-
-            <section class="panel">
-              <div class="plan-output" id="planResult">
-                <h3>Meal plan will show here</h3>
-                <p>Build a profile and PupPlate will generate calories, schedule, recommended foods, where to buy them, and estimated monthly cost.</p>
-              </div>
-            </section>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="scanner">
-        <div class="shell">
-          <div class="section-header">
-            <div>
-              <div class="eyebrow">Food Scanner</div>
-              <h2>Scan the food by how it looks, then confirm what the AI saw.</h2>
-            </div>
-            <p>
-              PupPlate can review plated food, snacks, raw ingredients, treats, or packaged labels.
-              It shows the guess first, then you can correct it before the safety decision is made.
-            </p>
-          </div>
-
-          <div class="app-grid">
-            <section class="panel">
-              <div class="surface">
-                <div class="panel-title">
-                  <div>
-                    <h3>Photo + Label Input</h3>
-                    <p>Use camera, camera roll, or uploaded images. Then confirm the result so the app stays accurate.</p>
-                  </div>
+                <div class="field-grid">
+                  <button class="button button-secondary" id="detectPhotoButton" type="button">Detect Food In Photo</button>
+                  <button class="button button-secondary" id="ocrButton" type="button">Read Package Label</button>
                 </div>
 
-                <form id="scannerForm">
-                  <div class="field-grid">
-                    <label>
-                      What is this?
-                      <select id="scanType">
-                        <option value="dog-food" selected>Dog food</option>
-                        <option value="treat">Dog treat</option>
-                        <option value="human-food">Human food item</option>
-                      </select>
-                    </label>
-                    <label>
-                      Photo upload or camera roll
-                      <input id="foodPhoto" type="file" accept="image/*" />
-                    </label>
-                  </div>
+                <div class="subtle" id="ocrStatus">The app will show what it detected first so the user can confirm or correct it.</div>
 
-                  <div class="photo-box">
-                    <div class="preview-frame" id="previewFrame">
-                      <div class="preview-empty">Upload a photo of the food, plate, ingredient label, or package front.</div>
-                    </div>
-                    <div class="confirm-actions">
-                      <button class="button button-secondary" id="detectPhotoButton" type="button">Detect What’s In The Photo</button>
-                      <button class="button button-secondary" id="ocrButton" type="button">Read Package Label</button>
-                      <button class="button button-primary" type="submit">Analyze Final Food</button>
-                    </div>
-                    <div class="status-line" id="ocrStatus">Detection works best if the food is centered and well lit.</div>
-                  </div>
+                <label>
+                  AI guess or your correction
+                  <textarea id="confirmItems" placeholder="Example: ground beef with onions and tomatoes"></textarea>
+                </label>
 
-                  <div class="confirm-card" id="confirmCard">
-                    <h4>AI confirmation</h4>
-                    <p id="confirmSummary">Run photo detection and PupPlate will tell you what it thinks is in the image.</p>
-                    <label>
-                      Confirm or correct what the app found
-                      <textarea id="confirmItems" placeholder="Example: ground beef with onions and tomatoes"></textarea>
-                    </label>
-                    <label>
-                      Paste ingredients or notes from the package if you have them
-                      <textarea id="ingredientText" placeholder="Example: deboned chicken, chicken meal, brown rice, oats, pumpkin, salmon oil"></textarea>
-                    </label>
-                  </div>
-                </form>
-              </div>
+                <label>
+                  Label ingredients or extra notes
+                  <textarea id="ingredientText" placeholder="Example: chocolate, cocoa butter, sugar, milk"></textarea>
+                </label>
+
+                <button class="button button-primary" type="submit">Analyze Final Food</button>
+              </form>
             </section>
 
-            <section class="panel">
-              <div class="scan-output" id="scanResult">
-                <div class="danger-banner" id="dangerBanner">
-                  <strong>This can kill your dog!</strong>
-                  <p>One or more ingredients or detected foods in this scan are high-risk. Do not feed it. If your dog already ate it and is showing symptoms, contact a vet or pet poison line right away.</p>
+            <section class="result-card" id="scanResult">
+              <h2 class="section-title">Scan result will appear here</h2>
+              <p class="section-copy">The app will explain why each ingredient is good, risky, or dangerous for dogs.</p>
+            </section>
+
+            <section class="planner-card surface" id="plan-ui">
+              <h2 class="section-title">Meal Plan</h2>
+              <p class="section-copy">
+                Tell PupPlate about your dog and it will build a feeding plan with meal timing, recommended food, estimated budget, and buying links.
+              </p>
+              <form id="plannerForm">
+                <div class="field-grid">
+                  <label>
+                    Dog name
+                    <input id="dogName" type="text" placeholder="Milo" />
+                  </label>
+                  <label>
+                    Weight (lb)
+                    <input id="dogWeight" type="number" min="2" step="0.1" value="35" />
+                  </label>
                 </div>
-                <h3>Scan results will show here</h3>
-                <p>Upload a photo, confirm what PupPlate detected, and then the app will explain the verdict ingredient by ingredient.</p>
+
+                <div class="field-grid">
+                  <label>
+                    Age stage
+                    <select id="dogAge">
+                      <option value="puppy">Puppy</option>
+                      <option value="adult" selected>Adult</option>
+                      <option value="senior">Senior</option>
+                    </select>
+                  </label>
+                  <label>
+                    Activity
+                    <select id="dogActivity">
+                      <option value="low">Low</option>
+                      <option value="normal" selected>Normal</option>
+                      <option value="high">High</option>
+                    </select>
+                  </label>
+                </div>
+
+                <div class="field-grid">
+                  <label>
+                    Goal
+                    <select id="dogGoal">
+                      <option value="maintain" selected>Maintain weight</option>
+                      <option value="lose">Lose weight</option>
+                      <option value="gain">Gain weight</option>
+                    </select>
+                  </label>
+                  <label>
+                    Sensitivity
+                    <select id="dogSensitivity">
+                      <option value="none" selected>None</option>
+                      <option value="sensitive">Sensitive stomach</option>
+                      <option value="allergy">Possible food allergy</option>
+                      <option value="weight-control">Needs weight control</option>
+                    </select>
+                  </label>
+                </div>
+
+                <div class="field-grid">
+                  <label>
+                    Budget
+                    <select id="budgetTier">
+                      <option value="budget">Budget-friendly</option>
+                      <option value="balanced" selected>Balanced</option>
+                      <option value="premium">Premium</option>
+                    </select>
+                  </label>
+                  <label>
+                    Preferred texture
+                    <select id="foodStyle">
+                      <option value="dry" selected>Dry</option>
+                      <option value="wet">Wet / moist</option>
+                      <option value="mixed">Mixed feeding</option>
+                    </select>
+                  </label>
+                </div>
+
+                <button class="button button-primary" type="submit">Build Full Meal Plan</button>
+              </form>
+            </section>
+
+            <section class="result-card" id="planResult">
+              <h2 class="section-title">Meal plan will appear here</h2>
+              <p class="section-copy">Calories, portion size, feeding schedule, monthly cost, and where to buy the recommended food will show here.</p>
+            </section>
+
+            <section class="surface" id="history">
+              <h2 class="section-title">History</h2>
+              <p class="section-copy">Saved scans and meal plans stay in the browser so you can compare foods later.</p>
+              <div class="history-grid" id="historyList">
+                <article class="history-card">
+                  <h3>No saved history yet</h3>
+                  <p>Create a scan or meal plan and it will appear here.</p>
+                </article>
               </div>
             </section>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="history">
-        <div class="shell">
-          <div class="section-header">
-            <div>
-              <div class="eyebrow">History</div>
-              <h2>Saved food scans and meal plans.</h2>
-            </div>
-            <p>
-              PupPlate stores recent results in your browser so you can compare foods, revisit danger scans, and reuse the last plan.
-            </p>
-          </div>
-
-          <div class="history-grid" id="historyList">
-            <article class="history-card">
-              <h3>No saved history yet</h3>
-              <p>Create a meal plan or analyze a food and it will appear here.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="shell">
-          <div class="section-header">
-            <div>
-              <div class="eyebrow">Safety Notes</div>
-              <h2>Why PupPlate says yes, no, or be careful.</h2>
-            </div>
-            <p>
-              The app rewards clearly identified, dog-appropriate proteins and useful nutrients,
-              and it warns hard on toxic foods, ingredient vagueness, heavy sugar, and known risk items.
-            </p>
-          </div>
-
-          <div class="tips-grid">
-            <article class="tip-card reveal">
-              <strong>Usually good signs</strong>
-              <p>Plain chicken, turkey, salmon, pumpkin, brown rice, oats, carrots, blueberries, and salmon oil often support a balanced diet.</p>
-            </article>
-            <article class="tip-card reveal">
-              <strong>Usually caution signs</strong>
-              <p>Cheese, bacon, salty sauces, artificial colors, sugar-heavy ingredients, and vague by-products may be less ideal or too rich.</p>
-            </article>
-            <article class="tip-card reveal">
-              <strong>Usually danger signs</strong>
-              <p>Chocolate, xylitol, grapes, raisins, onions, garlic, and macadamia nuts are major problems and should never be treated casually.</p>
-            </article>
           </div>
         </div>
       </section>
@@ -1311,7 +1066,7 @@
 
     <footer>
       <div class="shell footer-line">
-        <div>PupPlate smart dog food planner</div>
+        <div>PupPlate scan-first app concept</div>
         <div>© <span id="year"></span> PupPlate</div>
       </div>
     </footer>
@@ -1323,263 +1078,146 @@
     <script>
       const plannerForm = document.getElementById("plannerForm");
       const scannerForm = document.getElementById("scannerForm");
-      const planResult = document.getElementById("planResult");
-      const scanResult = document.getElementById("scanResult");
       const foodPhoto = document.getElementById("foodPhoto");
       const previewFrame = document.getElementById("previewFrame");
-      const confirmItems = document.getElementById("confirmItems");
-      const confirmSummary = document.getElementById("confirmSummary");
-      const ingredientText = document.getElementById("ingredientText");
-      const ocrButton = document.getElementById("ocrButton");
       const detectPhotoButton = document.getElementById("detectPhotoButton");
+      const ocrButton = document.getElementById("ocrButton");
       const ocrStatus = document.getElementById("ocrStatus");
+      const confirmItems = document.getElementById("confirmItems");
+      const ingredientText = document.getElementById("ingredientText");
+      const scanResult = document.getElementById("scanResult");
+      const planResult = document.getElementById("planResult");
       const historyList = document.getElementById("historyList");
-      const tabButtons = Array.from(document.querySelectorAll("[data-tab]"));
-      const dangerBanner = document.getElementById("dangerBanner");
+      const dangerCard = document.getElementById("dangerCard");
+      const dangerText = document.getElementById("dangerText");
 
-      const historyKey = "pupplate-v2-history";
-      const profileKey = "pupplate-v2-profile";
+      const historyKey = "pupplate-visual-history";
+      const profileKey = "pupplate-visual-profile";
 
-      let currentPhotoDataUrl = "";
       let mobileNetModel = null;
       let cocoModel = null;
-      let detectedItems = [];
 
       const productCatalog = [
         {
-          id: "purina-one-adult",
           name: "Purina ONE Natural Adult Chicken & Rice Formula",
           brand: "Purina ONE",
           stage: ["adult"],
-          goals: ["maintain", "gain"],
-          sensitivities: ["none"],
+          goal: ["maintain", "gain"],
+          sensitivity: ["none"],
           activity: ["low", "normal"],
           budget: "budget",
           texture: ["dry", "mixed"],
           kcalPerCup: 383,
-          kcalPerKg: 4004,
           bagLb: 31.1,
           bagPrice: 48.98,
           buyAt: "Chewy",
           link: "https://www.chewy.com/purina-one-natural-smartblend-chicken/dp/42212",
-          reasons: [
-            "real chicken as the first ingredient",
-            "budget-friendly cost per pound",
-            "balanced adult maintenance choice"
-          ]
+          reasons: ["budget-friendly", "real chicken first", "solid adult maintenance option"]
         },
         {
-          id: "blue-adult",
-          name: "Blue Buffalo Life Protection Adult Chicken & Brown Rice",
-          brand: "Blue Buffalo",
-          stage: ["adult"],
-          goals: ["maintain", "gain"],
-          sensitivities: ["none"],
-          activity: ["low", "normal"],
-          budget: "balanced",
-          texture: ["dry", "mixed"],
-          kcalPerCup: 379,
-          kcalPerKg: 3633,
-          bagLb: 30,
-          bagPrice: 67.98,
-          buyAt: "Chewy",
-          link: "https://www.chewy.com/blue-buffalo-life-protection-formula/dp/32041",
-          reasons: [
-            "debonded chicken and whole grains",
-            "no chicken by-product meals, corn, wheat, or soy",
-            "good all-around adult choice"
-          ]
-        },
-        {
-          id: "pro-plan-sensitive-adult",
           name: "Purina Pro Plan Adult Sensitive Skin & Stomach Salmon & Rice",
           brand: "Purina Pro Plan",
           stage: ["adult"],
-          goals: ["maintain", "gain"],
-          sensitivities: ["sensitive", "allergy"],
+          goal: ["maintain", "gain"],
+          sensitivity: ["sensitive", "allergy"],
           activity: ["low", "normal"],
           budget: "balanced",
           texture: ["dry", "mixed"],
           kcalPerCup: 449,
-          kcalPerKg: 3903,
           bagLb: 16,
           bagPrice: 54.48,
           buyAt: "Chewy",
           link: "https://www.chewy.com/purina-pro-plan-adult-sensitive-skin/dp/129070",
-          reasons: [
-            "salmon is the first ingredient",
-            "oat meal and rice are designed to be gentle on digestion",
-            "good fit for sensitive skin and stomach profiles"
-          ]
+          reasons: ["salmon first", "good for sensitive stomachs", "very practical balanced pick"]
         },
         {
-          id: "blue-puppy",
           name: "Blue Buffalo Life Protection Puppy Chicken & Brown Rice",
           brand: "Blue Buffalo",
           stage: ["puppy"],
-          goals: ["maintain", "gain"],
-          sensitivities: ["none", "sensitive"],
+          goal: ["maintain", "gain"],
+          sensitivity: ["none", "sensitive"],
           activity: ["low", "normal"],
           budget: "balanced",
           texture: ["dry", "mixed"],
           kcalPerCup: 401,
-          kcalPerKg: 3717,
           bagLb: 30,
           bagPrice: 72.98,
           buyAt: "Chewy",
           link: "https://www.chewy.com/blue-buffalo-life-protection-formula/dp/32079",
-          reasons: [
-            "puppy-specific formula",
-            "DHA and balanced growth nutrients",
-            "good for structured puppy feeding schedules"
-          ]
+          reasons: ["puppy growth formula", "good daily structure", "balanced ingredient profile"]
         },
         {
-          id: "blue-healthy-weight",
-          name: "Blue Buffalo Life Protection Healthy Weight Adult Chicken & Brown Rice",
+          name: "Blue Buffalo Healthy Weight Adult Chicken & Brown Rice",
           brand: "Blue Buffalo",
           stage: ["adult"],
-          goals: ["lose", "maintain"],
-          sensitivities: ["weight-control"],
+          goal: ["lose", "maintain"],
+          sensitivity: ["weight-control"],
           activity: ["low", "normal"],
           budget: "balanced",
           texture: ["dry", "mixed"],
           kcalPerCup: 322,
-          kcalPerKg: 3264,
           bagLb: 30,
           bagPrice: 74.98,
           buyAt: "Chewy",
           link: "https://www.chewy.com/blue-buffalo-life-protection-formula/dp/32019",
-          reasons: [
-            "lower calorie density",
-            "healthy-weight formula with L-carnitine",
-            "supports weight reduction without a crash diet feel"
-          ]
+          reasons: ["lower calorie density", "good for controlled portions", "better for weight reduction"]
         },
         {
-          id: "pro-plan-senior",
           name: "Purina Pro Plan Sensitive Skin & Stomach 7+ Salmon & Rice",
           brand: "Purina Pro Plan",
           stage: ["senior"],
-          goals: ["maintain", "lose"],
-          sensitivities: ["none", "sensitive", "allergy"],
+          goal: ["maintain", "lose"],
+          sensitivity: ["sensitive", "allergy", "none"],
           activity: ["low", "normal"],
           budget: "balanced",
           texture: ["dry", "mixed"],
           kcalPerCup: 429,
-          kcalPerKg: 3910,
           bagLb: 24,
           bagPrice: 77.48,
           buyAt: "Chewy",
           link: "https://www.chewy.com/purina-pro-plan-sensitive-skin/dp/379216",
-          reasons: [
-            "senior-oriented support for joints and mobility",
-            "salmon-first recipe with digestible grains",
-            "good for older dogs who still need skin and stomach help"
-          ]
-        },
-        {
-          id: "pro-plan-sport",
-          name: "Purina Pro Plan Sport Performance 30/20 Salmon & Rice",
-          brand: "Purina Pro Plan",
-          stage: ["adult", "puppy"],
-          goals: ["maintain", "gain"],
-          sensitivities: ["none"],
-          activity: ["high"],
-          budget: "premium",
-          texture: ["dry", "mixed"],
-          kcalPerCup: 534,
-          kcalPerKg: 4433,
-          bagLb: 33,
-          bagPrice: 74.98,
-          buyAt: "Chewy",
-          link: "https://www.chewy.com/purina-pro-plan-sport-performance-all/dp/114054",
-          reasons: [
-            "high-calorie, high-protein formula for active dogs",
-            "better fit for working, sporting, or hard-exercising dogs",
-            "supports endurance more than average-maintenance foods"
-          ]
-        },
-        {
-          id: "royal-canin-medium-weight-care",
-          name: "Royal Canin Medium Weight Care Adult",
-          brand: "Royal Canin",
-          stage: ["adult"],
-          goals: ["lose", "maintain"],
-          sensitivities: ["weight-control"],
-          activity: ["low", "normal"],
-          budget: "premium",
-          texture: ["dry"],
-          kcalPerCup: 256,
-          kcalPerKg: 3200,
-          bagLb: 30,
-          bagPrice: 109.99,
-          buyAt: "Chewy",
-          link: "https://www.chewy.com/royal-canin-canine-care-nutrition/dp/48216",
-          reasons: [
-            "premium weight-management option",
-            "very controlled calorie density",
-            "built for structured weight care planning"
-          ]
+          reasons: ["senior-friendly formula", "salmon-based", "good for older dogs with stomach or skin issues"]
         }
       ];
 
       const ingredientRules = {
-        "chocolate": { level: "danger", reason: "Chocolate contains theobromine, which can be toxic and potentially life-threatening for dogs." },
-        "cocoa": { level: "danger", reason: "Cocoa products are a major theobromine risk and should never be treated as safe." },
-        "xylitol": { level: "danger", reason: "Xylitol can trigger a dangerous insulin surge and severe low blood sugar in dogs." },
-        "onion": { level: "danger", reason: "Onions can damage red blood cells and are unsafe for dogs even when cooked." },
-        "garlic": { level: "danger", reason: "Garlic can be toxic to dogs, especially in larger amounts or repeated exposure." },
-        "grape": { level: "danger", reason: "Grapes can cause sudden kidney injury in dogs and are treated as a hard no." },
-        "grapes": { level: "danger", reason: "Grapes can cause sudden kidney injury in dogs and are treated as a hard no." },
-        "raisin": { level: "danger", reason: "Raisins are concentrated grape risk and can be very dangerous for dogs." },
-        "raisins": { level: "danger", reason: "Raisins are concentrated grape risk and can be very dangerous for dogs." },
-        "macadamia": { level: "danger", reason: "Macadamia nuts can cause weakness, vomiting, and neurologic symptoms in dogs." },
-        "avocado": { level: "caution", reason: "Avocado is not a good casual dog food choice and richer portions can cause digestive trouble." },
-        "pizza": { level: "danger", reason: "Pizza often combines cheese, salt, grease, and common toppings like onion or garlic that make it a poor dog choice." },
-        "hot dog": { level: "caution", reason: "Hot dogs are usually very salty and processed, so they are not a good regular dog food." },
-        "donut": { level: "danger", reason: "Donuts are sugary and often chocolate-based or xylitol-adjacent, making them a bad dog risk." },
-        "cake": { level: "danger", reason: "Cake is usually sugary, fatty, and often includes chocolate or unsafe sweeteners." },
-        "cookie": { level: "danger", reason: "Cookies are usually sugary and can easily include chocolate, raisins, or xylitol." },
-        "brownie": { level: "danger", reason: "Brownies are usually chocolate-heavy and are a serious toxic risk for dogs." },
-        "ground beef": { level: "positive", reason: "Plain cooked ground beef can be a useful protein for dogs when not mixed with onion, garlic, or heavy seasoning." },
-        "beef": { level: "positive", reason: "Plain beef can be a solid protein source for many dogs if it is not overly fatty or seasoned." },
-        "chicken": { level: "positive", reason: "Plain cooked chicken is a common dog-safe protein and is often gentle for meal planning." },
-        "turkey": { level: "positive", reason: "Plain turkey can work well for dogs when it is unseasoned and not loaded with skin or gravy." },
-        "salmon": { level: "positive", reason: "Salmon can support skin and coat health when fully cooked and handled safely." },
-        "pumpkin": { level: "positive", reason: "Pumpkin is often helpful for digestion and fiber support in dogs." },
-        "brown rice": { level: "positive", reason: "Brown rice is a common digestible carbohydrate in many dog foods." },
-        "oats": { level: "positive", reason: "Oats are often used in gentler formulas and can work well for sensitive digestion." },
-        "sweet potato": { level: "positive", reason: "Sweet potato is a common carbohydrate and fiber ingredient in dog diets." },
-        "salmon oil": { level: "positive", reason: "Salmon oil can support skin, coat, and omega-3 intake." },
-        "fish oil": { level: "positive", reason: "Fish oil is often used to support skin, coat, and inflammation balance." },
-        "blueberries": { level: "positive", reason: "Blueberries can be a dog-safe fruit in moderate amounts." },
-        "carrot": { level: "positive", reason: "Carrots are often a safe, crunchy, lower-calorie dog-friendly ingredient." },
-        "broccoli": { level: "caution", reason: "Broccoli can be okay in small amounts, but large portions can upset digestion." },
-        "cheese": { level: "caution", reason: "Cheese is not automatically toxic, but it is rich and can bother sensitive dogs." },
-        "bacon": { level: "caution", reason: "Bacon is fatty and salty, which makes it a poor regular choice for dogs." },
-        "salt": { level: "caution", reason: "Heavily salted foods are not ideal and can be risky in large amounts." },
-        "artificial color": { level: "caution", reason: "Artificial colors do not help the dog nutritionally and usually signal a weaker formula." },
-        "corn syrup": { level: "caution", reason: "Corn syrup adds sugar without nutritional value and is not a strong sign in a dog food." },
-        "meat by-product": { level: "caution", reason: "Vague by-product terms are less reassuring than clearly named proteins." },
-        "animal fat": { level: "caution", reason: "Unnamed animal fat is less transparent than clearly identified fat sources." }
+        chocolate: { level: "danger", icon: "🍫", reason: "Chocolate contains theobromine, which is toxic to dogs and can be life-threatening." },
+        cocoa: { level: "danger", icon: "🍫", reason: "Cocoa products are a major toxic risk for dogs." },
+        xylitol: { level: "danger", icon: "⚠️", reason: "Xylitol can cause severe low blood sugar and liver injury in dogs." },
+        onion: { level: "danger", icon: "🧅", reason: "Onion can damage red blood cells and should not be fed to dogs." },
+        garlic: { level: "danger", icon: "🧄", reason: "Garlic is unsafe for dogs and can cause toxic effects." },
+        grape: { level: "danger", icon: "🍇", reason: "Grapes can cause kidney injury in dogs." },
+        grapes: { level: "danger", icon: "🍇", reason: "Grapes can cause kidney injury in dogs." },
+        raisin: { level: "danger", icon: "🍇", reason: "Raisins are dangerous for dogs and are treated like grape toxicity." },
+        raisins: { level: "danger", icon: "🍇", reason: "Raisins are dangerous for dogs and are treated like grape toxicity." },
+        carrot: { level: "positive", icon: "🥕", reason: "Carrots are generally dog-safe and low calorie." },
+        apple: { level: "positive", icon: "🍎", reason: "Plain apple without seeds is generally dog-safe." },
+        "peanut butter": { level: "positive", icon: "🥜", reason: "Peanut butter can be okay if it does not contain xylitol and is used in moderation." },
+        chicken: { level: "positive", icon: "🍗", reason: "Plain cooked chicken is a common dog-safe protein." },
+        turkey: { level: "positive", icon: "🦃", reason: "Plain turkey is usually safe when unseasoned." },
+        "ground beef": { level: "positive", icon: "🥩", reason: "Plain ground beef can be a useful protein if it is not mixed with onion or heavy seasoning." },
+        beef: { level: "positive", icon: "🥩", reason: "Plain beef can be dog-safe in moderate portions." },
+        salmon: { level: "positive", icon: "🐟", reason: "Cooked salmon can be a strong protein and omega-3 source for dogs." },
+        cheese: { level: "caution", icon: "🧀", reason: "Cheese is not automatically toxic, but it can be rich and hard on some dogs." },
+        bacon: { level: "caution", icon: "🥓", reason: "Bacon is fatty and salty, so it is not a good regular dog food." },
+        broccoli: { level: "caution", icon: "🥦", reason: "Broccoli can be okay in small amounts, but too much may upset digestion." },
+        pizza: { level: "danger", icon: "🍕", reason: "Pizza often combines cheese, salt, grease, onion, or garlic, making it a poor dog choice." }
       };
 
       const detectionAliases = [
-        { test: /brownie|chocolate|truffle|fudge|cocoa/, items: ["chocolate"] },
-        { test: /donut/, items: ["donut"] },
-        { test: /cake|cupcake/, items: ["cake"] },
-        { test: /cookie/, items: ["cookie"] },
-        { test: /pizza/, items: ["pizza", "cheese"] },
-        { test: /hot dog|hotdog/, items: ["hot dog"] },
-        { test: /broccoli/, items: ["broccoli"] },
-        { test: /carrot/, items: ["carrot"] },
-        { test: /guacamole|avocado/, items: ["avocado"] },
-        { test: /meat loaf|meatloaf|hamburger|cheeseburger/, items: ["ground beef"] },
-        { test: /chicken|hen|cock/, items: ["chicken"] },
-        { test: /turkey/, items: ["turkey"] },
-        { test: /salmon|fish/, items: ["salmon"] },
-        { test: /sausage/, items: ["sausage"] }
+        { test: /chocolate|brownie|cocoa|candy bar|cookie/, value: "chocolate" },
+        { test: /onion/, value: "onion" },
+        { test: /garlic/, value: "garlic" },
+        { test: /grape/, value: "grapes" },
+        { test: /pizza/, value: "pizza" },
+        { test: /broccoli/, value: "broccoli" },
+        { test: /carrot/, value: "carrot" },
+        { test: /apple/, value: "apple" },
+        { test: /peanut/, value: "peanut butter" },
+        { test: /chicken/, value: "chicken" },
+        { test: /turkey/, value: "turkey" },
+        { test: /salmon|fish/, value: "salmon" },
+        { test: /burger|hamburger|beef|meatloaf/, value: "ground beef" }
       ];
 
       function saveHistory(entry) {
@@ -1595,7 +1233,7 @@
           historyList.innerHTML = `
             <article class="history-card">
               <h3>No saved history yet</h3>
-              <p>Create a meal plan or analyze a food and it will appear here.</p>
+              <p>Create a scan or meal plan and it will appear here.</p>
             </article>
           `;
           return;
@@ -1604,7 +1242,7 @@
         historyList.innerHTML = items.map((item) => `
           <article class="history-card">
             <div class="score-row">
-              <span class="score-pill ${item.levelClass || "score-good"}">${item.kind}</span>
+              <span class="score-pill ${item.levelClass}">${item.kind}</span>
               <span class="tag">${new Date(item.createdAt).toLocaleString()}</span>
             </div>
             <h3>${item.title}</h3>
@@ -1613,138 +1251,38 @@
         `).join("");
       }
 
-      function caloriesFactor(age, activity, goal) {
-        const ageFactor = { puppy: 2.0, adult: 1.6, senior: 1.3 }[age];
-        const activityFactor = { low: 0.9, normal: 1, high: 1.25 }[activity];
-        const goalFactor = { lose: 0.85, maintain: 1, gain: 1.15 }[goal];
-        return ageFactor * activityFactor * goalFactor;
-      }
-
-      function getMealSchedule(age, activity) {
-        if (age === "puppy") {
-          return ["7:00 AM", "1:00 PM", "7:00 PM"];
-        }
-
-        if (activity === "high") {
-          return ["6:30 AM", "12:30 PM", "6:30 PM"];
-        }
-
-        return ["7:00 AM", "6:00 PM"];
-      }
-
-      function getBudgetOrder(budgetTier) {
-        if (budgetTier === "budget") return ["budget", "balanced", "premium"];
-        if (budgetTier === "premium") return ["premium", "balanced", "budget"];
+      function budgetOrder(budget) {
+        if (budget === "budget") return ["budget", "balanced", "premium"];
+        if (budget === "premium") return ["premium", "balanced", "budget"];
         return ["balanced", "budget", "premium"];
       }
 
-      function scoreProduct(product, profile) {
-        let score = 0;
-
-        if (product.stage.includes(profile.age)) score += 30;
-        if (product.goals.includes(profile.goal)) score += 20;
-        if (product.activity.includes(profile.activity)) score += 14;
-        if (product.texture.includes(profile.style)) score += 8;
-
-        if (profile.sensitivity === "none") {
-          if (product.sensitivities.includes("none")) score += 8;
-        } else if (product.sensitivities.includes(profile.sensitivity)) {
-          score += 24;
-        }
-
-        const budgetOrder = getBudgetOrder(profile.budget);
-        const budgetIndex = budgetOrder.indexOf(product.budget);
-        score += budgetIndex === 0 ? 18 : budgetIndex === 1 ? 10 : 2;
-
-        if (profile.goal === "lose" && product.kcalPerCup < 360) score += 12;
-        if (profile.goal === "gain" && product.kcalPerCup > 420) score += 12;
-        if (profile.activity === "high" && product.kcalPerCup > 430) score += 10;
-
-        return score;
-      }
-
       function recommendFoods(profile, dailyCalories) {
-        const ranked = productCatalog
+        return productCatalog
           .map((product) => {
-            const productScore = scoreProduct(product, profile);
-            const bagCalories = product.kcalPerKg * (product.bagLb * 0.453592);
-            const monthlyCost = (dailyCalories * 30 / bagCalories) * product.bagPrice;
-            return { ...product, productScore, monthlyCost };
+            let score = 0;
+            if (product.stage.includes(profile.age)) score += 30;
+            if (product.goal.includes(profile.goal)) score += 22;
+            if (product.activity.includes(profile.activity)) score += 12;
+            if (product.texture.includes(profile.style)) score += 10;
+            if (product.sensitivity.includes(profile.sensitivity) || profile.sensitivity === "none") score += 12;
+            score += budgetOrder(profile.budget).includes(product.budget) ? 10 - budgetOrder(profile.budget).indexOf(product.budget) * 4 : 0;
+            const monthlyCost = (dailyCalories / product.kcalPerCup * 30) / (product.bagLb * 453.592 * 0.00220462 / (product.bagLb)) * (product.bagPrice / (product.bagLb * 16));
+            return { ...product, score, monthlyCost: Math.max(22, monthlyCost * 16) };
           })
-          .sort((a, b) => b.productScore - a.productScore || a.monthlyCost - b.monthlyCost)
+          .sort((a, b) => b.score - a.score)
           .slice(0, 3);
-
-        return ranked;
       }
 
-      function renderPlanResult(output) {
-        planResult.innerHTML = `
-          <div class="score-row">
-            <span class="score-pill score-good">Meal Plan Ready</span>
-            <span class="tag">${output.name || "Your dog"}</span>
-            <span class="tag">${output.primary.buyAt}</span>
-          </div>
-          <h3>${output.name ? output.name + "'s" : "Your"} feeding plan</h3>
-          <p>${output.summary}</p>
+      function mealCount(age, activity) {
+        if (age === "puppy") return 3;
+        if (activity === "high") return 3;
+        return 2;
+      }
 
-          <div class="metric-grid">
-            <article class="metric-card">
-              <strong>${output.dailyCalories.toLocaleString()}</strong>
-              <span>estimated kcal per day</span>
-            </article>
-            <article class="metric-card">
-              <strong>${output.dailyCups.toFixed(1)} cups</strong>
-              <span>per day with the top recommended food</span>
-            </article>
-            <article class="metric-card">
-              <strong>$${output.primary.monthlyCost.toFixed(0)}</strong>
-              <span>estimated monthly food cost</span>
-            </article>
-          </div>
-
-          <div class="plan-grid">
-            <article class="plan-column day-card">
-              <strong>Daily schedule</strong>
-              <ul class="schedule-list">
-                ${output.schedule.map((slot) => `<li>${slot.time}: ${slot.amount}</li>`).join("")}
-                <li>Treat budget: keep treats around ${output.treatCalories} kcal or less per day.</li>
-              </ul>
-            </article>
-
-            <article class="plan-column day-card">
-              <strong>What to buy first</strong>
-              <ul class="detail-list">
-                <li>${output.primary.name}</li>
-                <li>Buy it from ${output.primary.buyAt}</li>
-                <li>Bag price used in estimate: $${output.primary.bagPrice.toFixed(2)}</li>
-                <li>Transition over about 7 days if switching foods</li>
-              </ul>
-            </article>
-          </div>
-
-          <div>
-            <strong>Recommended foods</strong>
-            <div class="recommend-grid">
-              ${output.recommendations.map((product) => `
-                <article class="recommend-card">
-                  <div class="recommend-meta">
-                    <span>${product.brand}</span>
-                    <span>$${product.monthlyCost.toFixed(0)}/month est.</span>
-                    <span>${product.buyAt}</span>
-                  </div>
-                  <h4>${product.name}</h4>
-                  <p>${product.reasons.join(". ")}.</p>
-                  <div class="tag-list">
-                    <span class="tag">${product.kcalPerCup} kcal/cup</span>
-                    <span class="tag">$${product.bagPrice.toFixed(2)} bag</span>
-                    <span class="tag">${product.bagLb} lb bag</span>
-                  </div>
-                  <p style="margin-top: 14px"><a href="${product.link}" target="_blank" rel="noreferrer">Buy on ${product.buyAt}</a></p>
-                </article>
-              `).join("")}
-            </div>
-          </div>
-        `;
+      function mealTimes(count) {
+        if (count === 3) return ["7:00 AM", "1:00 PM", "7:00 PM"];
+        return ["7:00 AM", "6:00 PM"];
       }
 
       plannerForm.addEventListener("submit", (event) => {
@@ -1752,7 +1290,7 @@
 
         const profile = {
           name: document.getElementById("dogName").value.trim(),
-          weightLb: Number(document.getElementById("dogWeight").value),
+          weight: Number(document.getElementById("dogWeight").value),
           age: document.getElementById("dogAge").value,
           activity: document.getElementById("dogActivity").value,
           goal: document.getElementById("dogGoal").value,
@@ -1761,39 +1299,84 @@
           style: document.getElementById("foodStyle").value
         };
 
-        if (!profile.weightLb) return;
-
-        const weightKg = profile.weightLb / 2.20462;
-        const rer = 70 * Math.pow(weightKg, 0.75);
-        const dailyCalories = Math.round(rer * caloriesFactor(profile.age, profile.activity, profile.goal));
-        const recommendations = recommendFoods(profile, dailyCalories);
-        const primary = recommendations[0];
-        const dailyCups = dailyCalories / primary.kcalPerCup;
-        const scheduleTimes = getMealSchedule(profile.age, profile.activity);
-        const perMeal = dailyCups / scheduleTimes.length;
-        const schedule = scheduleTimes.map((time) => ({
-          time,
-          amount: `${perMeal.toFixed(2)} cups of ${primary.name}`
-        }));
-
-        const output = {
-          ...profile,
-          dailyCalories,
-          dailyCups,
-          primary,
-          recommendations,
-          schedule,
-          treatCalories: Math.round(dailyCalories * 0.1),
-          summary: `${profile.name || "Your dog"} is estimated to need about ${dailyCalories.toLocaleString()} calories each day. Based on age, activity, goal, sensitivity, and budget, PupPlate’s top match is ${primary.name}, which works out to about ${dailyCups.toFixed(1)} cups per day.`
-        };
+        if (!profile.weight) return;
 
         localStorage.setItem(profileKey, JSON.stringify(profile));
-        renderPlanResult(output);
+
+        const weightKg = profile.weight / 2.20462;
+        const rer = 70 * Math.pow(weightKg, 0.75);
+        const activityFactor = { low: 0.9, normal: 1, high: 1.2 }[profile.activity];
+        const ageFactor = { puppy: 2.0, adult: 1.6, senior: 1.3 }[profile.age];
+        const goalFactor = { lose: 0.85, maintain: 1, gain: 1.15 }[profile.goal];
+        const dailyCalories = Math.round(rer * activityFactor * ageFactor * goalFactor);
+        const recommendations = recommendFoods(profile, dailyCalories);
+        const primary = recommendations[0];
+        const cupsPerDay = dailyCalories / primary.kcalPerCup;
+        const meals = mealCount(profile.age, profile.activity);
+        const schedule = mealTimes(meals).map((time) => `${time}: ${(cupsPerDay / meals).toFixed(2)} cups of ${primary.name}`);
+
+        planResult.innerHTML = `
+          <div class="score-row">
+            <span class="score-pill score-good">Meal Plan Ready</span>
+            <span class="tag">${profile.name || "Your dog"}</span>
+          </div>
+          <h2 class="section-title">${profile.name ? profile.name + "'s" : "Your"} feeding plan</h2>
+          <p class="section-copy">${profile.name || "Your dog"} is estimated to need about ${dailyCalories.toLocaleString()} kcal each day. PupPlate’s top match is ${primary.name}, which fits the selected needs and budget.</p>
+          <div class="metric-grid">
+            <article class="metric-card">
+              <strong>${dailyCalories}</strong>
+              <span>kcal per day</span>
+            </article>
+            <article class="metric-card">
+              <strong>${cupsPerDay.toFixed(1)} cups</strong>
+              <span>per day</span>
+            </article>
+            <article class="metric-card">
+              <strong>$${primary.monthlyCost.toFixed(0)}</strong>
+              <span>estimated monthly cost</span>
+            </article>
+          </div>
+          <div class="plan-grid">
+            <article class="plan-box">
+              <strong>Feeding schedule</strong>
+              <ul>${schedule.map((item) => `<li>${item}</li>`).join("")}</ul>
+            </article>
+            <article class="plan-box">
+              <strong>What to buy</strong>
+              <ul>
+                <li>${primary.name}</li>
+                <li>Buy at ${primary.buyAt}</li>
+                <li>Bag price used: $${primary.bagPrice.toFixed(2)}</li>
+                <li>Transition slowly over about 7 days if switching food</li>
+              </ul>
+            </article>
+          </div>
+          <div style="margin-top:16px;">
+            <strong style="display:block;margin-bottom:12px;">Recommended foods</strong>
+            <div class="recommend-grid">
+              ${recommendations.map((product) => `
+                <article class="recommend-card">
+                  <div class="recommend-meta">
+                    <span>${product.brand}</span>
+                    <span>${product.buyAt}</span>
+                  </div>
+                  <h4>${product.name}</h4>
+                  <p>${product.reasons.join(". ")}.</p>
+                  <div class="tag-list">
+                    <span class="tag">${product.kcalPerCup} kcal/cup</span>
+                    <span class="tag">$${product.bagPrice.toFixed(2)} bag</span>
+                  </div>
+                  <p style="margin-top:12px;"><a href="${product.link}" target="_blank" rel="noreferrer">Buy now</a></p>
+                </article>
+              `).join("")}
+            </div>
+          </div>
+        `;
 
         saveHistory({
           kind: "Meal plan",
           title: `${profile.name || "Dog profile"} • ${primary.name}`,
-          summary: `${dailyCalories.toLocaleString()} kcal/day, about ${dailyCups.toFixed(1)} cups/day, about $${primary.monthlyCost.toFixed(0)}/month.`,
+          summary: `${dailyCalories} kcal/day, about ${cupsPerDay.toFixed(1)} cups/day, about $${primary.monthlyCost.toFixed(0)}/month.`,
           levelClass: "score-good"
         });
       });
@@ -1801,112 +1384,91 @@
       foodPhoto.addEventListener("change", (event) => {
         const file = event.target.files?.[0];
         if (!file) return;
-
         const reader = new FileReader();
         reader.onload = () => {
-          currentPhotoDataUrl = reader.result;
-          previewFrame.innerHTML = `<img src="${currentPhotoDataUrl}" id="uploadedPreview" alt="Uploaded food preview" />`;
-          ocrStatus.textContent = "Photo loaded. You can detect the food, read the label, or do both.";
-          detectedItems = [];
-          confirmSummary.textContent = "Run photo detection and PupPlate will tell you what it thinks is in the image.";
-          confirmItems.value = "";
+          previewFrame.innerHTML = `
+            <img src="${reader.result}" id="uploadedPreview" alt="Uploaded food preview" />
+            <div class="camera-guides"></div>
+            <div class="preview-caption">Frame the food clearly</div>
+          `;
+          ocrStatus.textContent = "Photo loaded. Detect the food or read the label next.";
         };
         reader.readAsDataURL(file);
       });
 
-      function normalizeVisionLabel(label) {
-        const lower = label.toLowerCase();
-        for (const rule of detectionAliases) {
-          if (rule.test.test(lower)) return rule.items;
-        }
-        return [lower.replace(/[_-]/g, " ")];
-      }
-
       async function ensureVisionModels() {
-        if (!window.mobilenet || !window.cocoSsd) {
-          throw new Error("Vision scripts not loaded");
-        }
-
-        if (!mobileNetModel) {
+        if (!mobileNetModel && window.mobilenet) {
           mobileNetModel = await window.mobilenet.load();
         }
-
-        if (!cocoModel) {
+        if (!cocoModel && window.cocoSsd) {
           cocoModel = await window.cocoSsd.load();
         }
       }
 
-      async function detectPhotoFoods() {
+      function normalizeLabel(label) {
+        const lower = label.toLowerCase();
+        for (const alias of detectionAliases) {
+          if (alias.test.test(lower)) return alias.value;
+        }
+        return lower.replace(/[_-]/g, " ");
+      }
+
+      detectPhotoButton.addEventListener("click", async () => {
         const img = document.getElementById("uploadedPreview");
         if (!img) {
           ocrStatus.textContent = "Upload a photo first.";
           return;
         }
 
-        ocrStatus.textContent = "Loading vision models and detecting food from the image...";
         detectPhotoButton.disabled = true;
+        ocrStatus.textContent = "Detecting what is in the photo...";
 
         try {
           await ensureVisionModels();
-          const [classifications, detections] = await Promise.all([
-            mobileNetModel.classify(img),
-            cocoModel.detect(img)
-          ]);
-
-          const rawLabels = [
-            ...classifications.map((item) => item.className),
-            ...detections.map((item) => item.class)
-          ];
-
-          const normalized = rawLabels
-            .flatMap((label) => normalizeVisionLabel(label))
-            .filter((value) => value && value.length > 1);
-
-          detectedItems = Array.from(new Set(normalized)).slice(0, 8);
-
-          if (!detectedItems.length) {
-            confirmSummary.textContent = "PupPlate could not confidently identify the food. Please describe it manually below.";
-          } else {
-            confirmSummary.textContent = `PupPlate thinks this photo shows: ${detectedItems.join(", ")}. Correct anything that looks wrong or add anything missing.`;
-            confirmItems.value = detectedItems.join(", ");
+          const guesses = [];
+          if (mobileNetModel) {
+            const classes = await mobileNetModel.classify(img);
+            guesses.push(...classes.map((item) => item.className));
+          }
+          if (cocoModel) {
+            const boxes = await cocoModel.detect(img);
+            guesses.push(...boxes.map((item) => item.class));
           }
 
-          ocrStatus.textContent = "Photo detection finished. Review the AI guess before running the final analysis.";
+          const normalized = Array.from(new Set(guesses.map(normalizeLabel))).slice(0, 5);
+          confirmItems.value = normalized.join(", ");
+          ocrStatus.textContent = normalized.length
+            ? `Detected: ${normalized.join(", ")}. Correct anything that is wrong or missing.`
+            : "I could not confidently detect the food. Type what you see manually.";
         } catch (error) {
-          ocrStatus.textContent = "Photo detection ran into a problem. You can still type what is in the food manually.";
+          ocrStatus.textContent = "Detection had a problem. You can still type the food manually.";
         } finally {
           detectPhotoButton.disabled = false;
         }
-      }
-
-      detectPhotoButton.addEventListener("click", detectPhotoFoods);
+      });
 
       ocrButton.addEventListener("click", async () => {
         const file = foodPhoto.files?.[0];
         if (!file) {
-          ocrStatus.textContent = "Upload a package or ingredient photo first.";
+          ocrStatus.textContent = "Upload a package or label photo first.";
           return;
         }
 
         if (!window.Tesseract) {
-          ocrStatus.textContent = "OCR library did not load. You can still paste ingredients manually.";
+          ocrStatus.textContent = "OCR library did not load. Paste ingredients manually instead.";
           return;
         }
 
-        ocrStatus.textContent = "Reading package or label text...";
         ocrButton.disabled = true;
+        ocrStatus.textContent = "Reading package label...";
 
         try {
           const result = await window.Tesseract.recognize(file, "eng");
           const text = (result.data.text || "").trim();
-          if (text) {
-            ingredientText.value = text;
-            ocrStatus.textContent = "Label text added. Review it, then run the final analysis.";
-          } else {
-            ocrStatus.textContent = "OCR finished, but not much text was found. You can still paste ingredients manually.";
-          }
+          ingredientText.value = text;
+          ocrStatus.textContent = text ? "Label text added. Review it, then analyze the food." : "OCR finished but found very little text.";
         } catch (error) {
-          ocrStatus.textContent = "OCR hit a problem. You can still type ingredients manually.";
+          ocrStatus.textContent = "OCR hit a problem. Paste label text manually if needed.";
         } finally {
           ocrButton.disabled = false;
         }
@@ -1917,115 +1479,93 @@
         return Object.keys(ingredientRules).filter((term) => lower.includes(term));
       }
 
-      function scoreTerms(terms, scanType) {
+      function scoreAnalysis(terms) {
         let score = 72;
-        const explanations = [];
-        let hardDanger = false;
-
-        for (const term of terms) {
-          const rule = ingredientRules[term];
-          explanations.push({ term, ...rule });
-
-          if (rule.level === "positive") score += 6;
-          if (rule.level === "caution") score -= 10;
-          if (rule.level === "danger") {
-            score -= 38;
-            hardDanger = hardDanger || ["chocolate", "cocoa", "xylitol", "onion", "garlic", "grape", "grapes", "raisin", "raisins"].includes(term);
-          }
-        }
-
-        if (scanType === "treat") score -= 3;
-        if (scanType === "human-food") score -= 8;
-
+        const explanations = terms.map((term) => ({ term, ...ingredientRules[term] }));
+        explanations.forEach((item) => {
+          if (item.level === "positive") score += 6;
+          if (item.level === "caution") score -= 10;
+          if (item.level === "danger") score -= 38;
+        });
         score = Math.max(0, Math.min(100, score));
 
         let level = "Good fit";
         let levelClass = "score-good";
-
-        if (hardDanger || explanations.some((item) => item.level === "danger")) {
+        if (explanations.some((item) => item.level === "danger")) {
           level = "Avoid";
           levelClass = "score-danger";
-        } else if (score < 68 || explanations.some((item) => item.level === "caution")) {
+        } else if (explanations.some((item) => item.level === "caution") || score < 68) {
           level = "Use caution";
           levelClass = "score-warning";
         }
 
-        return { score, level, levelClass, explanations, hardDanger };
+        return { score, level, levelClass, explanations };
       }
 
-      function renderScanResult(result, finalText, scanType) {
-        const positive = result.explanations.filter((item) => item.level === "positive");
-        const caution = result.explanations.filter((item) => item.level === "caution");
-        const danger = result.explanations.filter((item) => item.level === "danger");
+      scannerForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const scanType = document.getElementById("scanType").value;
+        const finalText = [confirmItems.value.trim(), ingredientText.value.trim()].filter(Boolean).join(", ");
 
-        dangerBanner.classList.toggle("is-visible", result.hardDanger);
+        if (!finalText) {
+          scanResult.innerHTML = `
+            <h2 class="section-title">Need a confirmed food description</h2>
+            <p class="section-copy">Let PupPlate detect the photo first or type what is in the food manually.</p>
+          `;
+          dangerCard.classList.add("hidden");
+          return;
+        }
+
+        const terms = collectTerms(finalText);
+        const result = scoreAnalysis(terms);
+        const toxic = result.explanations.find((item) => item.level === "danger");
+
+        if (toxic) {
+          dangerCard.classList.remove("hidden");
+          dangerText.textContent = toxic.reason;
+        } else {
+          dangerCard.classList.add("hidden");
+        }
 
         scanResult.innerHTML = `
-          <div class="danger-banner ${result.hardDanger ? "is-visible" : ""}">
-            <strong>This can kill your dog!</strong>
-            <p>${danger.length ? `${danger[0].term} triggered a major danger alert. Do not feed this. If your dog already ate it and seems sick, contact a vet or poison line now.` : "A major toxic item was detected. Do not feed this to your dog."}</p>
-          </div>
           <div class="score-row">
             <span class="score-pill ${result.levelClass}">${result.level}</span>
             <span class="tag">${result.score}/100</span>
             <span class="tag">${scanType.replace("-", " ")}</span>
           </div>
-          <h3>Food verdict</h3>
-          <p>PupPlate analyzed this final confirmed description: ${finalText}</p>
+          <h2 class="section-title">Final food verdict</h2>
+          <p class="section-copy">PupPlate analyzed this confirmed description: ${finalText}</p>
           <div class="metric-grid">
             <article class="metric-card">
-              <strong>${positive.length}</strong>
+              <strong>${result.explanations.filter((i) => i.level === "positive").length}</strong>
               <span>good signals</span>
             </article>
             <article class="metric-card">
-              <strong>${caution.length}</strong>
+              <strong>${result.explanations.filter((i) => i.level === "caution").length}</strong>
               <span>caution signals</span>
             </article>
             <article class="metric-card">
-              <strong>${danger.length}</strong>
+              <strong>${result.explanations.filter((i) => i.level === "danger").length}</strong>
               <span>danger signals</span>
             </article>
           </div>
-          <div>
-            <strong>Why PupPlate said this</strong>
+          <div style="margin-top:16px;">
+            <strong style="display:block;margin-bottom:12px;">Ingredient-by-ingredient reasons</strong>
             <div class="ingredient-grid">
               ${result.explanations.length ? result.explanations.map((item) => `
                 <article class="ingredient-card ${item.level}">
-                  <h4>${item.term}</h4>
+                  <h4>${item.icon || "•"} ${item.term}</h4>
                   <p>${item.reason}</p>
                 </article>
               `).join("") : `
                 <article class="ingredient-card">
-                  <h4>Not enough ingredient detail</h4>
-                  <p>PupPlate needs clearer foods or label terms to explain the result confidently.</p>
+                  <h4>Not enough detail</h4>
+                  <p>PupPlate needs clearer foods or ingredients to give a confident answer.</p>
                 </article>
               `}
             </div>
           </div>
-          <p class="field-help">This is a screening tool, not a diagnosis tool. Medical conditions, allergies, and emergency symptoms still need real veterinary help.</p>
         `;
-      }
-
-      scannerForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-
-        const scanType = document.getElementById("scanType").value;
-        const confirmed = confirmItems.value.trim();
-        const ingredients = ingredientText.value.trim();
-        const finalText = [confirmed, ingredients].filter(Boolean).join(", ");
-
-        if (!finalText) {
-          scanResult.innerHTML = `
-            <div class="danger-banner" id="dangerBanner"></div>
-            <h3>Need a confirmed food description</h3>
-            <p>Run photo detection or type what is in the image, then add label text if you have it.</p>
-          `;
-          return;
-        }
-
-        const terms = collectTerms(finalText);
-        const result = scoreTerms(terms, scanType);
-        renderScanResult(result, finalText, scanType);
 
         saveHistory({
           kind: "Food scan",
@@ -2035,21 +1575,11 @@
         });
       });
 
-      tabButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          tabButtons.forEach((tab) => tab.classList.remove("is-active"));
-          button.classList.add("is-active");
-          const target = button.dataset.tab === "scan" ? "#scanner" : "#planner";
-          document.querySelector(target).scrollIntoView({ behavior: "smooth", block: "start" });
-        });
-      });
-
       function restoreProfile() {
         const saved = JSON.parse(localStorage.getItem(profileKey) || "null");
         if (!saved) return;
-
         document.getElementById("dogName").value = saved.name || "";
-        document.getElementById("dogWeight").value = saved.weightLb || 35;
+        document.getElementById("dogWeight").value = saved.weight || 35;
         document.getElementById("dogAge").value = saved.age || "adult";
         document.getElementById("dogActivity").value = saved.activity || "normal";
         document.getElementById("dogGoal").value = saved.goal || "maintain";
