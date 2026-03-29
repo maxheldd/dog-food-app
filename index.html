@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PupPlate | Dog Food Finder & Photo Checker</title>
+    <meta
+      name="description"
+      content="PupPlate helps dog owners estimate feeding needs, compare dog food options, and check ingredient labels from photos."
+    />
+    <style>
+      :root {
+        --green-700: #43a623;
+        --green-600: #58cc02;
+        --green-500: #7ae12a;
+        --mint-200: #dbffd0;
+        --mint-100: #f3ffea;
+        --sky-500: #46b5ff;
+        --sky-300: #8ed4ff;
+        --sun-400: #ffd85b;
+        --sun-300: #ffe890;
+        --ink: #23303b;
+        --muted: #5f7282;
+        --cream: #fffdf6;
+        --white: #ffffff;
+        --line: rgba(35, 48, 59, 0.08);
+        --shadow-xl: 0 28px 90px rgba(37, 88, 31, 0.14);
+        --shadow-lg: 0 20px 48px rgba(35, 48, 59, 0.12);
+        --shadow-md: 0 14px 30px rgba(35, 48, 59, 0.08);
+        --radius-xl: 36px;
+        --radius-lg: 26px;
+        --radius-md: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(122, 225, 42, 0.28), transparent 28%),
+          radial-gradient(circle at top right, rgba(70, 181, 255, 0.22), transparent 28%),
+          linear-gradient(180deg, #f8ffef 0%, #fdfdf3 46%, #f6fff7 100%);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          linear-gradient(rgba(88, 204, 2, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(88, 204, 2, 0.04) 1px, transparent 1px);
+        background-size: 34px 34px;
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 78%);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      img {
+        max-width: 100%;
+        display: block;
+      }
+
+      .shell {
+        width: min(1220px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 60;
+        backdrop-filter: blur(18px);
+        background: rgba(255, 253, 246, 0.84);
+        border-bottom: 1px solid rgba(35, 48, 59, 0.06);
+      }
+
+      .topbar-inner {
+        min-height: 84px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-mark {
+        position: relative;
+        width: 58px;
+        height: 58px;
+        border-radius: 20px;
+        background: linear-gradient(145deg, var(--green-500), var(--green-600));
+        box-shadow: var(--shadow-md);
+      }
+
+      .brand-mark::before,
+      .brand-mark::after {
+        content: "";
+        position: absolute;
+        top: -8px;
+        width: 18px;
+        height: 22px;
+        border-radius: 14px 14px 6px 6px;
+        background: var(--green-600);
+      }
+
+      .brand-mark::before {
+        left: 10px;
+        transform: rotate(-16deg);
+      }
+
+      .brand-mark::after {
+        right: 10px;
+        transform: rotate(16deg);
+      }
+
+      .brand-paw {
+        position: absolute;
+        inset: 14px;
+        border-radius: 18px;
+        background: #fffdf6;
+      }
+
+      .brand-copy {
+        display: grid;
+        gap: 3px;
+      }
+
+      .eyebrow {
+        font-size: 0.72rem;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: #4d8e2f;
+      }
+
+      .brand-name {
+        font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+        font-weight: 900;
+        font-size: clamp(1.35rem, 2vw, 1.8rem);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .nav-link {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.9rem;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 50px;
+        padding: 0 22px;
+        border: 0;
+        border-radius: 999px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .button:hover {
+        transform: translateY(-2px);
+      }
+
+      .button-primary {
+        color: #153108;
+        background: linear-gradient(145deg, var(--green-500), var(--green-600));
+        box-shadow: 0 16px 34px rgba(88, 204, 2, 0.28);
+      }
+
+      .button-secondary {
+        color: var(--ink);
+        background: #fff;
+        border: 1px solid rgba(35, 48, 59, 0.08);
+        box-shadow: var(--shadow-md);
+      }
+
+      .hero {
+        padding: 30px 0 24px;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .hero-copy,
+      .hero-stage,
+      .card,
+      .scanner-card,
+      .result-card,
+      .history-card {
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .hero-copy {
+        position: relative;
+        overflow: hidden;
+        padding: 56px clamp(24px, 4vw, 58px);
+        color: #173108;
+        background:
+          radial-gradient(circle at top left, rgba(255, 232, 144, 0.62), transparent 28%),
+          linear-gradient(160deg, #f4ffe4 0%, #e7ffd2 42%, #d6ffc0 100%);
+      }
+
+      .hero-copy::after {
+        content: "";
+        position: absolute;
+        right: -40px;
+        bottom: -40px;
+        width: 190px;
+        height: 190px;
+        border-radius: 50%;
+        background: rgba(70, 181, 255, 0.16);
+      }
+
+      .hero-copy h1 {
+        position: relative;
+        margin: 10px 0 18px;
+        font-size: clamp(3.2rem, 6vw, 5.8rem);
+        line-height: 0.92;
+        letter-spacing: -0.05em;
+        max-width: 9ch;
+      }
+
+      .hero-copy p {
+        position: relative;
+        max-width: 62ch;
+        margin: 0 0 26px;
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.72;
+      }
+
+      .chip-row,
+      .hero-actions,
+      .hero-stats,
+      .quick-grid,
+      .app-grid,
+      .history-grid,
+      .tips-grid {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 40px;
+        padding: 0 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(35, 48, 59, 0.08);
+        font-size: 0.82rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #2d5d11;
+      }
+
+      .hero-stats {
+        margin-top: 30px;
+      }
+
+      .stat {
+        flex: 1 1 180px;
+        min-width: 180px;
+        padding: 18px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.66);
+        border: 1px solid rgba(35, 48, 59, 0.06);
+        box-shadow: var(--shadow-md);
+      }
+
+      .stat strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 1.18rem;
+      }
+
+      .stat span {
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .hero-stage {
+        overflow: hidden;
+        padding: 22px;
+        background:
+          radial-gradient(circle at top right, rgba(255, 216, 91, 0.36), transparent 32%),
+          linear-gradient(180deg, #ffffff 0%, #f3fff1 100%);
+      }
+
+      .stage-grid {
+        display: grid;
+        gap: 16px;
+        min-height: 100%;
+      }
+
+      .stage-blob {
+        position: relative;
+        min-height: 230px;
+        border-radius: 32px;
+        background:
+          radial-gradient(circle at 30% 24%, rgba(255, 232, 144, 0.75), transparent 22%),
+          linear-gradient(145deg, #5dd11a 0%, #58cc02 48%, #3bb4ff 100%);
+        overflow: hidden;
+      }
+
+      .stage-blob::before,
+      .stage-blob::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.18);
+      }
+
+      .stage-blob::before {
+        width: 180px;
+        height: 180px;
+        top: -28px;
+        right: -24px;
+      }
+
+      .stage-blob::after {
+        width: 120px;
+        height: 120px;
+        left: -22px;
+        bottom: -18px;
+      }
+
+      .stage-face {
+        position: absolute;
+        inset: 34px;
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.92);
+      }
+
+      .stage-face::before,
+      .stage-face::after {
+        content: "";
+        position: absolute;
+        top: 70px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #23303b;
+      }
+
+      .stage-face::before {
+        left: 70px;
+      }
+
+      .stage-face::after {
+        right: 70px;
+      }
+
+      .stage-snout {
+        position: absolute;
+        left: 50%;
+        bottom: 54px;
+        transform: translateX(-50%);
+        width: 92px;
+        height: 70px;
+        border-radius: 40px;
+        background: #ffe0c7;
+      }
+
+      .stage-snout::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 15px;
+        transform: translateX(-50%);
+        width: 24px;
+        height: 18px;
+        border-radius: 16px;
+        background: #23303b;
+      }
+
+      .stage-cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .mini-card {
+        padding: 18px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.86);
+        border: 1px solid rgba(35, 48, 59, 0.06);
+        box-shadow: var(--shadow-md);
+      }
+
+      .mini-card strong {
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .mini-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.58;
+      }
+
+      .section {
+        padding: 30px 0;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: end;
+        margin-bottom: 24px;
+      }
+
+      .section-header h2 {
+        margin: 8px 0 0;
+        font-size: clamp(2.1rem, 4vw, 3.9rem);
+        line-height: 0.98;
+        letter-spacing: -0.04em;
+      }
+
+      .section-header p {
+        max-width: 580px;
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.72;
+      }
+
+      .quick-grid {
+        justify-content: stretch;
+      }
+
+      .quick-card {
+        flex: 1 1 220px;
+        min-width: 220px;
+        padding: 22px;
+        border-radius: var(--radius-lg);
+        background: rgba(255, 255, 255, 0.82);
+        border: 1px solid rgba(35, 48, 59, 0.06);
+        box-shadow: var(--shadow-md);
+      }
+
+      .quick-card strong {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .quick-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.62;
+      }
+
+      .app-grid {
+        align-items: start;
+      }
+
+      .panel {
+        flex: 1 1 560px;
+        min-width: 320px;
+      }
+
+      .card,
+      .scanner-card,
+      .result-card,
+      .history-card {
+        padding: 24px;
+        background: rgba(255, 255, 255, 0.86);
+        border: 1px solid rgba(35, 48, 59, 0.06);
+      }
+
+      .panel-title {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: start;
+        margin-bottom: 18px;
+      }
+
+      .panel-title h3,
+      .result-card h3,
+      .history-card h3 {
+        margin: 0;
+        font-size: 1.3rem;
+      }
+
+      .panel-title p,
+      .result-card p,
+      .history-card p,
+      .field-help {
+        margin: 6px 0 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      form {
+        display: grid;
+        gap: 16px;
+      }
+
+      .field-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+        font-weight: 800;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        min-height: 52px;
+        border-radius: 18px;
+        border: 1px solid rgba(35, 48, 59, 0.1);
+        padding: 14px 16px;
+        font: inherit;
+        color: var(--ink);
+        background: #fff;
+        box-shadow: inset 0 2px 0 rgba(35, 48, 59, 0.03);
+      }
+
+      textarea {
+        min-height: 150px;
+        resize: vertical;
+      }
+
+      .tabs {
+        display: inline-flex;
+        gap: 8px;
+        padding: 6px;
+        border-radius: 999px;
+        background: #eef7e6;
+        border: 1px solid rgba(35, 48, 59, 0.06);
+      }
+
+      .tab-button {
+        min-height: 42px;
+        padding: 0 16px;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--muted);
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .tab-button.is-active {
+        background: linear-gradient(145deg, var(--green-500), var(--green-600));
+        color: #173108;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .result-card {
+        display: grid;
+        gap: 18px;
+      }
+
+      .score-row {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .score-pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 42px;
+        padding: 0 14px;
+        border-radius: 999px;
+        font-weight: 900;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .score-good {
+        color: #1f5411;
+        background: rgba(122, 225, 42, 0.2);
+      }
+
+      .score-warning {
+        color: #7c4f00;
+        background: rgba(255, 216, 91, 0.25);
+      }
+
+      .score-danger {
+        color: #8d1b1b;
+        background: rgba(255, 141, 141, 0.22);
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .metric-card {
+        padding: 18px;
+        border-radius: 22px;
+        background: linear-gradient(180deg, #f9fff4, #fff);
+        border: 1px solid rgba(35, 48, 59, 0.06);
+      }
+
+      .metric-card strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 1.35rem;
+      }
+
+      .metric-card span {
+        color: var(--muted);
+      }
+
+      .tag-list {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 36px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: rgba(70, 181, 255, 0.12);
+        color: #196390;
+        font-size: 0.84rem;
+        font-weight: 800;
+      }
+
+      .photo-drop {
+        display: grid;
+        gap: 14px;
+      }
+
+      .preview-frame {
+        display: grid;
+        place-items: center;
+        min-height: 220px;
+        border-radius: 24px;
+        border: 2px dashed rgba(35, 48, 59, 0.12);
+        background:
+          radial-gradient(circle at top, rgba(255, 216, 91, 0.18), transparent 30%),
+          linear-gradient(180deg, #fcfff8, #f2fff0);
+        overflow: hidden;
+      }
+
+      .preview-frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .preview-empty {
+        max-width: 26ch;
+        text-align: center;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .history-grid {
+        flex-direction: column;
+      }
+
+      .history-card {
+        display: grid;
+        gap: 10px;
+      }
+
+      .tips-grid {
+        justify-content: stretch;
+      }
+
+      .tip-card {
+        flex: 1 1 260px;
+        min-width: 240px;
+        padding: 24px;
+        border-radius: 26px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(246, 255, 242, 0.9));
+        border: 1px solid rgba(35, 48, 59, 0.06);
+        box-shadow: var(--shadow-md);
+      }
+
+      .tip-card strong {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .tip-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.62;
+      }
+
+      .status-line {
+        min-height: 22px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      footer {
+        padding: 28px 0 48px;
+        color: var(--muted);
+      }
+
+      .footer-line {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(18px);
+        animation: rise 0.7s ease forwards;
+      }
+
+      .reveal:nth-child(2) {
+        animation-delay: 0.08s;
+      }
+
+      .reveal:nth-child(3) {
+        animation-delay: 0.16s;
+      }
+
+      .reveal:nth-child(4) {
+        animation-delay: 0.24s;
+      }
+
+      @keyframes rise {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 1080px) {
+        .hero-grid,
+        .app-grid,
+        .stage-cards {
+          grid-template-columns: 1fr;
+        }
+
+        .stage-cards,
+        .metric-grid {
+          display: grid;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .topbar-inner,
+        .section-header,
+        .footer-line {
+          flex-direction: column;
+          align-items: start;
+        }
+
+        .nav {
+          width: 100%;
+          justify-content: flex-start;
+        }
+
+        .field-grid,
+        .metric-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-copy {
+          padding: 38px 22px;
+        }
+
+        .hero-copy h1 {
+          font-size: 3.2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <a class="brand" href="#top">
+          <div class="brand-mark">
+            <div class="brand-paw"></div>
+          </div>
+          <div class="brand-copy">
+            <span class="eyebrow">Feed Better</span>
+            <span class="brand-name">PupPlate</span>
+          </div>
+        </a>
+        <nav class="nav">
+          <a class="nav-link" href="#planner">Feed Plan</a>
+          <a class="nav-link" href="#scanner">Photo Check</a>
+          <a class="nav-link" href="#history">History</a>
+          <a class="button button-primary" href="#planner">Start Now</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="shell hero-grid">
+          <article class="hero-copy">
+            <div class="eyebrow">Dog Nutrition Assistant</div>
+            <h1>Find the right food. Check the label. Feel sure.</h1>
+            <p>
+              PupPlate helps you estimate how much to feed your dog based on weight,
+              age, activity, and goals, then lets you snap or upload food photos to
+              score ingredients and flag red-flag items.
+            </p>
+            <div class="chip-row">
+              <span class="chip">Weight-based feeding plan</span>
+              <span class="chip">Photo label checker</span>
+              <span class="chip">Ingredient scoring</span>
+              <span class="chip">Saved recent scans</span>
+            </div>
+            <div class="hero-actions" style="margin-top: 26px">
+              <a class="button button-primary" href="#planner">Build Feed Plan</a>
+              <a class="button button-secondary" href="#scanner">Check A Food</a>
+            </div>
+            <div class="hero-stats">
+              <div class="stat">
+                <strong>Smart portions</strong>
+                <span>Daily calorie and meal estimates based on your dog’s profile.</span>
+              </div>
+              <div class="stat">
+                <strong>Health flags</strong>
+                <span>Spots helpful ingredients, weak fillers, and dangerous foods fast.</span>
+              </div>
+              <div class="stat">
+                <strong>Phone-friendly</strong>
+                <span>Works as a mobile-first web app so you can use it in the aisle.</span>
+              </div>
+            </div>
+          </article>
+
+          <aside class="hero-stage">
+            <div class="stage-grid">
+              <div class="stage-blob">
+                <div class="stage-face">
+                  <div class="stage-snout"></div>
+                </div>
+              </div>
+              <div class="stage-cards">
+                <article class="mini-card reveal">
+                  <strong>1. Build a profile</strong>
+                  <p>Tell the app about your dog so the feeding plan actually fits.</p>
+                </article>
+                <article class="mini-card reveal">
+                  <strong>2. Snap a label</strong>
+                  <p>Upload a food package or ingredient panel and analyze it.</p>
+                </article>
+                <article class="mini-card reveal">
+                  <strong>3. Get a verdict</strong>
+                  <p>See calories, portions, score, warnings, and better-fit traits.</p>
+                </article>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="shell quick-grid">
+          <article class="quick-card reveal">
+            <strong>Made for real dog owners</strong>
+            <p>Simple enough to use in seconds, but detailed enough to be genuinely helpful.</p>
+          </article>
+          <article class="quick-card reveal">
+            <strong>Understands dog context</strong>
+            <p>Puppy, adult, senior, sensitive stomach, weight loss, and active-dog needs are built in.</p>
+          </article>
+          <article class="quick-card reveal">
+            <strong>Scanner with honesty</strong>
+            <p>Photo review is label-focused, so the app explains why it likes or dislikes a food.</p>
+          </article>
+          <article class="quick-card reveal">
+            <strong>Feels playful, not clinical</strong>
+            <p>Rounded cards, bright greens, gentle motion, and a warm Duolingo-style energy.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="planner">
+        <div class="shell">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow">Feed Plan</div>
+              <h2>Start with the dog, not the bag.</h2>
+            </div>
+            <p>
+              Enter a profile and PupPlate estimates daily calories, suggested meals,
+              feeding style, and the kinds of formulas that are most likely to fit.
+            </p>
+          </div>
+
+          <div class="app-grid">
+            <section class="panel">
+              <div class="card">
+                <div class="panel-title">
+                  <div>
+                    <h3>Dog Profile</h3>
+                    <p>Everything here saves to your browser so the app remembers your last setup.</p>
+                  </div>
+                  <div class="tabs">
+                    <button class="tab-button is-active" type="button" data-tab="plan">Feed Plan</button>
+                    <button class="tab-button" type="button" data-tab="scan">Photo Check</button>
+                  </div>
+                </div>
+
+                <form id="plannerForm">
+                  <div class="field-grid">
+                    <label>
+                      Dog name
+                      <input id="dogName" type="text" placeholder="Milo" />
+                    </label>
+                    <label>
+                      Weight (lb)
+                      <input id="dogWeight" type="number" min="2" step="0.1" value="35" />
+                    </label>
+                  </div>
+
+                  <div class="field-grid">
+                    <label>
+                      Age stage
+                      <select id="dogAge">
+                        <option value="puppy">Puppy</option>
+                        <option value="adult" selected>Adult</option>
+                        <option value="senior">Senior</option>
+                      </select>
+                    </label>
+                    <label>
+                      Activity
+                      <select id="dogActivity">
+                        <option value="low">Low</option>
+                        <option value="normal" selected>Normal</option>
+                        <option value="high">High</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <div class="field-grid">
+                    <label>
+                      Goal
+                      <select id="dogGoal">
+                        <option value="maintain" selected>Maintain weight</option>
+                        <option value="lose">Lose weight</option>
+                        <option value="gain">Gain weight</option>
+                      </select>
+                    </label>
+                    <label>
+                      Food style
+                      <select id="foodStyle">
+                        <option value="dry" selected>Dry food</option>
+                        <option value="wet">Wet food</option>
+                        <option value="mixed">Mixed feeding</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <div class="field-grid">
+                    <label>
+                      Sensitivity
+                      <select id="dogSensitivity">
+                        <option value="none" selected>None</option>
+                        <option value="sensitive">Sensitive stomach</option>
+                        <option value="allergy">Possible food allergy</option>
+                        <option value="weight-control">Needs weight control</option>
+                      </select>
+                    </label>
+                    <label>
+                      Kcal per cup or can
+                      <input id="foodDensity" type="number" min="100" step="1" value="380" />
+                    </label>
+                  </div>
+
+                  <div class="field-help">
+                    PupPlate uses a resting energy requirement estimate and adjusts it for age, activity,
+                    and goals. It is useful for planning, but not a replacement for veterinary advice.
+                  </div>
+
+                  <button class="button button-primary" type="submit">Generate Feed Plan</button>
+                </form>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="result-card" id="planResult">
+                <h3>Plan results will show here</h3>
+                <p>Build a profile and PupPlate will calculate daily calories, feeding amount, and ideal formula traits.</p>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="scanner">
+        <div class="shell">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow">Photo Check</div>
+              <h2>Snap the item and let the app judge the label.</h2>
+            </div>
+            <p>
+              Upload a dog food bag, treat label, or even a human food item. PupPlate can preview the photo,
+              optionally try OCR on the label, and score the ingredient text with dog-safe heuristics.
+            </p>
+          </div>
+
+          <div class="app-grid">
+            <section class="panel">
+              <div class="scanner-card">
+                <div class="panel-title">
+                  <div>
+                    <h3>Food Scanner</h3>
+                    <p>Best results come from a clear photo of the ingredients or nutrition panel.</p>
+                  </div>
+                </div>
+
+                <form id="scannerForm">
+                  <div class="field-grid">
+                    <label>
+                      What are you checking?
+                      <select id="scanType">
+                        <option value="dog-food" selected>Dog food</option>
+                        <option value="treat">Dog treat</option>
+                        <option value="human-food">Human food item</option>
+                      </select>
+                    </label>
+                    <label>
+                      Photo upload / camera
+                      <input id="foodPhoto" type="file" accept="image/*" capture="environment" />
+                    </label>
+                  </div>
+
+                  <div class="photo-drop">
+                    <div class="preview-frame" id="previewFrame">
+                      <div class="preview-empty">Take or upload a photo. A preview will appear here.</div>
+                    </div>
+                    <div class="hero-actions">
+                      <button class="button button-secondary" id="ocrButton" type="button">Read Label From Photo</button>
+                      <button class="button button-primary" type="submit">Analyze Food</button>
+                    </div>
+                    <div class="status-line" id="ocrStatus">OCR is optional. You can also paste ingredient text manually.</div>
+                  </div>
+
+                  <label>
+                    Detected or pasted ingredient text
+                    <textarea id="ingredientText" placeholder="Example: deboned chicken, chicken meal, brown rice, oats, pumpkin, salmon oil..."></textarea>
+                  </label>
+                </form>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="result-card" id="scanResult">
+                <h3>Food analysis will show here</h3>
+                <p>Upload a photo and add label text, then PupPlate will score the food and explain why it looks strong, weak, or risky.</p>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="history">
+        <div class="shell">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow">Recent History</div>
+              <h2>Saved feed plans and food checks.</h2>
+            </div>
+            <p>
+              Everything below is stored locally in your browser so you can compare scans and revisit the last feeding setup.
+            </p>
+          </div>
+
+          <div class="history-grid" id="historyList">
+            <article class="history-card">
+              <h3>No saved history yet</h3>
+              <p>Create a feed plan or analyze a food and it will appear here.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="shell">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow">Helpful Notes</div>
+              <h2>What PupPlate treats as green flags and red flags.</h2>
+            </div>
+            <p>
+              The checker rewards named proteins and helpful nutrients, and it warns on toxic foods,
+              vague fillers, heavy sugar, and suspicious additives.
+            </p>
+          </div>
+
+          <div class="tips-grid">
+            <article class="tip-card reveal">
+              <strong>Usually positive</strong>
+              <p>Named meat or fish, salmon oil, pumpkin, oats, sweet potato, probiotics, and limited clean ingredient lists.</p>
+            </article>
+            <article class="tip-card reveal">
+              <strong>Use caution</strong>
+              <p>Meat by-products, artificial colors, corn syrup, excessive sodium, vague “animal fat,” and long filler-heavy labels.</p>
+            </article>
+            <article class="tip-card reveal">
+              <strong>Usually avoid</strong>
+              <p>Chocolate, xylitol, grapes, raisins, onions, garlic-heavy products, macadamia nuts, and anything that causes clear symptoms in your dog.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="shell footer-line">
+        <div>PupPlate dog food advisor</div>
+        <div>© <span id="year"></span> PupPlate</div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script>
+      const plannerForm = document.getElementById("plannerForm");
+      const planResult = document.getElementById("planResult");
+      const scannerForm = document.getElementById("scannerForm");
+      const scanResult = document.getElementById("scanResult");
+      const foodPhoto = document.getElementById("foodPhoto");
+      const previewFrame = document.getElementById("previewFrame");
+      const ingredientText = document.getElementById("ingredientText");
+      const ocrButton = document.getElementById("ocrButton");
+      const ocrStatus = document.getElementById("ocrStatus");
+      const historyList = document.getElementById("historyList");
+      const tabButtons = Array.from(document.querySelectorAll("[data-tab]"));
+      const storageKey = "pupplate-history";
+      let currentPhotoDataUrl = "";
+
+      const positiveKeywords = [
+        "chicken", "turkey", "beef", "lamb", "salmon", "duck", "whitefish",
+        "egg", "pumpkin", "oats", "brown rice", "sweet potato", "barley",
+        "probiotic", "salmon oil", "fish oil", "flaxseed", "blueberry", "carrot"
+      ];
+
+      const cautionKeywords = [
+        "meat by-product", "animal fat", "corn syrup", "sugar", "artificial color",
+        "red 40", "yellow 5", "bha", "bht", "propylene glycol", "excess salt",
+        "sodium nitrate", "carrageenan"
+      ];
+
+      const toxicKeywords = [
+        "xylitol", "grape", "grapes", "raisin", "raisins", "chocolate", "cocoa",
+        "onion", "garlic", "macadamia", "macadamia nuts"
+      ];
+
+      function saveHistory(entry) {
+        const existing = JSON.parse(localStorage.getItem(storageKey) || "[]");
+        existing.unshift({ ...entry, createdAt: new Date().toISOString() });
+        localStorage.setItem(storageKey, JSON.stringify(existing.slice(0, 8)));
+        renderHistory();
+      }
+
+      function renderHistory() {
+        const items = JSON.parse(localStorage.getItem(storageKey) || "[]");
+        if (!items.length) {
+          historyList.innerHTML = `
+            <article class="history-card">
+              <h3>No saved history yet</h3>
+              <p>Create a feed plan or analyze a food and it will appear here.</p>
+            </article>
+          `;
+          return;
+        }
+
+        historyList.innerHTML = items.map((item) => `
+          <article class="history-card">
+            <div class="score-row">
+              <span class="score-pill ${item.levelClass || "score-good"}">${item.kind}</span>
+              <span class="tag">${new Date(item.createdAt).toLocaleString()}</span>
+            </div>
+            <h3>${item.title}</h3>
+            <p>${item.summary}</p>
+          </article>
+        `).join("");
+      }
+
+      function caloriesFactor(age, activity, goal) {
+        const ageFactor = { puppy: 2.0, adult: 1.6, senior: 1.3 }[age];
+        const activityFactor = { low: 0.9, normal: 1, high: 1.2 }[activity];
+        const goalFactor = { lose: 0.85, maintain: 1, gain: 1.15 }[goal];
+        return ageFactor * activityFactor * goalFactor;
+      }
+
+      function mealCount(age) {
+        return age === "puppy" ? 3 : 2;
+      }
+
+      function buildTraits(style, sensitivity, goal, weight) {
+        const traits = [];
+        const avoid = [];
+
+        if (style === "dry") traits.push("kibble with clear calorie density");
+        if (style === "wet") traits.push("moist food with higher hydration");
+        if (style === "mixed") traits.push("mixed feeding plan with measured portions");
+
+        if (sensitivity === "sensitive") {
+          traits.push("gentle proteins and simpler ingredient list");
+          traits.push("pumpkin, oats, or probiotics");
+          avoid.push("rich treats and abrupt food changes");
+        }
+
+        if (sensitivity === "allergy") {
+          traits.push("limited ingredient formula");
+          traits.push("single primary animal protein");
+          avoid.push("vague meat meals and unnecessary extras");
+        }
+
+        if (sensitivity === "weight-control" || goal === "lose") {
+          traits.push("higher protein and moderated calories");
+          traits.push("measured treats and satiety-supporting fiber");
+          avoid.push("high-fat treats and calorie-dense toppers");
+        }
+
+        if (goal === "gain") {
+          traits.push("energy-dense food with strong protein quality");
+        }
+
+        if (weight >= 55) {
+          traits.push("large-breed-friendly portion control");
+        } else if (weight <= 15) {
+          traits.push("small-bite pieces or softer texture");
+        }
+
+        if (!avoid.length) avoid.push("foods with sugar-heavy or color-heavy labels");
+
+        return { traits, avoid };
+      }
+
+      function renderPlanResult(data) {
+        planResult.innerHTML = `
+          <div class="score-row">
+            <span class="score-pill score-good">Feed Plan Ready</span>
+            <span class="tag">${data.name ? data.name : "Your dog"}</span>
+          </div>
+          <h3>${data.name ? data.name + "'s" : "Your"} daily feeding estimate</h3>
+          <p>${data.summary}</p>
+          <div class="metric-grid">
+            <article class="metric-card">
+              <strong>${data.dailyCalories}</strong>
+              <span>estimated kcal per day</span>
+            </article>
+            <article class="metric-card">
+              <strong>${data.amount}</strong>
+              <span>${data.unit} per day</span>
+            </article>
+            <article class="metric-card">
+              <strong>${data.meals}</strong>
+              <span>recommended meals each day</span>
+            </article>
+          </div>
+          <div>
+            <strong>Look for formulas with:</strong>
+            <div class="tag-list">${data.traits.map((trait) => `<span class="tag">${trait}</span>`).join("")}</div>
+          </div>
+          <div>
+            <strong>Be careful with:</strong>
+            <div class="tag-list">${data.avoid.map((item) => `<span class="tag">${item}</span>`).join("")}</div>
+          </div>
+        `;
+      }
+
+      plannerForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const name = document.getElementById("dogName").value.trim();
+        const weightLb = Number(document.getElementById("dogWeight").value);
+        const age = document.getElementById("dogAge").value;
+        const activity = document.getElementById("dogActivity").value;
+        const goal = document.getElementById("dogGoal").value;
+        const style = document.getElementById("foodStyle").value;
+        const sensitivity = document.getElementById("dogSensitivity").value;
+        const density = Number(document.getElementById("foodDensity").value);
+
+        if (!weightLb || !density) return;
+
+        const weightKg = weightLb / 2.20462;
+        const rer = 70 * Math.pow(weightKg, 0.75);
+        const totalCalories = Math.round(rer * caloriesFactor(age, activity, goal));
+        const amountPerDay = totalCalories / density;
+        const meals = mealCount(age);
+        const { traits, avoid } = buildTraits(style, sensitivity, goal, weightLb);
+        const unit = style === "wet" ? "cans or equivalent units" : style === "mixed" ? "cups / mixed portions" : "cups";
+
+        const result = {
+          name,
+          dailyCalories: totalCalories.toLocaleString(),
+          amount: amountPerDay.toFixed(1),
+          unit,
+          meals,
+          traits,
+          avoid,
+          summary: `${name || "Your dog"} is estimated to need about ${totalCalories.toLocaleString()} calories per day. With food at ${density} kcal per serving unit, that works out to roughly ${amountPerDay.toFixed(1)} ${unit} each day split over ${meals} meals.`
+        };
+
+        localStorage.setItem("pupplate-last-profile", JSON.stringify({
+          name, weightLb, age, activity, goal, style, sensitivity, density
+        }));
+
+        renderPlanResult(result);
+
+        saveHistory({
+          kind: "Feed plan",
+          title: `${name || "Dog profile"} • ${totalCalories.toLocaleString()} kcal/day`,
+          summary: `Estimated ${amountPerDay.toFixed(1)} ${unit} daily over ${meals} meals.`,
+          levelClass: "score-good"
+        });
+      });
+
+      foodPhoto.addEventListener("change", (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          currentPhotoDataUrl = reader.result;
+          previewFrame.innerHTML = `<img src="${currentPhotoDataUrl}" alt="Uploaded dog food or ingredient label preview" />`;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      ocrButton.addEventListener("click", async () => {
+        const file = foodPhoto.files?.[0];
+        if (!file) {
+          ocrStatus.textContent = "Add a photo first, then try OCR.";
+          return;
+        }
+
+        if (!window.Tesseract) {
+          ocrStatus.textContent = "OCR library did not load. You can still paste the ingredient list manually.";
+          return;
+        }
+
+        ocrStatus.textContent = "Reading label text from the photo...";
+        ocrButton.disabled = true;
+
+        try {
+          const result = await window.Tesseract.recognize(file, "eng");
+          const text = (result.data.text || "").trim();
+          ingredientText.value = text;
+          ocrStatus.textContent = text ? "Label text added. Review it and run the analyzer." : "OCR finished, but very little text was found. Try a clearer label photo.";
+        } catch (error) {
+          ocrStatus.textContent = "OCR hit a problem. You can still paste ingredients manually.";
+        } finally {
+          ocrButton.disabled = false;
+        }
+      });
+
+      function scoreText(text, scanType) {
+        const lower = text.toLowerCase();
+        const positives = positiveKeywords.filter((word) => lower.includes(word));
+        const cautions = cautionKeywords.filter((word) => lower.includes(word));
+        const toxics = toxicKeywords.filter((word) => lower.includes(word));
+
+        let score = 70;
+        score += positives.length * 5;
+        score -= cautions.length * 10;
+        score -= toxics.length * 35;
+
+        if (scanType === "treat") score -= 5;
+        if (scanType === "human-food") score -= 10;
+        if (lower.includes("corn") && !lower.includes("popcorn")) score -= 4;
+        if (lower.includes("artificial")) score -= 8;
+        if (lower.includes("whole") || lower.includes("deboned")) score += 5;
+        if (lower.includes("first ingredient")) score += 3;
+
+        score = Math.max(0, Math.min(100, score));
+
+        let level = "Good fit";
+        let levelClass = "score-good";
+
+        if (toxics.length || score < 35) {
+          level = "Avoid";
+          levelClass = "score-danger";
+        } else if (score < 68 || cautions.length) {
+          level = "Use caution";
+          levelClass = "score-warning";
+        }
+
+        const takeaways = [];
+        if (positives.length) takeaways.push(`Positive signs: ${positives.slice(0, 4).join(", ")}`);
+        if (cautions.length) takeaways.push(`Caution signs: ${cautions.slice(0, 4).join(", ")}`);
+        if (toxics.length) takeaways.push(`Danger signs: ${toxics.slice(0, 4).join(", ")}`);
+        if (!takeaways.length) takeaways.push("No major signals were found, so treat this result as a light heuristic rather than a final answer.");
+
+        return { score, level, levelClass, positives, cautions, toxics, takeaways };
+      }
+
+      function renderScanResult(result, scanType) {
+        scanResult.innerHTML = `
+          <div class="score-row">
+            <span class="score-pill ${result.levelClass}">${result.level}</span>
+            <span class="tag">${result.score}/100</span>
+            <span class="tag">${scanType.replace("-", " ")}</span>
+          </div>
+          <h3>Food verdict</h3>
+          <p>${result.takeaways[0]}</p>
+          <div class="metric-grid">
+            <article class="metric-card">
+              <strong>${result.positives.length}</strong>
+              <span>positive ingredient signals</span>
+            </article>
+            <article class="metric-card">
+              <strong>${result.cautions.length}</strong>
+              <span>caution ingredient signals</span>
+            </article>
+            <article class="metric-card">
+              <strong>${result.toxics.length}</strong>
+              <span>danger ingredient signals</span>
+            </article>
+          </div>
+          <div>
+            <strong>What PupPlate noticed:</strong>
+            <div class="tag-list">
+              ${result.takeaways.map((item) => `<span class="tag">${item}</span>`).join("")}
+            </div>
+          </div>
+          <p class="field-help">This is a fast label-review tool. If your dog has medical needs, allergies, or symptoms, check with your vet.</p>
+        `;
+      }
+
+      scannerForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const text = ingredientText.value.trim();
+        const scanType = document.getElementById("scanType").value;
+
+        if (!text) {
+          scanResult.innerHTML = `
+            <h3>Need a label or ingredient list</h3>
+            <p>Add ingredient text manually or run OCR from a clearer photo so PupPlate has something real to score.</p>
+          `;
+          return;
+        }
+
+        const result = scoreText(text, scanType);
+        renderScanResult(result, scanType);
+
+        saveHistory({
+          kind: "Food check",
+          title: `${result.level} • ${result.score}/100`,
+          summary: result.takeaways[0],
+          levelClass: result.levelClass
+        });
+      });
+
+      tabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          tabButtons.forEach((tab) => tab.classList.remove("is-active"));
+          button.classList.add("is-active");
+          const target = button.dataset.tab === "scan" ? "#scanner" : "#planner";
+          document.querySelector(target).scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+
+      function restoreProfile() {
+        const saved = JSON.parse(localStorage.getItem("pupplate-last-profile") || "null");
+        if (!saved) return;
+
+        document.getElementById("dogName").value = saved.name || "";
+        document.getElementById("dogWeight").value = saved.weightLb || 35;
+        document.getElementById("dogAge").value = saved.age || "adult";
+        document.getElementById("dogActivity").value = saved.activity || "normal";
+        document.getElementById("dogGoal").value = saved.goal || "maintain";
+        document.getElementById("foodStyle").value = saved.style || "dry";
+        document.getElementById("dogSensitivity").value = saved.sensitivity || "none";
+        document.getElementById("foodDensity").value = saved.density || 380;
+      }
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+      restoreProfile();
+      renderHistory();
+    </script>
+  </body>
+</html>
