@@ -1,1596 +1,2322 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PupPlate | Dog Food Scan App</title>
-    <meta
-      name="description"
-      content="PupPlate is a mobile-style dog food scan app with danger alerts, quick-reference food checks, and budget-aware meal planning."
-    />
-    <style>
-      :root {
-        --green-700: #42a41f;
-        --green-600: #58cc02;
-        --green-500: #77e52a;
-        --green-100: #efffe6;
-        --green-050: #f8fff2;
-        --red-700: #d41111;
-        --red-600: #ef1e1e;
-        --red-500: #ff4a4a;
-        --red-100: #ffe7e7;
-        --yellow-100: #fff5cc;
-        --blue-100: #eaf7ff;
-        --ink: #1f252b;
-        --muted: #78838f;
-        --white: #ffffff;
-        --line: rgba(31, 37, 43, 0.08);
-        --shadow-xl: 0 28px 80px rgba(39, 52, 64, 0.14);
-        --shadow-lg: 0 18px 40px rgba(39, 52, 64, 0.12);
-        --shadow-md: 0 10px 24px rgba(39, 52, 64, 0.08);
-        --radius-xl: 34px;
-        --radius-lg: 26px;
-        --radius-md: 18px;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      html {
-        scroll-behavior: smooth;
-      }
-
-      body {
-        margin: 0;
-        font-family: "Avenir Next", "Trebuchet MS", sans-serif;
-        color: var(--ink);
-        background:
-          radial-gradient(circle at top left, rgba(119, 229, 42, 0.16), transparent 25%),
-          linear-gradient(180deg, #f6fff2 0%, #ffffff 48%, #f8fffb 100%);
-      }
-
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-
-      img {
-        max-width: 100%;
-        display: block;
-      }
-
-      .shell {
-        width: min(1180px, calc(100% - 28px));
-        margin: 0 auto;
-      }
-
-      .topbar {
-        position: sticky;
-        top: 0;
-        z-index: 60;
-        backdrop-filter: blur(16px);
-        background: rgba(255, 255, 255, 0.88);
-        border-bottom: 1px solid var(--line);
-      }
-
-      .topbar-inner {
-        min-height: 78px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 18px;
-      }
-
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .brand-mark {
-        position: relative;
-        width: 54px;
-        height: 54px;
-        border-radius: 18px;
-        background: linear-gradient(145deg, var(--green-500), var(--green-600));
-        box-shadow: var(--shadow-md);
-      }
-
-      .brand-mark::before,
-      .brand-mark::after {
-        content: "";
-        position: absolute;
-        top: -7px;
-        width: 16px;
-        height: 20px;
-        border-radius: 14px 14px 6px 6px;
-        background: var(--green-600);
-      }
-
-      .brand-mark::before {
-        left: 10px;
-        transform: rotate(-16deg);
-      }
-
-      .brand-mark::after {
-        right: 10px;
-        transform: rotate(16deg);
-      }
-
-      .brand-core {
-        position: absolute;
-        inset: 13px;
-        border-radius: 16px;
-        background: white;
-      }
-
-      .brand-copy {
-        display: grid;
-        gap: 2px;
-      }
-
-      .eyebrow {
-        font-size: 0.72rem;
-        letter-spacing: 0.24em;
-        text-transform: uppercase;
-        color: #54a02f;
-      }
-
-      .brand-name {
-        font-weight: 900;
-        font-size: 1.45rem;
-      }
-
-      .desktop-nav {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        flex-wrap: wrap;
-      }
-
-      .desktop-nav a {
-        font-size: 0.9rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        min-height: 52px;
-        padding: 0 22px;
-        border: 0;
-        border-radius: 999px;
-        font-weight: 900;
-        letter-spacing: 0.04em;
-        cursor: pointer;
-        transition: transform 0.18s ease, box-shadow 0.18s ease;
-      }
-
-      .button:hover {
-        transform: translateY(-2px);
-      }
-
-      .button-primary {
-        color: #173208;
-        background: linear-gradient(145deg, var(--green-500), var(--green-600));
-        box-shadow: 0 16px 32px rgba(88, 204, 2, 0.26);
-      }
-
-      .button-secondary {
-        color: var(--ink);
-        background: white;
-        border: 1px solid var(--line);
-        box-shadow: var(--shadow-md);
-      }
-
-      .hero {
-        padding: 24px 0;
-      }
-
-      .hero-grid {
-        display: grid;
-        grid-template-columns: minmax(300px, 430px) minmax(0, 1fr);
-        gap: 28px;
-        align-items: start;
-      }
-
-      .phone-shell {
-        position: sticky;
-        top: 104px;
-        width: min(100%, 430px);
-        margin: 0 auto;
-        padding: 14px;
-        border-radius: 46px;
-        background: linear-gradient(180deg, #2b2f34, #111317);
-        box-shadow: 0 32px 80px rgba(17, 19, 23, 0.28);
-      }
-
-      .phone-screen {
-        overflow: hidden;
-        border-radius: 34px;
-        background: linear-gradient(180deg, #ffffff 0%, #fbfff7 100%);
-        min-height: 820px;
-      }
-
-      .statusbar {
-        position: relative;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 16px 18px 10px;
-        font-weight: 800;
-      }
-
-      .notch {
-        position: absolute;
-        left: 50%;
-        top: 10px;
-        transform: translateX(-50%);
-        width: 144px;
-        height: 34px;
-        border-radius: 999px;
-        background: #050607;
-      }
-
-      .screen-inner {
-        padding: 8px 18px 22px;
-      }
-
-      .screen-title {
-        text-align: center;
-        font-size: 1.9rem;
-        font-weight: 900;
-        margin: 4px 0 14px;
-      }
-
-      .segmented {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 16px;
-      }
-
-      .segmented button {
-        flex: 1;
-        min-height: 44px;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        background: #fff;
-        color: var(--muted);
-        font-weight: 900;
-        cursor: pointer;
-      }
-
-      .segmented button.is-active {
-        border-color: transparent;
-        color: #173208;
-        background: linear-gradient(145deg, #bff79c, var(--green-500));
-      }
-
-      .scan-cta {
-        width: 100%;
-        min-height: 58px;
-        border-radius: 22px;
-        background: linear-gradient(145deg, #73e64f, #51ca00);
-        color: white;
-        font-weight: 900;
-        font-size: 1.1rem;
-        border: 0;
-        box-shadow: 0 16px 34px rgba(88, 204, 2, 0.26);
-        cursor: pointer;
-      }
-
-      .scan-card,
-      .danger-card,
-      .reference-card,
-      .surface,
-      .planner-card,
-      .result-card,
-      .history-card,
-      .ingredient-card,
-      .recommend-card {
-        background: white;
-        border: 1px solid var(--line);
-        box-shadow: var(--shadow-lg);
-      }
-
-      .scan-card {
-        margin-top: 18px;
-        padding: 18px;
-        border-radius: 28px;
-      }
-
-      .scan-label {
-        text-align: center;
-        color: #4eb52f;
-        font-weight: 900;
-        margin-bottom: 10px;
-      }
-
-      .scan-card h2 {
-        margin: 0 0 8px;
-        text-align: center;
-        font-size: 2rem;
-        line-height: 1.05;
-      }
-
-      .scan-card p {
-        margin: 0;
-        color: var(--muted);
-        text-align: center;
-        line-height: 1.55;
-      }
-
-      .preview-frame {
-        position: relative;
-        margin-top: 18px;
-        min-height: 270px;
-        border-radius: 28px;
-        overflow: hidden;
-        background:
-          radial-gradient(circle at top, rgba(119, 229, 42, 0.12), transparent 30%),
-          linear-gradient(180deg, #fcfff8, #f3fff0);
-        border: 1px solid rgba(31, 37, 43, 0.06);
-        display: grid;
-        place-items: center;
-      }
-
-      .preview-frame img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .camera-guides {
-        position: absolute;
-        inset: 18% 18%;
-        border: 4px dashed rgba(255, 255, 255, 0.95);
-        border-radius: 26px;
-        pointer-events: none;
-      }
-
-      .preview-caption {
-        position: absolute;
-        bottom: 14px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 10px 14px;
-        border-radius: 999px;
-        background: rgba(31, 37, 43, 0.45);
-        color: white;
-        font-weight: 700;
-        font-size: 0.88rem;
-      }
-
-      .preview-empty {
-        max-width: 22ch;
-        text-align: center;
-        color: var(--muted);
-        line-height: 1.55;
-        padding: 24px;
-      }
-
-      .danger-card {
-        margin-top: 18px;
-        padding: 24px 22px;
-        border-radius: 28px;
-        background: linear-gradient(180deg, var(--red-600), var(--red-700));
-        color: white;
-      }
-
-      .danger-card.hidden {
-        display: none;
-      }
-
-      .danger-icon {
-        font-size: 2.2rem;
-        text-align: center;
-        margin-bottom: 8px;
-      }
-
-      .danger-card h3 {
-        margin: 0;
-        text-align: center;
-        font-size: 3rem;
-        line-height: 1;
-      }
-
-      .danger-card strong {
-        display: block;
-        margin: 16px 0 10px;
-        text-align: center;
-        font-size: 1.9rem;
-      }
-
-      .danger-card p {
-        margin: 0;
-        text-align: center;
-        color: rgba(255, 255, 255, 0.93);
-        line-height: 1.58;
-        font-size: 1.05rem;
-      }
-
-      .reference-card {
-        margin-top: 16px;
-        padding: 18px;
-        border-radius: 26px;
-      }
-
-      .reference-card h4 {
-        margin: 0 0 14px;
-        font-size: 1.35rem;
-      }
-
-      .reference-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
-      }
-
-      .reference-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .food-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 14px;
-        display: grid;
-        place-items: center;
-        font-size: 1.35rem;
-        background: #f6f8fb;
-      }
-
-      .reference-copy strong {
-        display: block;
-        font-size: 1rem;
-      }
-
-      .state-line {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 0.9rem;
-        font-weight: 800;
-        margin-top: 3px;
-      }
-
-      .state-line.safe {
-        color: #39ab25;
-      }
-
-      .state-line.toxic {
-        color: #eb3d45;
-      }
-
-      .phone-nav {
-        position: sticky;
-        bottom: 12px;
-        margin: 18px auto 0;
-        width: min(100%, 310px);
-        padding: 10px 14px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.96);
-        border: 1px solid var(--line);
-        box-shadow: var(--shadow-md);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .phone-nav a {
-        display: grid;
-        gap: 4px;
-        justify-items: center;
-        min-width: 72px;
-        font-size: 0.86rem;
-        font-weight: 800;
-      }
-
-      .phone-nav a.active {
-        color: var(--green-600);
-      }
-
-      .desktop-content {
-        display: grid;
-        gap: 22px;
-      }
-
-      .intro-card,
-      .surface,
-      .planner-card,
-      .result-card,
-      .history-card,
-      .ingredient-card,
-      .recommend-card {
-        border-radius: 30px;
-        padding: 24px;
-      }
-
-      .intro-card {
-        background: linear-gradient(180deg, #f8fff0, #ffffff);
-        border: 1px solid var(--line);
-        box-shadow: var(--shadow-lg);
-      }
-
-      .intro-card h1 {
-        margin: 8px 0 12px;
-        font-size: clamp(2.8rem, 5vw, 4.4rem);
-        line-height: 0.95;
-        letter-spacing: -0.05em;
-      }
-
-      .intro-card p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.68;
-        max-width: 64ch;
-      }
-
-      .chip-row,
-      .score-row,
-      .tag-list,
-      .recommend-grid,
-      .ingredient-grid,
-      .history-grid {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-
-      .chip,
-      .tag,
-      .score-pill {
-        display: inline-flex;
-        align-items: center;
-        min-height: 38px;
-        padding: 0 14px;
-        border-radius: 999px;
-        font-weight: 800;
-      }
-
-      .chip {
-        margin-top: 16px;
-        background: var(--green-050);
-        color: #3d9f1a;
-        border: 1px solid rgba(88, 204, 2, 0.12);
-      }
-
-      .tag {
-        background: var(--blue-100);
-        color: #1870a8;
-      }
-
-      .score-pill.score-good {
-        background: rgba(88, 204, 2, 0.16);
-        color: #38941e;
-      }
-
-      .score-pill.score-warning {
-        background: rgba(255, 179, 0, 0.18);
-        color: #946000;
-      }
-
-      .score-pill.score-danger {
-        background: rgba(255, 74, 74, 0.16);
-        color: #c61c22;
-      }
-
-      .section-title {
-        margin: 0 0 14px;
-        font-size: 1.55rem;
-      }
-
-      .section-copy {
-        margin: 0 0 16px;
-        color: var(--muted);
-        line-height: 1.65;
-      }
-
-      form {
-        display: grid;
-        gap: 16px;
-      }
-
-      .field-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px;
-      }
-
-      label {
-        display: grid;
-        gap: 8px;
-        font-weight: 800;
-      }
-
-      input,
-      select,
-      textarea {
-        width: 100%;
-        min-height: 52px;
-        border-radius: 18px;
-        border: 1px solid var(--line);
-        padding: 14px 16px;
-        font: inherit;
-        background: white;
-        color: var(--ink);
-      }
-
-      textarea {
-        min-height: 126px;
-        resize: vertical;
-      }
-
-      .subtle {
-        color: var(--muted);
-        line-height: 1.6;
-      }
-
-      .metric-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 14px;
-      }
-
-      .metric-card {
-        padding: 18px;
-        border-radius: 22px;
-        background: linear-gradient(180deg, #f9fff5, #ffffff);
-        border: 1px solid var(--line);
-      }
-
-      .metric-card strong {
-        display: block;
-        margin-bottom: 6px;
-        font-size: 1.4rem;
-      }
-
-      .metric-card span {
-        color: var(--muted);
-      }
-
-      .plan-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
-        margin-top: 14px;
-      }
-
-      .plan-box {
-        padding: 20px;
-        border-radius: 24px;
-        background: linear-gradient(180deg, #f9fff5, #ffffff);
-        border: 1px solid var(--line);
-      }
-
-      .plan-box strong {
-        display: block;
-        margin-bottom: 10px;
-      }
-
-      .plan-box ul {
-        margin: 0;
-        padding-left: 18px;
-        color: var(--muted);
-        line-height: 1.6;
-      }
-
-      .recommend-card,
-      .ingredient-card,
-      .history-card {
-        flex: 1 1 250px;
-        min-width: 250px;
-      }
-
-      .recommend-card h4,
-      .ingredient-card h4 {
-        margin: 0 0 10px;
-        font-size: 1.08rem;
-      }
-
-      .recommend-card p,
-      .ingredient-card p,
-      .history-card p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.62;
-      }
-
-      .recommend-meta {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-bottom: 12px;
-      }
-
-      .recommend-meta span {
-        display: inline-flex;
-        align-items: center;
-        min-height: 32px;
-        padding: 0 12px;
-        border-radius: 999px;
-        background: var(--blue-100);
-        color: #1870a8;
-        font-size: 0.82rem;
-        font-weight: 800;
-      }
-
-      .ingredient-card.positive {
-        background: linear-gradient(180deg, #f5ffe9, #ffffff);
-      }
-
-      .ingredient-card.caution {
-        background: linear-gradient(180deg, #fff9de, #ffffff);
-      }
-
-      .ingredient-card.danger {
-        background: linear-gradient(180deg, #fff0f0, #ffffff);
-      }
-
-      footer {
-        padding: 30px 0 46px;
-        color: var(--muted);
-      }
-
-      .footer-line {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-
-      @media (max-width: 1100px) {
-        .hero-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .phone-shell {
-          position: static;
-        }
-      }
-
-      @media (max-width: 760px) {
-        .topbar-inner,
-        .footer-line {
-          flex-direction: column;
-          align-items: start;
-        }
-
-        .desktop-nav {
-          width: 100%;
-          justify-content: flex-start;
-        }
-
-        .field-grid,
-        .metric-grid,
-        .plan-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <header class="topbar">
-      <div class="shell topbar-inner">
-        <a class="brand" href="#top">
-          <div class="brand-mark"><div class="brand-core"></div></div>
-          <div class="brand-copy">
-            <span class="eyebrow">Food Scan For Dogs</span>
-            <span class="brand-name">PupPlate</span>
-          </div>
-        </a>
-        <nav class="desktop-nav">
-          <a href="#scan-ui">Scan</a>
-          <a href="#plan-ui">Meal Plan</a>
-          <a href="#history">History</a>
-        </nav>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>PawPlate</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --primary: #FF7A59;
+  --primary-dark: #D45D3F;
+  --secondary: #FFF3CC;
+  --accent: #70C1B3;
+  --dark: #2D3142;
+}
+* { font-family: 'Nunito', sans-serif; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { background: #e0e0e0; margin: 0; display: flex; justify-content: center; min-height: 100vh; align-items: flex-start; }
+
+/* ── PHONE FRAME ── */
+.phone {
+  width: 393px;
+  height: 852px;
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.28);
+  display: flex;
+  flex-direction: column;
+}
+@media (max-width: 420px) {
+  body { background: #fff; }
+  .phone { width: 100vw; height: 100dvh; box-shadow: none; }
+}
+
+/* ── LAYERS ── */
+/* Onboarding sits on top; main app beneath */
+#onboarding {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  background: #fff;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+#onboarding.hidden-out {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.97);
+}
+#main-app {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── ONBOARDING SLIDES ── */
+.ob-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  transform: translateX(40px);
+}
+.ob-slide.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(0);
+}
+.ob-slide.exiting {
+  opacity: 0;
+  transform: translateX(-40px);
+}
+
+/* ── PAW PATTERN ── */
+.paw-bg {
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm10-5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm10 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-5 10a2 2 0 1 1-4 0 2 2 0 0 1 4 0z' fill='%23FF7A59' fill-opacity='0.08'/%3E%3C/svg%3E");
+}
+
+/* ── BUTTONS ── */
+.btn-primary {
+  width: 100%; background: var(--primary); color: #fff;
+  font-weight: 900; font-size: 17px; padding: 18px 24px;
+  border-radius: 24px; border: none; cursor: pointer;
+  box-shadow: 0 6px 0 var(--primary-dark);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.btn-primary:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
+
+.btn-dark {
+  width: 100%; background: var(--dark); color: #fff;
+  font-weight: 900; font-size: 17px; padding: 18px 24px;
+  border-radius: 24px; border: none; cursor: pointer;
+  box-shadow: 0 6px 0 #1a1e2e;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.btn-dark:active { transform: translateY(3px); box-shadow: 0 3px 0 #1a1e2e; }
+
+/* ── MAIN APP TABS ── */
+#tab-content {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+.tab-pane {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+.tab-pane::-webkit-scrollbar { display: none; }
+.tab-pane.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+.tab-bar {
+  flex-shrink: 0;
+  height: 72px;
+  background: #fff;
+  border-top: 1.5px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-bottom: 8px;
+}
+.tab-btn {
+  flex: 1; background: none; border: none; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 6px 0;
+}
+.tab-btn .tab-label { font-size: 11px; font-weight: 800; color: #c4c4c4; transition: color 0.2s; }
+.tab-btn iconify-icon { transition: color 0.2s; color: #c4c4c4; }
+.tab-btn.active .tab-label { color: var(--primary); }
+.tab-btn.active iconify-icon { color: var(--primary) !important; }
+
+/* ── SCROLL UTIL ── */
+.scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.scroll::-webkit-scrollbar { display: none; }
+
+/* ── WEIGHT SLIDER ── */
+.weight-slider {
+  -webkit-appearance: none; width: 100%; height: 10px;
+  border-radius: 99px; outline: none;
+  background: linear-gradient(to right, var(--primary) 28%, #e5e7eb 28%);
+  cursor: pointer;
+}
+.weight-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 34px; height: 34px;
+  border-radius: 50%; background: var(--primary); cursor: pointer;
+  border: 4px solid #fff; box-shadow: 0 4px 16px rgba(255,122,89,0.45);
+}
+
+/* ── ACTIVITY CARD ── */
+.act-card {
+  width: 100%; display: flex; align-items: center; gap: 16px;
+  padding: 18px 20px; background: #fff; border: 2.5px solid #d0d0d0;
+  border-radius: 24px; cursor: pointer; text-align: left;
+  transition: border-color 0.2s; position: relative;
+}
+.act-card.selected { border-color: var(--primary); box-shadow: 0 4px 16px rgba(255,122,89,0.18); }
+
+/* ── SCAN ANIMATION ── */
+@keyframes scanBar { 0%,100% { top: 6px; } 50% { top: calc(100% - 6px); } }
+.scan-line {
+  position: absolute; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, #FF7A59 25%, #FF7A59 75%, transparent);
+  box-shadow: 0 0 10px 3px rgba(255,122,89,0.5);
+  animation: scanBar 1.8s ease-in-out infinite; z-index: 5;
+}
+.scan-corner {
+  position: absolute; width: 24px; height: 24px;
+  border-color: var(--primary); border-style: solid; opacity: 0.9;
+}
+.sc-tl { top: 10px; left: 10px; border-width: 3px 0 0 3px; border-radius: 3px 0 0 0; }
+.sc-tr { top: 10px; right: 10px; border-width: 3px 3px 0 0; border-radius: 0 3px 0 0; }
+.sc-bl { bottom: 10px; left: 10px; border-width: 0 0 3px 3px; border-radius: 0 0 0 3px; }
+.sc-br { bottom: 10px; right: 10px; border-width: 0 3px 3px 0; border-radius: 0 0 3px 0; }
+
+/* ── PROGRESS BAR ── */
+.prog-wrap { height: 8px; background: #f3f4f6; border-radius: 99px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #FF7A59, #FF9F85); transition: width 0.12s linear; width: 0%; }
+
+/* ── UPLOAD ZONE ── */
+.upload-zone {
+  border: 3px dashed #FFAA88; border-radius: 22px; cursor: pointer;
+  background: #FFF8F5;
+  transition: border-color 0.2s, background 0.2s;
+}
+.upload-zone:hover { border-color: var(--primary); background: #fff3ed; }
+
+/* ── MEAL TIER CARD ── */
+.tier-card {
+  border: 2.5px solid #d0d0d0; border-radius: 24px; padding: 20px;
+  cursor: pointer; transition: all 0.2s; background: #fff; margin-bottom: 14px;
+}
+.tier-card.selected { border-color: #FF6535; box-shadow: 0 6px 24px rgba(255,100,53,0.28); }
+.tier-card:active { transform: scale(0.98); }
+
+/* ── SPINNER ── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { animation: spin 1s linear infinite; }
+
+/* ── STREAK BOUNCE ── */
+@keyframes streakPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.18); }
+  70%  { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+.streak-pop { animation: streakPop 0.45s cubic-bezier(0.36,0.07,0.19,0.97) both; }
+
+/* ── INSIGHT MODAL ── */
+#insight-modal {
+  position: absolute; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.55);
+  display: flex; align-items: flex-end;
+  transition: opacity 0.25s;
+}
+#insight-modal.hidden-modal { opacity: 0; pointer-events: none; }
+#insight-modal-sheet {
+  background: #fff; border-radius: 28px 28px 0 0;
+  padding: 28px 24px 44px; width: 100%;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
+  transform: translateY(0); transition: transform 0.3s ease;
+}
+
+/* ── QUICK ACTION PILLS ── */
+.qa-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 16px; border-radius: 99px; border: 2px solid rgba(0,0,0,0.18);
+  font-weight: 800; font-size: 13px; cursor: pointer;
+  white-space: nowrap; flex-shrink: 0;
+  transition: transform 0.1s, opacity 0.1s;
+}
+.qa-pill:active { transform: scale(0.95); opacity: 0.85; }
+
+/* ── LOG MEAL BOUNCE ── */
+@keyframes logBounce {
+  0%   { transform: scale(1); }
+  15%  { transform: scale(0.92); }
+  40%  { transform: scale(1.08); }
+  60%  { transform: scale(0.96); }
+  80%  { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+@keyframes logSuccess {
+  0%   { transform: scale(1); }
+  20%  { transform: scale(1.12); box-shadow: 0 0 0 0 rgba(112,193,179,0.6); }
+  60%  { transform: scale(0.97); box-shadow: 0 0 0 18px rgba(112,193,179,0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(112,193,179,0); }
+}
+.log-bounce { animation: logBounce 0.55s cubic-bezier(0.36,0.07,0.19,0.97) both; }
+.log-success { animation: logSuccess 0.7s ease forwards; }
+
+/* ── MEAL CARD EXPAND ── */
+.meal-card-body {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.38s cubic-bezier(0.4,0,0.2,1), opacity 0.28s ease;
+  opacity: 0;
+}
+.meal-card-body.open {
+  max-height: 600px;
+  opacity: 1;
+}
+.meal-card-chevron {
+  transition: transform 0.3s ease;
+  color: rgba(255,255,255,0.5);
+  font-size: 18px;
+}
+.meal-card-chevron.open { transform: rotate(180deg); }
+
+/* ── FEEDING TAB BAR ── */
+#feed-tabbar {
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0 20px;
+  z-index: 20;
+}
+.feed-tab-btn {
+  flex: 1; background: none; border: none; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px;
+}
+.feed-tab-btn span { font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.35); }
+.feed-tab-btn iconify-icon { color: rgba(255,255,255,0.35); font-size: 24px; }
+.feed-tab-btn.active-feed iconify-icon { color: rgba(255,255,255,0.9); }
+.feed-tab-btn.active-feed span { color: rgba(255,255,255,0.9); }
+
+/* ── FEEDING SCREEN ── */
+#screen-feeding {
+  position: absolute; inset: 0; z-index: 150;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;  /* outer does NOT scroll */
+  height: 100%;      /* must be explicit for flex children to scroll */
+}
+#screen-feeding.hidden-feed { opacity: 0; pointer-events: none; transform: translateY(20px); }
+/* Inner scrollable area */
+#feed-scroll-area {
+  flex: 1;
+  min-height: 0;        /* critical — allows flex child to shrink below content */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#feed-scroll-area::-webkit-scrollbar { display: none; }
+
+/* ── STARS ANIMATION ── */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50%       { opacity: 0.8;  transform: scale(1.2); }
+}
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  animation: twinkle var(--d, 3s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+/* ── BURGER MODAL BACK ── */
+#burger-back-bar {
+  padding: 14px 20px 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 4px;
+}
+
+/* ── PROFILE SHEET ── */
+#profile-sheet {
+  position: absolute; inset: 0; z-index: 60;
+  transition: opacity 0.3s, transform 0.3s;
+  height: 100%;
+  overflow: hidden;  /* outer does NOT scroll — inner div does */
+}
+#profile-sheet.hidden-sheet { opacity: 0; pointer-events: none; transform: translateY(30px); }
+#profile-sheet::-webkit-scrollbar { display: none; }
+
+/* ── EMERGENCY SHEET ── */
+#emergency-sheet {
+  position: absolute; inset: 0; z-index: 60; background: #fff;
+  transition: opacity 0.3s, transform 0.3s;
+  overflow-y: auto;
+}
+#emergency-sheet.hidden-sheet { opacity: 0; pointer-events: none; transform: translateY(30px); }
+#emergency-sheet::-webkit-scrollbar { display: none; }
+
+/* ── RESULT FADE ── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+.fade-up { animation: fadeUp 0.35s ease forwards; }
+
+/* ── HAMBURGER MENU ── */
+.hm-popup {
+  position: absolute; top: 60px; right: 16px;
+  background: #fff; border-radius: 18px; padding: 6px 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.16); z-index: 200;
+  min-width: 210px; border: 1px solid #f0f0f0; display: none;
+}
+.hm-popup.open { display: block; }
+.hm-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 18px; cursor: pointer; border: none;
+  background: transparent; width: 100%; text-align: left;
+}
+.hm-item:active { background: #f9fafb; }
+.hm-sep { height: 1px; background: #f3f4f6; margin: 3px 0; }
+
+/* ── MODAL SHEET ── */
+.modal-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 400; display: flex; align-items: flex-end; display: none;
+}
+.modal-overlay.open { display: flex; }
+.modal-sheet {
+  background: #fff; border-radius: 28px 28px 0 0;
+  padding: 24px 24px 40px; width: 100%;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.2);
+}
+
+/* ── OB PROGRESS DOTS ── */
+.ob-dot { width: 30px; height: 7px; border-radius: 99px; background: #e5e7eb; transition: background 0.3s; }
+.ob-dot.active { background: var(--primary); }
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- ONBOARDING (absolute layer, removed after completion)     -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="onboarding" class="paw-bg" style="background:#fff;">
+
+  <!-- SLIDE 1: Welcome -->
+  <div class="ob-slide active" id="ob-1">
+    <div class="flex-1 scroll px-6 pt-14 flex flex-col items-center pb-4">
+      <div class="w-full relative mb-6">
+        <img src="https://media.screensdesign.com/afprjsia/e3bf9e38-dee2-4053-a1fa-a17b73efa2ec.png"
+             class="w-full rounded-[28px] shadow-lg border-4" style="border-color:var(--secondary);" alt="Dog"/>
+        <div class="absolute -top-3 -right-1 px-4 py-2 rounded-full font-extrabold text-sm text-white border-2 border-white shadow-md"
+             style="background:var(--accent); transform:rotate(12deg);">VET APPROVED</div>
       </div>
-    </header>
+      <div class="text-center mb-6">
+        <h1 class="text-5xl font-black leading-tight" style="color:var(--dark);">Better Food,<br/><span style="color:var(--primary);">Happier Tails!</span></h1>
+        <p class="text-base font-semibold mt-3 px-4 leading-relaxed" style="color:#6b7280;">The first AI nutrition assistant that scans any food to see if it's safe for your pup.</p>
+      </div>
+      <div class="w-full space-y-3">
+        <div class="flex items-center gap-4 p-4 bg-white border-2 border-dashed rounded-[20px]" style="border-color:var(--accent);">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(112,193,179,0.12);">
+            <iconify-icon icon="lucide:scan-face" class="text-2xl" style="color:var(--accent);"></iconify-icon>
+          </div>
+          <div><p class="text-base font-extrabold" style="color:var(--dark);">AI Label Scanner</p><p class="text-sm font-bold" style="color:#9ca3af;">Instant safe/unsafe ratings</p></div>
+        </div>
+        <div class="flex items-center gap-4 p-4 bg-white border-2 border-dashed rounded-[20px]" style="border-color:var(--primary);">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(255,122,89,0.1);">
+            <iconify-icon icon="lucide:utensils" class="text-2xl" style="color:var(--primary);"></iconify-icon>
+          </div>
+          <div><p class="text-base font-extrabold" style="color:var(--dark);">Custom Meal Plans</p><p class="text-sm font-bold" style="color:#9ca3af;">Tailored to weight &amp; breed</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="px-6 pb-8 pt-3 bg-white border-t border-gray-100">
+      <button class="btn-primary" onclick="obNext()">GET STARTED 🐾</button>
+      <p class="text-center mt-3 text-sm font-extrabold" style="color:#9ca3af;">JOIN 50,000+ HAPPY PET PARENTS</p>
+    </div>
+  </div>
 
-    <main id="top">
-      <section class="hero">
-        <div class="shell hero-grid">
-          <aside class="phone-shell" id="scan-ui">
-            <div class="phone-screen">
-              <div class="statusbar">
-                <span>21:00</span>
-                <div class="notch"></div>
-                <span>▮▮▮ 5G</span>
-              </div>
-              <div class="screen-inner">
-                <div class="screen-title">Scan</div>
-                <div class="segmented">
-                  <button class="is-active" type="button">Food Check</button>
-                  <button type="button">Health Check</button>
-                </div>
+  <!-- SLIDE 2: Dog Name -->
+  <div class="ob-slide" id="ob-2" style="background:var(--secondary);">
+    <div class="px-6 pt-12 pb-3 flex items-center justify-between flex-shrink-0">
+      <button onclick="obBack()" class="w-11 h-11 bg-white rounded-2xl shadow-sm flex items-center justify-center" style="border:none;cursor:pointer;">
+        <iconify-icon icon="lucide:chevron-left" class="text-2xl" style="color:var(--dark);"></iconify-icon>
+      </button>
+      <div class="flex gap-1.5"><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
+      <div class="w-11"></div>
+    </div>
+    <div class="flex-1 scroll px-6 pt-4 flex flex-col items-center pb-4">
+      <!-- Dog photo upload -->
+      <div class="relative mb-3" onclick="document.getElementById('dog-photo-input').click()" style="cursor:pointer;">
+        <!-- Empty state: dashed circle with prompt text -->
+        <div id="dog-photo-empty" class="w-40 h-40 rounded-full flex flex-col items-center justify-center gap-2"
+             style="border:3px dashed rgba(255,122,89,0.5); background:rgba(255,122,89,0.05);">
+          <iconify-icon icon="lucide:camera" style="color:var(--primary); font-size:28px;"></iconify-icon>
+          <p class="text-xs font-extrabold text-center leading-tight px-4" style="color:var(--primary);">Upload a photo<br/>of your pup</p>
+        </div>
+        <!-- Filled state: shows uploaded photo (hidden until photo chosen) -->
+        <div id="dog-photo-filled" class="w-40 h-40 rounded-full overflow-hidden hidden"
+             style="border:4px solid var(--primary); box-shadow:0 8px 24px rgba(255,122,89,0.25);">
+          <img id="dog-photo-img" src="" alt="Dog" class="w-full h-full object-cover"/>
+        </div>
+        <!-- Camera badge (shown on filled state) -->
+        <div id="dog-photo-badge" class="hidden absolute bottom-1 right-1 w-10 h-10 rounded-full flex items-center justify-center shadow-lg"
+             style="background:var(--primary); border:3px solid var(--secondary);">
+          <iconify-icon icon="lucide:camera" class="text-white" style="font-size:16px;"></iconify-icon>
+        </div>
+        <input type="file" id="dog-photo-input" accept="image/*" class="hidden" onchange="loadDogPhoto(this)"/>
+      </div>
+      <p class="text-sm font-bold mb-5" style="color:#9ca3af;">Optional — you can skip this</p>
+      <div class="text-center mb-6">
+        <h2 class="text-4xl font-black leading-tight" style="color:var(--dark);">What's your<br/>best friend called?</h2>
+        <p class="text-sm font-extrabold uppercase tracking-widest mt-2" style="color:#9ca3af;">We'll personalize everything around them</p>
+      </div>
+      <!-- Input -->
+      <div class="w-full rounded-[28px] border-4 shadow-xl mb-4" style="background:#fff; border-color:var(--primary);">
+        <input id="dog-name-input" type="text" placeholder="Type your dog's name..." autocomplete="off"
+               class="w-full px-6 py-4 text-2xl font-black outline-none bg-transparent"
+               style="color:var(--dark);" oninput="dogProfile.name = this.value.trim() || 'Buddy'"/>
+      </div>
+      <div class="flex flex-wrap justify-center gap-2 mb-5">
+        <span onclick="pickName('Buddy')" class="bg-white px-4 py-2 rounded-full border-2 font-extrabold text-sm shadow-sm cursor-pointer" style="color:var(--dark); border-color:#FF7A59;">🐾 Buddy</span>
+        <span onclick="pickName('Bella')" class="bg-white px-4 py-2 rounded-full border-2 font-extrabold text-sm shadow-sm cursor-pointer" style="color:var(--dark); border-color:#FF7A59;">🐾 Bella</span>
+        <span onclick="pickName('Luna')" class="bg-white px-4 py-2 rounded-full border-2 font-extrabold text-sm shadow-sm cursor-pointer" style="color:var(--dark); border-color:#FF7A59;">🐾 Luna</span>
+        <span onclick="pickName('Max')" class="bg-white px-4 py-2 rounded-full border-2 font-extrabold text-sm shadow-sm cursor-pointer" style="color:var(--dark); border-color:#FF7A59;">🐾 Max</span>
+        <span onclick="pickName('Charlie')" class="bg-white px-4 py-2 rounded-full border-2 font-extrabold text-sm shadow-sm cursor-pointer" style="color:var(--dark); border-color:#FF7A59;">🐾 Charlie</span>
+      </div>
+      <!-- Fun fact -->
+      <div class="w-full rounded-2xl p-4 flex items-start gap-3" style="background:rgba(112,193,179,0.1); border:2px dashed rgba(112,193,179,0.3);">
+        <iconify-icon icon="lucide:lightbulb" class="text-xl flex-shrink-0 mt-0.5" style="color:var(--accent);"></iconify-icon>
+        <div><p class="text-xs font-black uppercase tracking-widest mb-1" style="color:var(--accent);">🐾 Dog Fact</p><p class="text-sm font-bold leading-relaxed" style="color:var(--dark);">Dogs have a sense of smell up to 100,000× stronger than humans — meaning toxic foods with strong scents like onions and chocolate are extra tempting to them.</p></div>
+      </div>
+    </div>
+    <div class="px-6 pb-8 pt-3" style="background:var(--secondary);">
+      <button class="btn-primary" onclick="obNext()">THAT'S THE ONE! 🐶</button>
+    </div>
+  </div>
 
-                <label class="scan-cta" for="foodPhoto" style="display:grid;place-items:center;">
-                  Take Photo / Choose Image
-                </label>
+  <!-- SLIDE 3: Dog Stats -->
+  <div class="ob-slide" id="ob-3" style="background:#fff;">
+    <div class="px-6 pt-12 pb-3 flex items-center justify-between flex-shrink-0">
+      <button onclick="obBack()" class="w-11 h-11 bg-gray-50 rounded-2xl flex items-center justify-center" style="border:none;cursor:pointer;">
+        <iconify-icon icon="lucide:chevron-left" class="text-2xl" style="color:var(--dark);"></iconify-icon>
+      </button>
+      <div class="flex gap-1.5"><div class="ob-dot active"></div><div class="ob-dot active"></div><div class="ob-dot"></div></div>
+      <div class="w-11"></div>
+    </div>
+    <!-- Fun fact banner -->
+    <div class="mx-6 mb-3 rounded-2xl p-3 flex items-start gap-3 flex-shrink-0" style="background:#E0F5F1; border:2px solid #4DAFA0;">
+      <iconify-icon icon="lucide:lightbulb" class="text-base flex-shrink-0 mt-0.5" style="color:var(--accent);"></iconify-icon>
+      <p class="text-xs font-bold leading-relaxed" style="color:var(--dark);"><span class="font-black" style="color:var(--accent);">🐾 Fact:</span> Overfeeding by just 10% daily causes obesity within months. A 30kg dog needs ~800 kcal/day — knowing your dog's exact weight is the most important thing for meal planning.</p>
+    </div>
+    <div class="flex-1 scroll px-6 pb-4">
+      <h2 class="text-4xl font-black mb-5" style="color:var(--dark);">Every pup is<br/><span style="color:var(--primary);">different.</span></h2>
+      <!-- Weight -->
+      <div class="rounded-[28px] p-6 mb-5 text-center shadow-md" style="background:#FFF3CC; border:3px solid #FFD166;">
+        <p class="text-xs font-black uppercase tracking-widest mb-3" style="color:var(--primary);">Current Weight</p>
+        <div class="flex items-end justify-center gap-2 mb-4">
+          <span id="weight-display" class="font-black" style="font-size:64px; line-height:1; color:var(--dark);">28</span>
+          <span class="text-2xl font-black pb-2" style="color:#9ca3af;">kg</span>
+        </div>
+        <input type="range" min="1" max="100" value="28" class="weight-slider" id="weight-slider"
+               oninput="updateWeightSlider(this)"/>
+        <div class="flex justify-between mt-3 text-xs font-extrabold px-1" style="color:#9ca3af;"><span>1kg</span><span>100kg</span></div>
+      </div>
+      <!-- Breed -->
+      <div class="mb-5">
+        <p class="text-xs font-black uppercase tracking-widest mb-2 px-1" style="color:var(--primary);">Breed</p>
+        <div class="bg-white rounded-[20px] p-4 shadow-sm" style="border:2px solid #e0e0e0;">
+          <select id="breed-select" class="w-full font-extrabold text-lg outline-none bg-transparent cursor-pointer" style="color:var(--dark); border:none;" onchange="dogProfile.breed=this.value">
+            <option>Golden Retriever</option><option>Labrador Retriever</option><option>French Bulldog</option>
+            <option>German Shepherd</option><option>Beagle</option><option>Poodle</option>
+            <option>Bulldog</option><option>Rottweiler</option><option>Dachshund</option>
+            <option>Yorkshire Terrier</option><option>Chihuahua</option><option>Boxer</option>
+            <option>Husky</option><option>Shih Tzu</option><option>Mixed / Other</option>
+          </select>
+        </div>
+      </div>
+      <!-- Age -->
+      <div class="mb-5">
+        <p class="text-xs font-black uppercase tracking-widest mb-2 px-1" style="color:var(--primary);">Age</p>
+        <div class="grid grid-cols-4 gap-2">
+          <button onclick="selectAge(this,'Puppy')" class="age-btn bg-white rounded-[18px] p-3 text-center font-extrabold" style="border:2.5px solid #ccc; cursor:pointer; color:var(--dark);">🐣<br/><span class="text-xs">Puppy</span></button>
+          <button onclick="selectAge(this,'Young')" class="age-btn bg-white rounded-[18px] p-3 text-center font-extrabold" style="border:2.5px solid #ccc; cursor:pointer; color:var(--dark);">🐕<br/><span class="text-xs">Young</span></button>
+          <button onclick="selectAge(this,'Adult')" class="age-btn bg-white rounded-[18px] p-3 text-center font-extrabold age-selected" style="border:2.5px solid var(--primary); cursor:pointer; color:var(--dark);">🦮<br/><span class="text-xs">Adult</span></button>
+          <button onclick="selectAge(this,'Senior')" class="age-btn bg-white rounded-[18px] p-3 text-center font-extrabold" style="border:2.5px solid #ccc; cursor:pointer; color:var(--dark);">🐩<br/><span class="text-xs">Senior</span></button>
+        </div>
+      </div>
+      <!-- Activity -->
+      <div class="space-y-3 mb-2">
+        <p class="text-xs font-black uppercase tracking-widest px-1" style="color:var(--primary);">Energy Level</p>
+        <button onclick="selectActivity(this,'Lazy')" class="act-card">
+          <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center flex-shrink-0"><iconify-icon icon="lucide:couch" class="text-3xl text-blue-400"></iconify-icon></div>
+          <div><p class="text-base font-black" style="color:var(--dark);">Lazy</p><p class="text-sm font-bold" style="color:#9ca3af;">Short walks, mostly naps.</p></div>
+        </button>
+        <button onclick="selectActivity(this,'Active')" class="act-card selected">
+          <div class="absolute top-4 right-4" style="color:var(--primary);"><iconify-icon icon="lucide:check-circle-2" class="text-xl"></iconify-icon></div>
+          <div class="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center flex-shrink-0"><iconify-icon icon="lucide:dog" class="text-3xl" style="color:var(--primary);"></iconify-icon></div>
+          <div><p class="text-base font-black" style="color:var(--dark);">Active</p><p class="text-sm font-bold" style="color:#9ca3af;">Daily play, 1-2h exercise.</p></div>
+        </button>
+        <button onclick="selectActivity(this,'Athlete')" class="act-card">
+          <div class="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center flex-shrink-0"><iconify-icon icon="lucide:zap" class="text-3xl text-purple-400"></iconify-icon></div>
+          <div><p class="text-base font-black" style="color:var(--dark);">Pro / Athlete</p><p class="text-sm font-bold" style="color:#9ca3af;">Working dog or intense training.</p></div>
+        </button>
+      </div>
+    </div>
+    <div class="px-6 pb-8 pt-3">
+      <button class="btn-primary" onclick="obNext()">CONTINUE →</button>
+    </div>
+  </div>
 
-                <div class="scan-card">
-                  <div class="scan-label">Treat Scan</div>
-                  <h2>Frame the food to check if your dog can eat it</h2>
-                  <p>Keep the item centered and well lit. Then confirm what the app detected.</p>
+  <!-- SLIDE 4: Feature highlight -->
+  <div class="ob-slide" id="ob-4" style="background:#fff;">
+    <div class="absolute inset-0" style="background-image:radial-gradient(#FF7A59 1.5px, transparent 1.5px); background-size:20px 20px; opacity:0.04; pointer-events:none;"></div>
+    <div class="px-6 pt-12 pb-3 flex items-center justify-between relative z-10 flex-shrink-0">
+      <button onclick="obBack()" class="w-11 h-11 bg-white rounded-2xl shadow-sm flex items-center justify-center" style="border:none;cursor:pointer;">
+        <iconify-icon icon="lucide:chevron-left" class="text-2xl" style="color:var(--dark);"></iconify-icon>
+      </button>
+      <div class="flex gap-1.5"><div class="ob-dot active"></div><div class="ob-dot active"></div><div class="ob-dot active"></div></div>
+      <div class="w-11"></div>
+    </div>
+    <div class="flex-1 scroll px-6 py-4 flex flex-col items-center relative z-10">
+      <div class="text-center mb-6">
+        <span class="px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest inline-block mb-3" style="background:var(--secondary); color:var(--primary);">DID YOU KNOW?</span>
+        <h2 class="text-4xl font-black leading-tight" style="color:var(--dark);">40% of kibble brands<br/>contain <span style="color:var(--primary);" class="underline decoration-dotted">hidden fillers</span>.</h2>
+      </div>
+      <div class="relative w-full rounded-[28px] overflow-hidden border-4 border-white shadow-2xl mb-6 flex items-center justify-center" style="aspect-ratio:4/5; background:#f9fafb;">
+        <img src="https://media.screensdesign.com/gasset/2f24e989-c4dd-48ec-8554-9723bdbef1ce.png" alt="Scanner" class="absolute inset-0 w-full h-full object-cover opacity-80"/>
+        <div class="relative z-10 text-white font-black py-4 px-8 rounded-2xl shadow-xl border-4 border-white text-3xl tracking-tighter" style="background:var(--accent); transform:rotate(-8deg);">APPROVED!</div>
+      </div>
+      <div class="w-full space-y-4">
+        <div class="flex items-start gap-3"><iconify-icon icon="lucide:check-circle-2" class="text-2xl mt-0.5 flex-shrink-0" style="color:var(--accent);"></iconify-icon><p class="text-base font-bold leading-relaxed" style="color:var(--dark);">Scan any ingredient list to instantly identify harmful additives and toxic foods.</p></div>
+        <div class="flex items-start gap-3"><iconify-icon icon="lucide:check-circle-2" class="text-2xl mt-0.5 flex-shrink-0" style="color:var(--accent);"></iconify-icon><p class="text-base font-bold leading-relaxed" style="color:var(--dark);">Personalized calorie plans matched to <span id="ob-dog-name-preview">your dog</span>'s breed, weight and activity.</p></div>
+        <div class="flex items-start gap-3"><iconify-icon icon="lucide:check-circle-2" class="text-2xl mt-0.5 flex-shrink-0" style="color:var(--accent);"></iconify-icon><p class="text-base font-bold leading-relaxed" style="color:var(--dark);">Emergency checker tells you exactly what to do if something dangerous was eaten.</p></div>
+      </div>
+    </div>
+    <div class="px-6 pb-8 pt-3 bg-white border-t border-gray-100 relative z-10 flex-shrink-0">
+      <button class="btn-primary" onclick="finishOnboarding()">LET'S GO, <span id="ob-finish-name">BUDDY</span>! 🐾</button>
+    </div>
+  </div>
 
-                  <div class="preview-frame" id="previewFrame">
-                    <div class="preview-empty">Upload a snack, meal, ingredient, or package label.</div>
-                    <div class="camera-guides"></div>
-                    <div class="preview-caption">Frame the food clearly</div>
-                  </div>
-                </div>
+</div><!-- /onboarding -->
 
-                <div class="danger-card hidden" id="dangerCard">
-                  <div class="danger-icon">🍫</div>
-                  <h3>NO!</h3>
-                  <strong>This could kill your dog!</strong>
-                  <p id="dangerText">Chocolate contains theobromine which is toxic to dogs. Symptoms can include vomiting, diarrhea, rapid breathing, and seizures.</p>
-                </div>
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- MAIN APP                                                  -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="main-app">
+  <div id="tab-content">
 
-                <div class="reference-card">
-                  <h4>Quick Reference</h4>
-                  <div class="reference-grid" id="quickReference">
-                    <div class="reference-item">
-                      <div class="food-icon">🥕</div>
-                      <div class="reference-copy">
-                        <strong>Carrot</strong>
-                        <div class="state-line safe">✓ Safe</div>
-                      </div>
-                    </div>
-                    <div class="reference-item">
-                      <div class="food-icon">🍫</div>
-                      <div class="reference-copy">
-                        <strong>Chocolate</strong>
-                        <div class="state-line toxic">✕ Toxic</div>
-                      </div>
-                    </div>
-                    <div class="reference-item">
-                      <div class="food-icon">🍎</div>
-                      <div class="reference-copy">
-                        <strong>Apple</strong>
-                        <div class="state-line safe">✓ Safe</div>
-                      </div>
-                    </div>
-                    <div class="reference-item">
-                      <div class="food-icon">🍇</div>
-                      <div class="reference-copy">
-                        <strong>Grapes</strong>
-                        <div class="state-line toxic">✕ Toxic</div>
-                      </div>
-                    </div>
-                    <div class="reference-item">
-                      <div class="food-icon">🥜</div>
-                      <div class="reference-copy">
-                        <strong>Peanut Butter</strong>
-                        <div class="state-line safe">✓ Safe</div>
-                      </div>
-                    </div>
-                    <div class="reference-item">
-                      <div class="food-icon">🧅</div>
-                      <div class="reference-copy">
-                        <strong>Onion</strong>
-                        <div class="state-line toxic">✕ Toxic</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+    <!-- ── TAB: HOME ── -->
+    <div class="tab-pane active paw-bg" id="tab-home" style="background:#fff; padding-bottom:40px;">
 
-                <div class="phone-nav">
-                  <a href="#plan-ui">
-                    <span>🐾</span>
-                    <span>Learn</span>
-                  </a>
-                  <a class="active" href="#scan-ui">
-                    <span>📸</span>
-                    <span>Scan</span>
-                  </a>
-                  <a href="#history">
-                    <span>👤</span>
-                    <span>Profile</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </aside>
+      <!-- Header -->
+      <div class="px-5 pt-12 pb-3 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-extrabold uppercase tracking-widest" id="home-time-greeting" style="color:#9ca3af;">Good morning 🌤</p>
+          <h1 id="home-greeting" class="text-4xl font-black" style="color:var(--dark);">Hey, Buddy!</h1>
+        </div>
+        <button onclick="openProfile()" class="w-14 h-14 rounded-full overflow-hidden flex-shrink-0" style="border:4px solid #fff; box-shadow:0 4px 14px rgba(0,0,0,0.1); background:#f3f4f6; padding:0; cursor:pointer;">
+          <img id="home-dog-photo" src="https://media.screensdesign.com/gasset/31dabddf-f49f-4fc9-8f9f-71bd300b78db.png" class="w-full h-full object-cover"/>
+        </button>
+      </div>
 
-          <div class="desktop-content">
-            <section class="intro-card">
-              <div class="eyebrow">Visual Direction</div>
-              <h1>Scan-first, simple, bright, and instantly readable.</h1>
-              <p>
-                I matched your mockup direction much more closely here: strong green scan CTA,
-                a huge red danger answer, quick-reference safe vs toxic foods with icons, and
-                a phone-app style layout instead of a normal website dashboard. The scan flow
-                still keeps the smarter logic underneath: AI guess, user correction, ingredient
-                reasoning, history, and meal planning.
-              </p>
-              <div class="chip-row">
-                <span class="chip">Quick reference</span>
-                <span class="chip">Big yes / no states</span>
-                <span class="chip">Food icons</span>
-                <span class="chip">Mobile app feel</span>
-              </div>
-            </section>
+      <!-- Stats card -->
+      <div class="mx-5 mb-4 rounded-[24px] p-5 text-white shadow-xl relative overflow-hidden" style="background:linear-gradient(135deg, #FF6535 0%, #FF8C5A 100%);">
+        <div class="absolute -right-4 -bottom-4 opacity-10"><iconify-icon icon="lucide:heart" style="font-size:110px;"></iconify-icon></div>
+        <div class="relative z-10">
+          <div class="flex justify-between items-start mb-2">
+            <p class="text-sm font-bold opacity-80" id="home-stats-label">Nutrition tracking</p>
+            <span class="px-3 py-1 rounded-full text-xs font-black" style="background:rgba(255,255,255,0.2);">TODAY</span>
+          </div>
+          <p class="text-4xl font-black mb-1" id="home-stats-value">0 <span class="text-xl font-bold opacity-70">scans</span></p>
+          <p class="text-sm font-bold opacity-60" id="home-stats-sub">Scan your first food to get started</p>
+        </div>
+      </div>
 
-            <section class="surface">
-              <h2 class="section-title">Smart Scan</h2>
-              <p class="section-copy">
-                Upload from camera or camera roll, let PupPlate detect what it sees, then confirm or correct it before the final verdict.
-              </p>
-              <form id="scannerForm">
-                <div class="field-grid">
-                  <label>
-                    What are you checking?
-                    <select id="scanType">
-                      <option value="dog-food" selected>Dog food</option>
-                      <option value="treat">Dog treat</option>
-                      <option value="human-food">Human food item</option>
-                    </select>
-                  </label>
-                  <label>
-                    Upload photo
-                    <input id="foodPhoto" type="file" accept="image/*" />
-                  </label>
-                </div>
-
-                <div class="field-grid">
-                  <button class="button button-secondary" id="detectPhotoButton" type="button">Detect Food In Photo</button>
-                  <button class="button button-secondary" id="ocrButton" type="button">Read Package Label</button>
-                </div>
-
-                <div class="subtle" id="ocrStatus">The app will show what it detected first so the user can confirm or correct it.</div>
-
-                <label>
-                  AI guess or your correction
-                  <textarea id="confirmItems" placeholder="Example: ground beef with onions and tomatoes"></textarea>
-                </label>
-
-                <label>
-                  Label ingredients or extra notes
-                  <textarea id="ingredientText" placeholder="Example: chocolate, cocoa butter, sugar, milk"></textarea>
-                </label>
-
-                <button class="button button-primary" type="submit">Analyze Final Food</button>
-              </form>
-            </section>
-
-            <section class="result-card" id="scanResult">
-              <h2 class="section-title">Scan result will appear here</h2>
-              <p class="section-copy">The app will explain why each ingredient is good, risky, or dangerous for dogs.</p>
-            </section>
-
-            <section class="planner-card surface" id="plan-ui">
-              <h2 class="section-title">Meal Plan</h2>
-              <p class="section-copy">
-                Tell PupPlate about your dog and it will build a feeding plan with meal timing, recommended food, estimated budget, and buying links.
-              </p>
-              <form id="plannerForm">
-                <div class="field-grid">
-                  <label>
-                    Dog name
-                    <input id="dogName" type="text" placeholder="Milo" />
-                  </label>
-                  <label>
-                    Weight (lb)
-                    <input id="dogWeight" type="number" min="2" step="0.1" value="35" />
-                  </label>
-                </div>
-
-                <div class="field-grid">
-                  <label>
-                    Age stage
-                    <select id="dogAge">
-                      <option value="puppy">Puppy</option>
-                      <option value="adult" selected>Adult</option>
-                      <option value="senior">Senior</option>
-                    </select>
-                  </label>
-                  <label>
-                    Activity
-                    <select id="dogActivity">
-                      <option value="low">Low</option>
-                      <option value="normal" selected>Normal</option>
-                      <option value="high">High</option>
-                    </select>
-                  </label>
-                </div>
-
-                <div class="field-grid">
-                  <label>
-                    Goal
-                    <select id="dogGoal">
-                      <option value="maintain" selected>Maintain weight</option>
-                      <option value="lose">Lose weight</option>
-                      <option value="gain">Gain weight</option>
-                    </select>
-                  </label>
-                  <label>
-                    Sensitivity
-                    <select id="dogSensitivity">
-                      <option value="none" selected>None</option>
-                      <option value="sensitive">Sensitive stomach</option>
-                      <option value="allergy">Possible food allergy</option>
-                      <option value="weight-control">Needs weight control</option>
-                    </select>
-                  </label>
-                </div>
-
-                <div class="field-grid">
-                  <label>
-                    Budget
-                    <select id="budgetTier">
-                      <option value="budget">Budget-friendly</option>
-                      <option value="balanced" selected>Balanced</option>
-                      <option value="premium">Premium</option>
-                    </select>
-                  </label>
-                  <label>
-                    Preferred texture
-                    <select id="foodStyle">
-                      <option value="dry" selected>Dry</option>
-                      <option value="wet">Wet / moist</option>
-                      <option value="mixed">Mixed feeding</option>
-                    </select>
-                  </label>
-                </div>
-
-                <button class="button button-primary" type="submit">Build Full Meal Plan</button>
-              </form>
-            </section>
-
-            <section class="result-card" id="planResult">
-              <h2 class="section-title">Meal plan will appear here</h2>
-              <p class="section-copy">Calories, portion size, feeding schedule, monthly cost, and where to buy the recommended food will show here.</p>
-            </section>
-
-            <section class="surface" id="history">
-              <h2 class="section-title">History</h2>
-              <p class="section-copy">Saved scans and meal plans stay in the browser so you can compare foods later.</p>
-              <div class="history-grid" id="historyList">
-                <article class="history-card">
-                  <h3>No saved history yet</h3>
-                  <p>Create a scan or meal plan and it will appear here.</p>
-                </article>
-              </div>
-            </section>
+      <!-- Recent scans — directly under stats -->
+      <div class="mx-5 mb-5">
+        <p class="text-xs font-black uppercase tracking-widest mb-3" style="color:var(--primary);">RECENT SCANS</p>
+        <div id="home-scan-list">
+          <div class="text-center py-8">
+            <iconify-icon icon="lucide:scan-line" style="font-size:44px; color:#e5e7eb;"></iconify-icon>
+            <p class="text-base font-black mt-3" style="color:#9ca3af;">No scans yet</p>
+            <p class="text-sm font-bold mt-1" style="color:#d1d5db;">Tap Scan below to get started</p>
           </div>
         </div>
-      </section>
-    </main>
-
-    <footer>
-      <div class="shell footer-line">
-        <div>PupPlate scan-first app concept</div>
-        <div>© <span id="year"></span> PupPlate</div>
       </div>
-    </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
-    <script>
-      const plannerForm = document.getElementById("plannerForm");
-      const scannerForm = document.getElementById("scannerForm");
-      const foodPhoto = document.getElementById("foodPhoto");
-      const previewFrame = document.getElementById("previewFrame");
-      const detectPhotoButton = document.getElementById("detectPhotoButton");
-      const ocrButton = document.getElementById("ocrButton");
-      const ocrStatus = document.getElementById("ocrStatus");
-      const confirmItems = document.getElementById("confirmItems");
-      const ingredientText = document.getElementById("ingredientText");
-      const scanResult = document.getElementById("scanResult");
-      const planResult = document.getElementById("planResult");
-      const historyList = document.getElementById("historyList");
-      const dangerCard = document.getElementById("dangerCard");
-      const dangerText = document.getElementById("dangerText");
+      <!-- SMART INSIGHT CARD — bold teal border, stands out -->
+      <div id="insight-card" onclick="openInsightModal()" class="mx-5 mb-4 rounded-[20px] p-4 flex items-start gap-3 cursor-pointer active:scale-[0.98] transition-transform" style="background:#EAF7F5; border:3px solid var(--accent); box-shadow:0 4px 14px rgba(112,193,179,0.25);">
+        <div class="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:var(--accent);">
+          <iconify-icon icon="lucide:lightbulb" style="color:#fff; font-size:20px;"></iconify-icon>
+        </div>
+        <div class="flex-1">
+          <p class="text-xs font-black uppercase tracking-widest mb-1" style="color:var(--accent);">QUICK INSIGHT</p>
+          <p id="insight-text" class="text-sm font-bold leading-relaxed" style="color:var(--dark);">Loading today's tip...</p>
+        </div>
+        <iconify-icon icon="lucide:chevron-right" style="color:var(--accent); font-size:18px; flex-shrink:0; margin-top:4px;"></iconify-icon>
+      </div>
 
-      const historyKey = "pupplate-visual-history";
-      const profileKey = "pupplate-visual-profile";
+      <!-- DAILY STREAK -->
+      <div id="streak-card" class="mx-5 mb-4 rounded-[20px] p-4 flex items-center gap-3" style="background:#FFF3CC; border:3px solid rgba(255,100,53,0.55);">
+        <div id="streak-fire" class="text-3xl" style="line-height:1;">🔥</div>
+        <div class="flex-1">
+          <p class="text-xs font-black uppercase tracking-widest mb-0.5" style="color:var(--primary);">DAILY STREAK</p>
+          <p id="streak-text" class="text-base font-black" style="color:var(--dark);">0 day streak</p>
+          <p id="streak-sub" class="text-xs font-bold" style="color:#9ca3af;">Scan food today to start your streak!</p>
+        </div>
+        <div id="streak-badge" class="px-3 py-1.5 rounded-full text-xs font-black text-white" style="background:var(--primary); display:none;"></div>
+      </div>
 
-      let mobileNetModel = null;
-      let cocoModel = null;
+      <!-- QUICK ACTION PILLS (horizontal scroll) -->
+      <div class="mb-4">
+        <div style="overflow-x:auto; -webkit-overflow-scrolling:touch; padding:0 20px 4px; display:flex; gap:10px; scrollbar-width:none; -ms-overflow-style:none;">
+          <button class="qa-pill" onclick="switchTab('scan')" style="background:var(--secondary); color:var(--primary);">
+            <iconify-icon icon="lucide:camera" style="font-size:16px;"></iconify-icon> Scan now →
+          </button>
+          <button class="qa-pill" onclick="prefillScan('peanut butter')" style="background:#fffbeb; color:#92400e;">
+            <iconify-icon icon="lucide:help-circle" style="font-size:16px;"></iconify-icon> Peanut butter safe?
+          </button>
+          <button class="qa-pill" onclick="switchTab('meal')" style="background:#f0fdf4; color:#166534;">
+            <iconify-icon icon="lucide:utensils" style="font-size:16px;"></iconify-icon> Today's meal
+          </button>
+          <button class="qa-pill" onclick="prefillScan('grapes, raisins')" style="background:#fef2f2; color:#991b1b;">
+            <iconify-icon icon="lucide:shield-check" style="font-size:16px;"></iconify-icon> Grapes safe?
+          </button>
+          <button class="qa-pill" onclick="prefillScan('chocolate, cocoa')" style="background:#fdf4ff; color:#7e22ce;">
+            <iconify-icon icon="lucide:alert-triangle" style="font-size:16px;"></iconify-icon> Chocolate?
+          </button>
+        </div>
+      </div>
 
-      const productCatalog = [
-        {
-          name: "Purina ONE Natural Adult Chicken & Rice Formula",
-          brand: "Purina ONE",
-          stage: ["adult"],
-          goal: ["maintain", "gain"],
-          sensitivity: ["none"],
-          activity: ["low", "normal"],
-          budget: "budget",
-          texture: ["dry", "mixed"],
-          kcalPerCup: 383,
-          bagLb: 31.1,
-          bagPrice: 48.98,
-          buyAt: "Chewy",
-          link: "https://www.chewy.com/purina-one-natural-smartblend-chicken/dp/42212",
-          reasons: ["budget-friendly", "real chicken first", "solid adult maintenance option"]
-        },
-        {
-          name: "Purina Pro Plan Adult Sensitive Skin & Stomach Salmon & Rice",
-          brand: "Purina Pro Plan",
-          stage: ["adult"],
-          goal: ["maintain", "gain"],
-          sensitivity: ["sensitive", "allergy"],
-          activity: ["low", "normal"],
-          budget: "balanced",
-          texture: ["dry", "mixed"],
-          kcalPerCup: 449,
-          bagLb: 16,
-          bagPrice: 54.48,
-          buyAt: "Chewy",
-          link: "https://www.chewy.com/purina-pro-plan-adult-sensitive-skin/dp/129070",
-          reasons: ["salmon first", "good for sensitive stomachs", "very practical balanced pick"]
-        },
-        {
-          name: "Blue Buffalo Life Protection Puppy Chicken & Brown Rice",
-          brand: "Blue Buffalo",
-          stage: ["puppy"],
-          goal: ["maintain", "gain"],
-          sensitivity: ["none", "sensitive"],
-          activity: ["low", "normal"],
-          budget: "balanced",
-          texture: ["dry", "mixed"],
-          kcalPerCup: 401,
-          bagLb: 30,
-          bagPrice: 72.98,
-          buyAt: "Chewy",
-          link: "https://www.chewy.com/blue-buffalo-life-protection-formula/dp/32079",
-          reasons: ["puppy growth formula", "good daily structure", "balanced ingredient profile"]
-        },
-        {
-          name: "Blue Buffalo Healthy Weight Adult Chicken & Brown Rice",
-          brand: "Blue Buffalo",
-          stage: ["adult"],
-          goal: ["lose", "maintain"],
-          sensitivity: ["weight-control"],
-          activity: ["low", "normal"],
-          budget: "balanced",
-          texture: ["dry", "mixed"],
-          kcalPerCup: 322,
-          bagLb: 30,
-          bagPrice: 74.98,
-          buyAt: "Chewy",
-          link: "https://www.chewy.com/blue-buffalo-life-protection-formula/dp/32019",
-          reasons: ["lower calorie density", "good for controlled portions", "better for weight reduction"]
-        },
-        {
-          name: "Purina Pro Plan Sensitive Skin & Stomach 7+ Salmon & Rice",
-          brand: "Purina Pro Plan",
-          stage: ["senior"],
-          goal: ["maintain", "lose"],
-          sensitivity: ["sensitive", "allergy", "none"],
-          activity: ["low", "normal"],
-          budget: "balanced",
-          texture: ["dry", "mixed"],
-          kcalPerCup: 429,
-          bagLb: 24,
-          bagPrice: 77.48,
-          buyAt: "Chewy",
-          link: "https://www.chewy.com/purina-pro-plan-sensitive-skin/dp/379216",
-          reasons: ["senior-friendly formula", "salmon-based", "good for older dogs with stomach or skin issues"]
-        }
+      <!-- Main action buttons -->
+      <div class="grid grid-cols-2 gap-3 mx-5 mb-4">
+        <button onclick="switchTab('scan')" class="rounded-[20px] p-5 text-left border-2 shadow-sm flex flex-col gap-3 active:scale-95 transition-transform" style="background:#FFF3CC; border:2.5px solid #FF6535; cursor:pointer;">
+          <iconify-icon icon="lucide:scan-line" class="text-4xl" style="color:var(--primary);"></iconify-icon>
+          <div><p class="text-lg font-black" style="color:var(--dark);">Scan Food</p><p class="text-sm font-bold" style="color:#9ca3af;">Check safety now</p></div>
+        </button>
+        <button onclick="switchTab('meal')" class="rounded-[20px] p-5 text-left border-2 shadow-sm flex flex-col gap-3 active:scale-95 transition-transform" style="background:#D9F2EE; border:2.5px solid #4DAFA0; cursor:pointer;">
+          <iconify-icon icon="lucide:utensils" class="text-4xl" style="color:var(--accent);"></iconify-icon>
+          <div><p class="text-lg font-black" style="color:var(--dark);">Meal Plan</p><p class="text-sm font-bold" style="color:#9ca3af;">Build today's meals</p></div>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ── TAB: SCAN ── -->
+    <div class="tab-pane" id="tab-scan" style="background:#fff; padding-bottom:8px;">
+      <div class="px-5 pt-12 pb-3 flex items-center justify-between flex-shrink-0">
+        <h2 class="text-2xl font-black" style="color:var(--dark);">AI Food Scanner</h2>
+        <div class="w-11"></div>
+      </div>
+      <!-- Package tip -->
+      <div class="mx-5 mb-3 flex items-center gap-2 px-4 py-2.5 rounded-2xl" style="background:rgba(255,122,89,0.08);">
+        <iconify-icon icon="lucide:package" style="color:var(--primary); flex-shrink:0;"></iconify-icon>
+        <span class="text-sm font-bold" style="color:var(--primary);">📦 Best on <strong>packaged labels</strong> — point at the ingredient list.</span>
+      </div>
+      <!-- Upload zone -->
+      <div id="upload-zone" class="upload-zone mx-5 mb-3 flex flex-col items-center justify-center text-center relative" style="min-height:180px;">
+        <input type="file" id="file-input" accept="image/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer z-10"/>
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-3" style="background:rgba(255,122,89,0.1);">
+          <iconify-icon icon="lucide:camera" class="text-3xl" style="color:var(--primary);"></iconify-icon>
+        </div>
+        <p class="text-lg font-black" style="color:#9ca3af;">Tap to take a photo</p>
+        <p class="text-sm font-bold mt-1" style="color:#d1d5db;">or upload from camera roll</p>
+        <div class="mt-3 px-5 py-2.5 rounded-full text-sm font-black text-white" style="background:var(--primary);">📷 OPEN CAMERA</div>
+      </div>
+      <!-- Image preview -->
+      <div id="image-preview-wrap" class="hidden mx-5 mb-3 relative rounded-[20px] overflow-hidden shadow-xl" style="border:3px solid #fff;">
+        <img id="image-preview" src="" class="w-full object-cover" style="max-height:240px; display:block;"/>
+        <div id="scan-overlay" class="hidden absolute inset-0" style="background:rgba(0,0,0,0.12);">
+          <div class="scan-line"></div>
+          <div class="scan-corner sc-tl"></div><div class="scan-corner sc-tr"></div>
+          <div class="scan-corner sc-bl"></div><div class="scan-corner sc-br"></div>
+        </div>
+        <div class="absolute top-3 left-3">
+          <label for="file-input-change" class="px-3 py-1.5 rounded-full text-xs font-black text-white flex items-center gap-1 cursor-pointer" style="background:rgba(0,0,0,0.5);">
+            <iconify-icon icon="lucide:refresh-cw" class="text-sm"></iconify-icon> Change
+          </label>
+          <input type="file" id="file-input-change" accept="image/*" class="hidden"/>
+        </div>
+        <button onclick="clearScan()" class="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center text-white" style="background:rgba(0,0,0,0.5); border:none; cursor:pointer;">
+          <iconify-icon icon="lucide:x"></iconify-icon>
+        </button>
+      </div>
+      <!-- Progress -->
+      <div id="scan-progress-section" class="hidden mx-5 mb-3">
+        <div class="flex items-center justify-between mb-1.5">
+          <p class="text-sm font-black" style="color:var(--primary);">Analyzing...</p>
+          <p id="scan-pct" class="text-sm font-black" style="color:var(--primary);">0%</p>
+        </div>
+        <div class="prog-wrap"><div id="scan-prog-fill" class="prog-fill"></div></div>
+        <p id="scan-status" class="text-xs font-bold mt-1.5" style="color:#9ca3af;">Detecting ingredients...</p>
+      </div>
+      <!-- Ingredients add box -->
+      <div class="mx-5 mb-3 rounded-[20px] border-2 p-4" style="background:#FFF3CC; border-color:rgba(255,100,53,0.5);">
+        <div class="flex items-center gap-2 mb-2">
+          <iconify-icon icon="lucide:plus-circle" class="text-xl flex-shrink-0" style="color:var(--primary);"></iconify-icon>
+          <p class="text-base font-black" style="color:var(--dark);">Add ingredients manually</p>
+        </div>
+        <p class="text-xs font-bold mb-2" style="color:#9ca3af;">Type anything the camera might miss, or skip the photo entirely:</p>
+        <textarea id="manual-ingredients" rows="2" placeholder="e.g. ground beef, onions, garlic, rice, apple..."
+                  class="w-full rounded-2xl px-4 py-3 text-base font-bold outline-none resize-none"
+                  style="background:#fff; border:2px solid rgba(255,122,89,0.2); color:var(--dark);"
+                  onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='rgba(255,122,89,0.2)'"></textarea>
+      </div>
+      <!-- Result area -->
+      <div id="scan-result" class="hidden mx-5 mb-3 fade-up"></div>
+      <!-- Analyze button -->
+      <div class="mx-5 mb-4">
+        <button onclick="analyzeFood()" id="analyze-btn" class="w-full py-5 rounded-[24px] font-black text-lg text-white flex items-center justify-center gap-3" style="background:var(--primary); border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark);">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="1" y="2" width="24" height="19" rx="4" stroke="white" stroke-width="2" fill="none"/><circle cx="13" cy="11.5" r="4.5" stroke="white" stroke-width="2" fill="none"/><circle cx="13" cy="11.5" r="1.8" fill="white"/><rect x="9" y="0.5" width="8" height="3" rx="1.5" fill="white"/><circle cx="20.5" cy="5.5" r="1.5" fill="white"/></svg>
+          SCAN THIS FOOD
+        </button>
+      </div>
+    </div>
+
+    <!-- ── TAB: MEAL PLAN ── -->
+    <!-- ── TAB: MEAL PLAN — tier picker (hidden once plan is set) ── -->
+    <div class="tab-pane" id="tab-meal" style="background:#fff; padding-bottom:8px;">
+      <!-- Tier picker — hidden after first generation -->
+      <div id="meal-tier-picker">
+        <div class="px-5 pt-12 pb-3 flex items-center justify-between flex-shrink-0">
+          <div>
+            <h2 class="text-2xl font-black" style="color:var(--dark);">Meal Plans</h2>
+            <p class="text-xs font-extrabold uppercase tracking-widest" style="color:#9ca3af;">CHOOSE A TIER</p>
+          </div>
+          <div class="w-11"></div>
+        </div>
+        <div class="mx-5 mb-4 rounded-[22px] p-4 border-2" style="background:#FFF3CC; border-color:rgba(255,100,53,0.4);">
+          <p class="text-base font-black mb-1" style="color:var(--dark);">Pick a tier for <span id="meal-dog-name">your dog</span></p>
+          <p class="text-sm font-bold" style="color:#9ca3af;">AI builds a plan tailored to their breed, weight, age and activity.</p>
+        </div>
+        <div class="mx-5">
+          <div class="tier-card selected" id="tier-premium" onclick="selectTier('premium')">
+            <div class="flex items-start justify-between mb-2">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl" style="background:#fef3c7;">⭐</div>
+                <div><p class="text-lg font-black" style="color:var(--dark);">Premium</p><p class="text-sm font-extrabold" style="color:var(--primary);">~$180/mo</p></div>
+              </div>
+              <div id="tc-premium" class="w-6 h-6 rounded-full border-2 flex items-center justify-center" style="border-color:var(--primary); background:var(--primary);"><iconify-icon icon="lucide:check" class="text-white text-xs"></iconify-icon></div>
+            </div>
+            <p class="text-sm font-bold leading-relaxed" style="color:#6b7280;">Organic whole foods, vet-precision portions, superfood ingredients. Zero fillers.</p>
+            <div class="flex gap-2 mt-2 flex-wrap"><span class="text-xs font-black px-2 py-0.5 rounded-full text-white" style="background:#f59e0b;">ORGANIC</span><span class="text-xs font-black px-2 py-0.5 rounded-full text-white" style="background:var(--accent);">VET-GRADE</span></div>
+          </div>
+          <div class="tier-card" id="tier-basic" onclick="selectTier('basic')">
+            <div class="flex items-start justify-between mb-2">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl" style="background:rgba(112,193,179,0.15);">🍖</div>
+                <div><p class="text-lg font-black" style="color:var(--dark);">Basic</p><p class="text-sm font-extrabold" style="color:var(--accent);">~$80/mo</p></div>
+              </div>
+              <div id="tc-basic" class="w-6 h-6 rounded-full border-2" style="border-color:#aaa; background:#fff;"></div>
+            </div>
+            <p class="text-sm font-bold leading-relaxed" style="color:#6b7280;">Quality grocery-store ingredients. Balanced, nutritious, easy to make.</p>
+            <div class="flex gap-2 mt-2 flex-wrap"><span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:#f0fdf4; color:#166534;">BALANCED</span><span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:#eff6ff; color:#1e40af;">EASY PREP</span></div>
+          </div>
+          <div class="tier-card" id="tier-budget" onclick="selectTier('budget')">
+            <div class="flex items-start justify-between mb-2">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl" style="background:#f3f4f6;">💰</div>
+                <div><p class="text-lg font-black" style="color:var(--dark);">Budget</p><p class="text-sm font-extrabold" style="color:#6b7280;">~$30/mo</p></div>
+              </div>
+              <div id="tc-budget" class="w-6 h-6 rounded-full border-2" style="border-color:#aaa; background:#fff;"></div>
+            </div>
+            <p class="text-sm font-bold leading-relaxed" style="color:#6b7280;">Bulk kibble base with affordable proteins. Cost-optimized, still complete.</p>
+            <div class="flex gap-2 mt-2 flex-wrap"><span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:#fef9c3; color:#854d0e;">AFFORDABLE</span></div>
+          </div>
+          <button onclick="generateMealPlan()" id="gen-btn" class="btn-primary mb-3">✨ GENERATE MY MEAL PLAN</button>
+          <div id="meal-loading" class="hidden" style="padding:20px 0;">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-sm font-black" style="color:var(--primary);" id="meal-prog-label">Building your plan...</p>
+              <p class="text-sm font-black" style="color:var(--primary);" id="meal-prog-pct">0%</p>
+            </div>
+            <div style="height:10px;background:#f3f4f6;border-radius:99px;overflow:hidden;">
+              <div id="meal-prog-fill" style="height:100%;border-radius:99px;background:linear-gradient(90deg,var(--primary),#FF9F85);transition:width 0.15s linear;width:0%;"></div>
+            </div>
+            <p id="meal-prog-status" class="text-xs font-bold mt-2" style="color:#9ca3af;">Calculating calorie needs...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-content -->
+
+  <!-- ── TAB BAR ── -->
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tbtn-home" onclick="switchTab('home')">
+      <iconify-icon icon="lucide:home" style="font-size:26px;"></iconify-icon>
+      <span class="tab-label">Home</span>
+    </button>
+    <button class="tab-btn" id="tbtn-scan" onclick="switchTab('scan')">
+      <iconify-icon icon="lucide:scan-line" style="font-size:26px;"></iconify-icon>
+      <span class="tab-label">Scan</span>
+    </button>
+    <button class="tab-btn" id="tbtn-meal" onclick="switchTab('meal')">
+      <iconify-icon icon="lucide:utensils" style="font-size:26px;"></iconify-icon>
+      <span class="tab-label">Meal Plan</span>
+    </button>
+  </div>
+</div><!-- /main-app -->
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- PROFILE SHEET (slides over main app)                     -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="profile-sheet" class="hidden-sheet paw-bg" style="background:var(--secondary); display:flex; flex-direction:column;">
+
+  <!-- Fixed header with back button — always visible -->
+  <div class="px-5 flex-shrink-0" style="padding-top:52px; padding-bottom:16px; display:flex; align-items:center; justify-content:space-between;">
+    <button onclick="closeProfile()" style="display:flex; align-items:center; gap:8px; background:none; border:none; cursor:pointer; padding:0;">
+      <div class="w-11 h-11 bg-white rounded-2xl shadow-sm flex items-center justify-center flex-shrink-0">
+        <iconify-icon icon="lucide:chevron-left" class="text-2xl" style="color:var(--dark);"></iconify-icon>
+      </div>
+      <span class="text-base font-extrabold" style="color:var(--dark);">Back</span>
+    </button>
+    <h2 class="text-xl font-black" style="color:var(--dark);">Profile</h2>
+    <div class="w-20"></div>
+  </div>
+
+  <!-- Scrollable content -->
+  <div style="flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding-bottom:40px;">
+
+    <!-- Dog photo + info -->
+    <div class="flex flex-col items-center px-5 pb-5">
+      <!-- Photo ring with upload button -->
+      <div class="relative mb-4">
+        <div class="w-32 h-32 rounded-full overflow-hidden" style="border:6px solid #fff; box-shadow:0 8px 28px rgba(0,0,0,0.12); cursor:pointer;" onclick="document.getElementById('profile-photo-input').click()">
+          <img id="profile-photo" src="https://media.screensdesign.com/gasset/31dabddf-f49f-4fc9-8f9f-71bd300b78db.png" class="w-full h-full object-cover"/>
+        </div>
+        <!-- Camera badge -->
+        <button onclick="document.getElementById('profile-photo-input').click()" style="position:absolute; bottom:2px; right:2px; width:36px; height:36px; border-radius:50%; background:var(--primary); border:3px solid var(--secondary); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 8px rgba(255,122,89,0.4);">
+          <iconify-icon icon="lucide:camera" style="color:#fff; font-size:16px;"></iconify-icon>
+        </button>
+        <input type="file" id="profile-photo-input" accept="image/*" class="hidden" onchange="uploadDogPhoto(this)"/>
+      </div>
+      <p class="text-xs font-bold mb-3" style="color:#9ca3af;">Tap photo to change</p>
+
+      <h2 id="profile-name" class="text-3xl font-black" style="color:var(--dark);">Buddy</h2>
+      <p id="profile-details" class="text-base font-bold mt-1" style="color:#9ca3af;">Golden Retriever • 28kg • Active</p>
+
+      <div class="flex gap-6 mt-5">
+        <div class="text-center"><p id="p-scan-count" class="text-3xl font-black" style="color:var(--dark);">0</p><p class="text-xs font-black uppercase tracking-wide" style="color:#9ca3af;">Scans</p></div>
+        <div class="w-px bg-gray-200"></div>
+        <div class="text-center"><p id="p-streak-count" class="text-3xl font-black" style="color:var(--dark);">0</p><p class="text-xs font-black uppercase tracking-wide" style="color:#9ca3af;">Streak 🔥</p></div>
+      </div>
+    </div>
+
+    <!-- Scan History -->
+    <div class="px-5">
+      <p class="text-xs font-black uppercase tracking-widest mb-3" style="color:var(--primary);">SCAN HISTORY</p>
+      <div id="profile-history"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- FEEDING SCHEDULE SCREEN                                  -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="screen-feeding" class="hidden-feed" style="background:linear-gradient(160deg, #1a1f3a 0%, #2d3357 50%, #3d2a4a 100%);">
+  <!-- Ambient glows (fixed so they don't scroll) -->
+  <div style="position:absolute; top:-80px; right:-80px; width:300px; height:300px; border-radius:50%; background:radial-gradient(circle, rgba(112,193,179,0.08) 0%, transparent 70%); pointer-events:none; z-index:0;"></div>
+  <div style="position:absolute; bottom:120px; left:-50px; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle, rgba(255,122,89,0.06) 0%, transparent 70%); pointer-events:none; z-index:0;"></div>
+  <!-- Stars (night only, toggled by JS) -->
+  <div id="feed-stars" style="position:absolute; inset:0; pointer-events:none; z-index:0;"></div>
+  <!-- Scrollable content -->
+  <div id="feed-scroll-area" style="position:relative; z-index:5;">
+    <div id="feeding-content"></div>
+  </div>
+  <!-- Tab bar OUTSIDE scroll area = always fixed at bottom -->
+  <div id="feed-tabbar">
+    <button class="feed-tab-btn" onclick="leaveFeedingTo('home')">
+      <iconify-icon icon="lucide:home"></iconify-icon>
+      <span>Home</span>
+    </button>
+    <button class="feed-tab-btn" onclick="leaveFeedingTo('scan')">
+      <iconify-icon icon="lucide:scan-line"></iconify-icon>
+      <span>Scan</span>
+    </button>
+    <button class="feed-tab-btn active-feed">
+      <iconify-icon icon="lucide:utensils"></iconify-icon>
+      <span>Meal Plan</span>
+    </button>
+  </div>
+</div>
+
+<!-- AI Diet Modal -->
+<div id="ai-diet-modal" class="modal-overlay" onclick="closeAIModal()">
+  <div class="modal-sheet" onclick="event.stopPropagation()" style="max-height:88vh;overflow-y:auto;">
+    <!-- Input view -->
+    <div id="ai-input-view">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <button onclick="closeAIModal()" style="width:36px;height:36px;border-radius:50%;background:#f3f4f6;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <iconify-icon icon="lucide:arrow-left" style="color:var(--dark);font-size:18px;"></iconify-icon>
+        </button>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;border-radius:12px;background:rgba(255,122,89,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <iconify-icon icon="lucide:sparkles" style="color:var(--primary);font-size:18px;"></iconify-icon>
+          </div>
+          <div><p style="font-size:17px;font-weight:900;color:var(--dark);margin:0;">AI Diet Advisor</p><p style="font-size:12px;font-weight:600;color:#9ca3af;margin:2px 0 0;">Describe a concern — AI adjusts the diet</p></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <span onclick="document.getElementById('ai-diet-input').value='My dog is tired all the time and won't run'" style="background:var(--secondary);padding:5px 11px;border-radius:99px;font-size:12px;font-weight:700;color:var(--dark);cursor:pointer;border:1px solid rgba(255,122,89,0.2);">"Always tired"</span>
+        <span onclick="document.getElementById('ai-diet-input').value='Dull coat, not shiny'" style="background:var(--secondary);padding:5px 11px;border-radius:99px;font-size:12px;font-weight:700;color:var(--dark);cursor:pointer;border:1px solid rgba(255,122,89,0.2);">"Dull coat"</span>
+        <span onclick="document.getElementById('ai-diet-input').value='Loose stools recently'" style="background:var(--secondary);padding:5px 11px;border-radius:99px;font-size:12px;font-weight:700;color:var(--dark);cursor:pointer;border:1px solid rgba(255,122,89,0.2);">"Loose stools"</span>
+        <span onclick="document.getElementById('ai-diet-input').value='Low energy, doesn't want to play'" style="background:var(--secondary);padding:5px 11px;border-radius:99px;font-size:12px;font-weight:700;color:var(--dark);cursor:pointer;border:1px solid rgba(255,122,89,0.2);">"Low energy"</span>
+        <span onclick="document.getElementById('ai-diet-input').value='Itchy skin or allergies'" style="background:var(--secondary);padding:5px 11px;border-radius:99px;font-size:12px;font-weight:700;color:var(--dark);cursor:pointer;border:1px solid rgba(255,122,89,0.2);">"Itchy skin"</span>
+      </div>
+      <textarea id="ai-diet-input" rows="3" placeholder="e.g. My dog seems tired all the time and doesn't want to run around..." style="width:100%;border:2px solid #f0f0f0;border-radius:18px;padding:14px;font-size:14px;font-weight:600;outline:none;resize:none;font-family:inherit;box-sizing:border-box;color:var(--dark);" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='#f0f0f0'"></textarea>
+      <!-- Progress bar (hidden until analyzing) -->
+      <div id="ai-prog-wrap" style="display:none;margin-top:14px;">
+        <div class="flex items-center justify-between mb-2">
+          <p style="font-size:13px;font-weight:800;color:var(--primary);margin:0;" id="ai-prog-label">Analyzing your concern...</p>
+          <p style="font-size:13px;font-weight:800;color:var(--primary);margin:0;" id="ai-prog-pct">0%</p>
+        </div>
+        <div style="height:8px;background:#f3f4f6;border-radius:99px;overflow:hidden;">
+          <div id="ai-prog-fill" style="height:100%;border-radius:99px;background:linear-gradient(90deg,var(--primary),#FF9F85);transition:width 0.15s linear;width:0%;"></div>
+        </div>
+        <p id="ai-prog-status" style="font-size:11px;font-weight:600;color:#9ca3af;margin-top:6px;">Reading current diet plan...</p>
+      </div>
+      <button onclick="runAIDietAdvisor()" id="ai-diet-btn" style="width:100%;margin-top:14px;padding:16px;border-radius:20px;background:var(--primary);color:#fff;font-weight:900;font-size:15px;border:none;cursor:pointer;box-shadow:0 5px 0 var(--primary-dark);">✨ ADJUST MY DIET PLAN</button>
+    </div>
+    <!-- Result view (hidden until done) -->
+    <div id="ai-result-view" style="display:none;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+        <button onclick="closeAIModal()" style="width:36px;height:36px;border-radius:50%;background:#f3f4f6;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <iconify-icon icon="lucide:arrow-left" style="color:var(--dark);font-size:18px;"></iconify-icon>
+        </button>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;border-radius:12px;background:rgba(112,193,179,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <iconify-icon icon="lucide:sparkles" style="color:var(--accent);font-size:18px;"></iconify-icon>
+          </div>
+          <div><p style="font-size:17px;font-weight:900;color:var(--dark);margin:0;">Diet Adjustments Ready</p><p style="font-size:12px;font-weight:600;color:#9ca3af;margin:2px 0 0;">Based on your concern</p></div>
+        </div>
+      </div>
+      <div id="ai-diet-result"></div>
+      <!-- Accept / Reject buttons -->
+      <div style="display:flex;gap:10px;margin-top:18px;">
+        <button onclick="rejectAIDiet()" style="flex:1;padding:15px;border-radius:20px;background:#f3f4f6;color:var(--dark);font-weight:900;font-size:14px;border:none;cursor:pointer;">✕ Don't Apply</button>
+        <button onclick="acceptAIDiet()" style="flex:2;padding:15px;border-radius:20px;background:var(--primary);color:#fff;font-weight:900;font-size:14px;border:none;cursor:pointer;box-shadow:0 4px 0 var(--primary-dark);">✓ Apply to My Diet</button>
+      </div>
+      <button onclick="backToAIInput()" style="width:100%;margin-top:10px;padding:12px;border-radius:18px;background:transparent;color:#9ca3af;font-weight:700;font-size:13px;border:2px solid #f0f0f0;cursor:pointer;">← Try a different concern</button>
+    </div>
+  </div>
+</div>
+
+<!-- Meal Times Modal -->
+<div id="meal-times-modal" class="modal-overlay" onclick="closeMealTimesModal()">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <button onclick="closeMealTimesModal()" style="width:36px;height:36px;border-radius:50%;background:#f3f4f6;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <iconify-icon icon="lucide:arrow-left" style="color:var(--dark);font-size:18px;"></iconify-icon>
+      </button>
+      <p style="font-size:18px;font-weight:900;color:var(--dark);margin:0;">Change Meal Times</p>
+    </div>
+    <div style="margin-bottom:14px;">
+      <p style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--primary);margin:0 0 7px;">Breakfast Time</p>
+      <input type="time" id="bt-input" value="07:30" style="width:100%;padding:13px;border:2px solid #f0f0f0;border-radius:16px;font-size:16px;font-weight:700;outline:none;font-family:inherit;box-sizing:border-box;color:var(--dark);" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='#f0f0f0'"/>
+    </div>
+    <div style="margin-bottom:18px;">
+      <p style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--primary);margin:0 0 7px;">Dinner Time</p>
+      <input type="time" id="dt-input" value="18:30" style="width:100%;padding:13px;border:2px solid #f0f0f0;border-radius:16px;font-size:16px;font-weight:700;outline:none;font-family:inherit;box-sizing:border-box;color:var(--dark);" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='#f0f0f0'"/>
+    </div>
+    <button onclick="applyMealTimes()" style="width:100%;padding:16px;border-radius:20px;background:var(--dark);color:#fff;font-weight:900;font-size:15px;border:none;cursor:pointer;box-shadow:0 5px 0 #1a1e2e;">SAVE TIMES</button>
+  </div>
+</div>
+
+<!-- INSIGHT MODAL -->
+<div id="insight-modal" class="hidden-modal">
+  <div id="insight-modal-sheet">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="width:40px;height:40px;border-radius:14px;background:rgba(112,193,179,0.15);display:flex;align-items:center;justify-content:center;">
+          <iconify-icon icon="lucide:lightbulb" style="color:var(--accent);font-size:20px;"></iconify-icon>
+        </div>
+        <p style="font-size:17px;font-weight:900;color:var(--dark);margin:0;">Quick Insight</p>
+      </div>
+      <button onclick="closeInsightModal()" style="width:34px;height:34px;border-radius:50%;background:#f3f4f6;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+        <iconify-icon icon="lucide:x" style="color:var(--dark);font-size:16px;"></iconify-icon>
+      </button>
+    </div>
+    <div id="insight-modal-content"></div>
+    <button onclick="closeInsightModal()" style="width:100%;margin-top:20px;padding:16px;border-radius:20px;background:var(--primary);color:#fff;font-weight:900;font-size:15px;border:none;cursor:pointer;box-shadow:0 5px 0 var(--primary-dark);">GOT IT 🐾</button>
+  </div>
+</div>
+
+</div><!-- /phone -->
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+const dogProfile = { name:'Buddy', breed:'Golden Retriever', weight:28, age:'Adult', activity:'Active', photo:null };
+let scanHistory = [];
+let selectedTier = 'premium';
+let savedMealPlan = null;
+let currentObSlide = 1;
+let scannedImageBase64 = null;
+let scannedImageType = null;
+let feedTimerInterval = null;
+let scanProgInterval = null;
+
+// ═══════════════════════════════════════════════════════════
+// ONBOARDING
+// ═══════════════════════════════════════════════════════════
+function obNext() {
+  if (currentObSlide === 4) { finishOnboarding(); return; }
+  const cur = document.getElementById('ob-' + currentObSlide);
+  cur.classList.add('exiting');
+  setTimeout(() => { cur.classList.remove('active','exiting'); }, 340);
+  currentObSlide++;
+  const next = document.getElementById('ob-' + currentObSlide);
+  next.classList.add('active');
+  // Update dog name preview on slide 4
+  if (currentObSlide === 4) {
+    const n = dogProfile.name || 'Buddy';
+    const el = document.getElementById('ob-dog-name-preview');
+    const el2 = document.getElementById('ob-finish-name');
+    if (el) el.textContent = n;
+    if (el2) el2.textContent = n.toUpperCase();
+  }
+}
+function obBack() {
+  if (currentObSlide <= 1) return;
+  const cur = document.getElementById('ob-' + currentObSlide);
+  cur.classList.remove('active');
+  currentObSlide--;
+  const prev = document.getElementById('ob-' + currentObSlide);
+  prev.classList.add('active');
+}
+function pickName(name) {
+  document.getElementById('dog-name-input').value = name;
+  dogProfile.name = name;
+}
+function loadDogPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const src = ev.target.result;
+    dogProfile.photo = src;
+    // Show filled state on onboarding
+    const empty = document.getElementById('dog-photo-empty');
+    const filled = document.getElementById('dog-photo-filled');
+    const badge = document.getElementById('dog-photo-badge');
+    const img = document.getElementById('dog-photo-img');
+    if (img) img.src = src;
+    if (empty) empty.classList.add('hidden');
+    if (filled) filled.classList.remove('hidden');
+    if (badge) badge.classList.remove('hidden');
+    // Update other instances
+    const homePhoto = document.getElementById('home-dog-photo');
+    const profilePhoto = document.getElementById('profile-photo');
+    if (homePhoto) homePhoto.src = src;
+    if (profilePhoto) profilePhoto.src = src;
+  };
+  reader.readAsDataURL(file);
+}
+function selectAge(btn, age) {
+  dogProfile.age = age;
+  document.querySelectorAll('.age-btn').forEach(b => b.style.borderColor = '#f3f4f6');
+  btn.style.borderColor = 'var(--primary)';
+}
+function selectActivity(btn, activity) {
+  dogProfile.activity = activity;
+  document.querySelectorAll('.act-card').forEach(b => {
+    b.classList.remove('selected');
+    b.style.borderColor = '#f3f4f6';
+    b.querySelectorAll('.check-act').forEach(c => c.remove());
+  });
+  btn.classList.add('selected');
+  btn.style.borderColor = 'var(--primary)';
+  const ic = document.createElement('div');
+  ic.className = 'check-act absolute top-4 right-4';
+  ic.style.color = 'var(--primary)';
+  ic.innerHTML = '<iconify-icon icon="lucide:check-circle-2" class="text-xl"></iconify-icon>';
+  btn.appendChild(ic);
+}
+function finishOnboarding() {
+  const nameVal = document.getElementById('dog-name-input').value.trim();
+  if (nameVal) dogProfile.name = nameVal;
+  // Update all name references
+  updateUINames();
+  // Dismiss onboarding
+  const ob = document.getElementById('onboarding');
+  ob.classList.add('hidden-out');
+  setTimeout(() => { ob.style.display = 'none'; }, 520);
+}
+
+// ═══════════════════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════════════════
+function switchTab(tab) {
+  // If leaving scan tab, reset it to blank slate
+  const currentActive = document.querySelector('.tab-pane.active')?.id;
+  if (currentActive === 'tab-scan' && tab !== 'scan') {
+    resetScanTab();
+  }
+  ['home','scan','meal'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('tbtn-' + t).classList.toggle('active', t === tab);
+  });
+  if (tab === 'meal') {
+    const nameEl = document.getElementById('meal-dog-name');
+    if (nameEl) nameEl.textContent = dogProfile.name;
+    if (savedMealPlan) {
+      openFeedingSchedule();
+      return;
+    }
+    const picker = document.getElementById('meal-tier-picker');
+    if (picker) picker.style.display = '';
+  }
+}
+
+function resetScanTab() {
+  // Clear image
+  scannedImageBase64 = null;
+  scannedImageType = null;
+  const wrap = document.getElementById('image-preview-wrap');
+  const zone = document.getElementById('upload-zone');
+  const result = document.getElementById('scan-result');
+  const prog = document.getElementById('scan-progress-section');
+  const manual = document.getElementById('manual-ingredients');
+  const fi = document.getElementById('file-input');
+  if (wrap) wrap.classList.add('hidden');
+  if (zone) zone.classList.remove('hidden');
+  if (result) { result.classList.add('hidden'); result.innerHTML = ''; }
+  if (prog) prog.classList.add('hidden');
+  if (manual) manual.value = '';
+  if (fi) fi.value = '';
+  const overlay = document.getElementById('scan-overlay');
+  if (overlay) overlay.classList.add('hidden');
+  stopScanProg();
+  clearInterval(scanProgInterval);
+}
+
+// ═══════════════════════════════════════════════════════════
+// UI UPDATES
+// ═══════════════════════════════════════════════════════════
+function updateUINames() {
+  const n = dogProfile.name;
+  const el = document.getElementById('home-greeting');
+  if (el) el.textContent = `Hey, ${n}!`;
+  const mn = document.getElementById('meal-dog-name');
+  if (mn) mn.textContent = n;
+  const pn = document.getElementById('profile-name');
+  if (pn) pn.textContent = n;
+  const pd = document.getElementById('profile-details');
+  if (pd) pd.textContent = `${dogProfile.breed} • ${dogProfile.weight}kg • ${dogProfile.activity}`;
+}
+function updateHomeScanCount() {
+  const el = document.getElementById('home-stats-value');
+  const sub = document.getElementById('home-stats-sub');
+  if (el) el.innerHTML = `${scanHistory.length} <span class="text-xl font-bold opacity-70">scan${scanHistory.length !== 1 ? 's' : ''}</span>`;
+  if (sub) sub.textContent = scanHistory.length === 0 ? 'Scan your first food to get started' : `${scanHistory.filter(s=>s.result==='danger').length} dangers found`;
+}
+function renderHomeScanList() {
+  const container = document.getElementById('home-scan-list');
+  if (!container) return;
+  if (scanHistory.length === 0) {
+    container.innerHTML = `<div class="text-center py-8"><iconify-icon icon="lucide:scan-line" style="font-size:44px;color:#e5e7eb;"></iconify-icon><p class="text-base font-black mt-3" style="color:#9ca3af;">No scans yet</p><p class="text-sm font-bold mt-1" style="color:#d1d5db;">Tap Scan below to get started</p></div>`;
+    return;
+  }
+  const stampBg = {safe:'var(--accent)',danger:'#ef4444',warn:'#f59e0b'};
+  const stamp = {safe:'YEP!',danger:'NO!',warn:'CARE'};
+  const icon = {safe:'lucide:check-circle',danger:'lucide:alert-octagon',warn:'lucide:help-circle'};
+  const col = {safe:'var(--accent)',danger:'#ef4444',warn:'#f59e0b'};
+  const border = {safe:'#fff',danger:'#fee2e2',warn:'#fff7ed'};
+  const lbl = {safe:'SAFE & HEALTHY',danger:'HIGHLY TOXIC',warn:'USE WITH CAUTION'};
+  container.innerHTML = scanHistory.slice(0,3).map(s => `
+    <div class="bg-white rounded-[20px] p-4 flex gap-3 border-2 relative overflow-hidden mb-3" style="border-color:${border[s.result]};">
+      <div class="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0"><img src="${s.img}" class="w-full h-full object-cover"/></div>
+      <div class="flex-1">
+        <p class="text-xs font-black uppercase tracking-widest" style="color:#9ca3af;">${s.date}</p>
+        <p class="text-base font-black" style="color:var(--dark);">${s.name}</p>
+        <div class="flex items-center gap-1"><iconify-icon icon="${icon[s.result]}" style="color:${col[s.result]};font-size:12px;"></iconify-icon><span class="text-xs font-black" style="color:${col[s.result]};">${lbl[s.result]}</span></div>
+      </div>
+      <div class="absolute -right-1 -bottom-1"><div class="text-white text-xs font-black px-3 py-1 border-2 border-white shadow" style="background:${stampBg[s.result]};transform:rotate(-4deg);">${stamp[s.result]}</div></div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROFILE SHEET
+// ═══════════════════════════════════════════════════════════
+function openProfile() {
+  updateUINames();
+  document.getElementById('p-scan-count').textContent = scanHistory.length;
+  // Show streak count in profile
+  const streakData = getStreakData();
+  const streakEl = document.getElementById('p-streak-count');
+  if (streakEl) streakEl.textContent = streakData.count;
+  renderProfileHistory();
+  document.getElementById('profile-sheet').classList.remove('hidden-sheet');
+}
+
+function uploadDogPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const src = ev.target.result;
+    dogProfile.photo = src;
+    // Update all dog photo instances
+    const ids = ['profile-photo', 'home-dog-photo', 'dog-photo-img'];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.src = src;
+    });
+  };
+  reader.readAsDataURL(file);
+}
+function closeProfile() {
+  document.getElementById('profile-sheet').classList.add('hidden-sheet');
+}
+function renderProfileHistory() {
+  const c = document.getElementById('profile-history');
+  if (!c) return;
+  if (scanHistory.length === 0) {
+    c.innerHTML = `<div class="text-center py-8"><iconify-icon icon="lucide:scan-line" style="font-size:44px;color:#e5e7eb;"></iconify-icon><p class="text-base font-black mt-3" style="color:#9ca3af;">No scans yet</p></div>`;
+    return;
+  }
+  const stampBg={safe:'var(--accent)',danger:'#ef4444',warn:'#f59e0b'};
+  const stamp={safe:'YEP!',danger:'NO!',warn:'CARE'};
+  const col={safe:'var(--accent)',danger:'#ef4444',warn:'#f59e0b'};
+  const border={safe:'#fff',danger:'#fee2e2',warn:'#fff7ed'};
+  const lbl={safe:'SAFE & HEALTHY',danger:'HIGHLY TOXIC',warn:'USE WITH CAUTION'};
+  c.innerHTML = scanHistory.map(s => `
+    <div class="bg-white rounded-[20px] p-4 flex gap-3 border-2 relative overflow-hidden mb-3" style="border-color:${border[s.result]};">
+      <div class="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0"><img src="${s.img}" class="w-full h-full object-cover"/></div>
+      <div class="flex-1">
+        <p class="text-xs font-black uppercase tracking-widest" style="color:#9ca3af;">${s.date}</p>
+        <p class="text-base font-black" style="color:var(--dark);">${s.name}</p>
+        <div class="flex items-center gap-1"><span class="text-xs font-black" style="color:${col[s.result]};">${lbl[s.result]}</span></div>
+      </div>
+      <div class="absolute -right-1 -bottom-1"><div class="text-white text-xs font-black px-3 py-1 border-2 border-white shadow" style="background:${stampBg[s.result]};transform:rotate(-4deg);">${stamp[s.result]}</div></div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// FOOD SCANNER
+// ═══════════════════════════════════════════════════════════
+const SCAN_PHASES = ['Detecting food items...','Identifying ingredients...','Cross-referencing toxicity data...','Checking breed sensitivities...','Generating safety report...'];
+
+function setupFileInputs() {
+  const fi = document.getElementById('file-input');
+  if (fi && !fi._ready) {
+    fi._ready = true;
+    fi.addEventListener('change', e => loadScanFile(e.target.files[0]));
+  }
+  const fc = document.getElementById('file-input-change');
+  if (fc && !fc._ready) {
+    fc._ready = true;
+    fc.addEventListener('change', e => loadScanFile(e.target.files[0]));
+  }
+}
+function loadScanFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const dataUrl = ev.target.result;
+    scannedImageBase64 = dataUrl.split(',')[1];
+    scannedImageType = file.type || 'image/jpeg';
+    document.getElementById('image-preview').src = dataUrl;
+    document.getElementById('image-preview-wrap').classList.remove('hidden');
+    document.getElementById('upload-zone').classList.add('hidden');
+    document.getElementById('scan-result').classList.add('hidden');
+    document.getElementById('scan-result').innerHTML = '';
+    document.getElementById('scan-progress-section').classList.add('hidden');
+  };
+  reader.readAsDataURL(file);
+}
+function clearScan() {
+  scannedImageBase64 = null; scannedImageType = null;
+  document.getElementById('image-preview-wrap').classList.add('hidden');
+  document.getElementById('upload-zone').classList.remove('hidden');
+  document.getElementById('scan-result').classList.add('hidden');
+  document.getElementById('scan-result').innerHTML = '';
+  document.getElementById('scan-progress-section').classList.add('hidden');
+  document.getElementById('file-input').value = '';
+}
+function startScanProg() {
+  let pct = 0, phase = 0;
+  const fill = document.getElementById('scan-prog-fill');
+  const pctEl = document.getElementById('scan-pct');
+  const statusEl = document.getElementById('scan-status');
+  clearInterval(scanProgInterval);
+  document.getElementById('scan-progress-section').classList.remove('hidden');
+  if (scannedImageBase64) document.getElementById('scan-overlay').classList.remove('hidden');
+  scanProgInterval = setInterval(() => {
+    if (pct < 91) pct += Math.random() * 3 + 0.6;
+    if (pct > 91) pct = 91;
+    if (fill) fill.style.width = pct + '%';
+    if (pctEl) pctEl.textContent = Math.round(pct) + '%';
+    const np = Math.floor((pct / 91) * SCAN_PHASES.length);
+    if (np !== phase && np < SCAN_PHASES.length) { phase = np; if (statusEl) statusEl.textContent = SCAN_PHASES[phase]; }
+  }, 130);
+}
+function stopScanProg() {
+  clearInterval(scanProgInterval);
+  const fill = document.getElementById('scan-prog-fill');
+  const pctEl = document.getElementById('scan-pct');
+  const statusEl = document.getElementById('scan-status');
+  if (fill) fill.style.width = '100%';
+  if (pctEl) pctEl.textContent = '100%';
+  if (statusEl) statusEl.textContent = 'Analysis complete!';
+  setTimeout(() => {
+    document.getElementById('scan-overlay')?.classList.add('hidden');
+  }, 600);
+}
+
+async function analyzeFood() {
+  const manual = document.getElementById('manual-ingredients').value.trim();
+  if (!scannedImageBase64 && !manual) { alert('Take a photo or type ingredients first!'); return; }
+  document.getElementById('analyze-btn').classList.add('hidden');
+  document.getElementById('scan-result').classList.add('hidden');
+  document.getElementById('scan-result').innerHTML = '';
+  startScanProg();
+
+  const sys = `You are PawPlate, expert dog nutrition AI.
+Dog: ${dogProfile.name}, ${dogProfile.breed}, ${dogProfile.weight}kg, ${dogProfile.age}, ${dogProfile.activity}.
+Respond ONLY with raw JSON, no backticks:
+{"overallResult":"safe"|"danger"|"warn","overallMessage":"1-sentence","ingredients":[{"name":"...","status":"safe"|"danger"|"warn","reason":"1-2 sentences","studyHint":"brief scientific ref"}],"recommendation":"1-2 sentence personalized tip","emergencyLevel":"none"|"moderate"|"critical"}`;
+
+  let userContent = scannedImageBase64
+    ? [{ type:'image', source:{ type:'base64', media_type: scannedImageType, data: scannedImageBase64 }}, { type:'text', text: manual ? `Analyze this food. Also: ${manual}` : 'Analyze this food for dog safety.' }]
+    : [{ type:'text', text: `Analyze for dog safety: ${manual}` }];
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, system:sys, messages:[{role:'user',content:userContent}] })
+    });
+    const data = await resp.json();
+    const raw = data.content?.[0]?.text || '';
+    let result;
+    try { result = JSON.parse(raw.replace(/```json|```/g,'').trim()); }
+    catch { throw new Error('Could not parse AI response'); }
+    displayScanResult(result);
+    // Add to history
+    const fname = result.ingredients?.[0]?.name || manual.split(',')[0] || 'Scanned Food';
+    scanHistory.unshift({
+      name: fname, result: result.overallResult, date: 'Just now',
+      img: scannedImageBase64 ? `data:${scannedImageType};base64,${scannedImageBase64}` : 'https://media.screensdesign.com/gasset/555f6e76-803b-442c-b3d3-ec8c5d3fbcf9.png',
+      label: result.overallResult==='safe' ? 'SAFE & HEALTHY' : result.overallResult==='danger' ? 'HIGHLY TOXIC' : 'USE WITH CAUTION'
+    });
+    updateHomeScanCount();
+    renderHomeScanList();
+    recordScanForStreak();
+  } catch(err) {
+    document.getElementById('scan-result').innerHTML = `<div class="p-5 rounded-2xl bg-red-50 border-2 border-red-100"><p class="font-black text-red-600">Could not analyze. Check connection.</p><p class="text-sm text-red-400 mt-1">${err.message}</p></div>`;
+    document.getElementById('scan-result').classList.remove('hidden');
+  } finally {
+    stopScanProg();
+    document.getElementById('analyze-btn').classList.remove('hidden');
+    document.getElementById('scan-progress-section').classList.add('hidden');
+  }
+}
+
+function displayScanResult(result) {
+  const bgM={safe:'#f0fdf4',danger:'#fef2f2',warn:'#fffbeb'};
+  const bdM={safe:'var(--accent)',danger:'#ef4444',warn:'#f59e0b'};
+  const icM={safe:'lucide:check-circle-2',danger:'lucide:skull',warn:'lucide:alert-triangle'};
+  const cM={safe:'var(--accent)',danger:'#ef4444',warn:'#f59e0b'};
+  const lM={safe:'✅ SAFE FOR YOUR DOG',danger:'☠️ DANGEROUS — DO NOT FEED',warn:'⚠️ USE WITH CAUTION'};
+  const ingHTML = (result.ingredients||[]).map(ing => {
+    const bg=ing.status==='safe'?'#f0fdf4':ing.status==='danger'?'#fef2f2':'#fffbeb';
+    const ic=ing.status==='safe'?'lucide:thumbs-up':ing.status==='danger'?'lucide:alert-triangle':'lucide:help-circle';
+    const tc=ing.status==='safe'?'var(--accent)':ing.status==='danger'?'#ef4444':'#f59e0b';
+    const bc=ing.status==='safe'?'#d1fae5':ing.status==='danger'?'#fee2e2':'#fef3c7';
+    return `<div class="bg-white rounded-[18px] p-4 flex items-start gap-3 border-2 mb-2" style="border-color:${bc};">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${bg};"><iconify-icon icon="${ic}" class="text-xl" style="color:${tc};"></iconify-icon></div>
+      <div class="flex-1"><p class="text-base font-black" style="color:var(--dark);">${ing.name}</p><p class="text-sm font-bold leading-snug mt-1" style="color:${ing.status==='danger'?'#ef4444':'#6b7280'};">${ing.reason}</p>${ing.studyHint?`<p class="text-xs font-bold mt-1" style="color:#9ca3af;">📚 ${ing.studyHint}</p>`:''}</div>
+    </div>`;
+  }).join('');
+  const resultEl = document.getElementById('scan-result');
+  resultEl.innerHTML = `
+    <div class="rounded-[22px] p-4 border-2 mb-3" style="background:${bgM[result.overallResult]};border-color:${bdM[result.overallResult]};">
+      <div class="flex items-center gap-2 mb-1"><iconify-icon icon="${icM[result.overallResult]}" class="text-xl" style="color:${cM[result.overallResult]};"></iconify-icon><p class="text-base font-black" style="color:${cM[result.overallResult]};">${lM[result.overallResult]}</p></div>
+      <p class="text-sm font-bold" style="color:var(--dark);">${result.overallMessage}</p>
+    </div>
+    <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:var(--primary);">Ingredient Breakdown</p>
+    ${ingHTML}
+    ${result.recommendation?`<div class="rounded-[18px] p-4 border-l-4 mb-2 mt-1" style="background:var(--secondary);border-color:var(--primary);"><p class="text-xs font-black mb-1" style="color:var(--dark);">💡 FOR ${dogProfile.name.toUpperCase()}</p><p class="text-sm font-bold" style="color:#6b7280;">${result.recommendation}</p></div>`:''}
+  `;
+  resultEl.classList.remove('hidden');
+  resultEl.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ═══════════════════════════════════════════════════════════
+// MEAL PLAN
+// ═══════════════════════════════════════════════════════════
+function selectTier(tier) {
+  selectedTier = tier;
+  ['premium','basic','budget'].forEach(t => {
+    const card = document.getElementById('tier-' + t);
+    const check = document.getElementById('tc-' + t);
+    if (t === tier) {
+      card.classList.add('selected');
+      check.style.background = 'var(--primary)'; check.style.borderColor = 'var(--primary)';
+      check.innerHTML = '<iconify-icon icon="lucide:check" class="text-white" style="font-size:11px;"></iconify-icon>';
+    } else {
+      card.classList.remove('selected');
+      check.style.background = '#fff'; check.style.borderColor = '#e5e7eb';
+      check.innerHTML = '';
+    }
+  });
+  if (savedMealPlan && savedMealPlan.tier !== tier) {
+    savedMealPlan = null;
+  }
+}
+
+let mealProgInterval = null;
+const MEAL_PHASES = ['Calculating calorie needs...','Analyzing breed requirements...','Sourcing ingredient options...','Calibrating portion sizes...','Writing your meal plan...'];
+
+function startMealProg() {
+  let pct = 0, phase = 0;
+  const fill = document.getElementById('meal-prog-fill');
+  const pctEl = document.getElementById('meal-prog-pct');
+  const statusEl = document.getElementById('meal-prog-status');
+  const labelEl = document.getElementById('meal-prog-label');
+  clearInterval(mealProgInterval);
+  mealProgInterval = setInterval(() => {
+    if (pct < 90) pct += Math.random() * 2.8 + 0.7;
+    if (pct > 90) pct = 90;
+    if (fill) fill.style.width = pct + '%';
+    if (pctEl) pctEl.textContent = Math.round(pct) + '%';
+    const np = Math.floor((pct / 90) * MEAL_PHASES.length);
+    if (np !== phase && np < MEAL_PHASES.length) { phase = np; if (statusEl) statusEl.textContent = MEAL_PHASES[phase]; }
+  }, 140);
+}
+function stopMealProg() {
+  clearInterval(mealProgInterval);
+  const fill = document.getElementById('meal-prog-fill');
+  const pctEl = document.getElementById('meal-prog-pct');
+  const statusEl = document.getElementById('meal-prog-status');
+  const labelEl = document.getElementById('meal-prog-label');
+  if (fill) fill.style.width = '100%';
+  if (pctEl) pctEl.textContent = '100%';
+  if (labelEl) labelEl.textContent = 'Plan ready!';
+  if (statusEl) statusEl.textContent = 'Opening your feeding schedule...';
+}
+
+async function generateMealPlan() {
+  document.getElementById('gen-btn').classList.add('hidden');
+  document.getElementById('meal-loading').classList.remove('hidden');
+  document.getElementById('meal-result')?.classList.add('hidden');
+  if (document.getElementById('meal-result')) document.getElementById('meal-result').innerHTML = '';
+  startMealProg();
+
+  const rer = Math.round(70 * Math.pow(dogProfile.weight, 0.75));
+  const actM = dogProfile.activity==='Lazy'?1.2:dogProfile.activity==='Active'?1.6:2.0;
+  const ageM = dogProfile.age==='Puppy'?2.0:dogProfile.age==='Young'?1.8:dogProfile.age==='Senior'?1.1:1.0;
+  const cals = Math.round(rer * actM * ageM);
+  const grams = Math.round(dogProfile.weight * 25);
+
+  const tierDesc = {
+    premium: `Premium — organic whole foods, vet-precision, ~$180/mo. Total daily food: ~${grams}g across 2 meals (~${Math.round(grams/2)}g each). Use: organic chicken breast, wild-caught salmon, 1 tsp coconut oil, small handful blueberries, 1-2 tbsp pumpkin puree, sweet potato. LEAN portions — premium means precise, not large.`,
+    basic: `Basic — quality grocery store ingredients, ~$80/mo. Total: ~${grams}g/day. Use: chicken thighs, brown rice, carrots, eggs, canned sardines, spinach.`,
+    budget: `Budget — cost-optimized, ~$30/mo. Total: ~${Math.round(grams*0.95)}g/day. Use: quality dry kibble as base, ground beef or chicken liver, white rice, oats, canned green beans.`
+  };
+
+  const prompt = `You are PawPlate, a veterinary nutritionist. Create a precise daily meal plan.
+Dog: ${dogProfile.name}, ${dogProfile.breed}, ${dogProfile.weight}kg, ${dogProfile.age}, ${dogProfile.activity}.
+Target: ${cals} kcal/day.
+Tier: ${tierDesc[selectedTier]}
+Rules: ALL portions EXACT for a ${dogProfile.weight}kg ${dogProfile.breed}. For each ingredient include a "why" (1 sentence on the specific benefit for this dog). Meal times: Breakfast 07:30, Dinner 18:30. Do NOT over-portion premium meals.
+Respond ONLY in raw JSON (no backticks):
+{"dailyCalories":${cals},"proteinPercent":number,"fatPercent":number,"carbPercent":number,"meals":[{"time":"07:30","name":"Breakfast","emoji":"🌅","ingredients":[{"item":"ingredient with exact amount","why":"1-sentence benefit"}],"totalGrams":number,"calories":number,"prepNote":"brief prep instructions"},{"time":"18:30","name":"Dinner","emoji":"🌙","ingredients":[{"item":"...","why":"..."}],"totalGrams":number,"calories":number,"prepNote":"..."}],"weeklyTip":"specific tip for this breed/size","estimatedMonthlyCost":"$X-$Y"}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1400, messages:[{role:'user',content:prompt}] })
+    });
+    const data = await resp.json();
+    const raw = data.content?.[0]?.text || '';
+    let plan;
+    try { plan = JSON.parse(raw.replace(/```json|```/g,'').trim()); }
+    catch { throw new Error('Could not parse response'); }
+    plan.tier = selectedTier;
+    savedMealPlan = plan;
+    // Hide tier picker, show feeding schedule directly
+    const picker = document.getElementById('meal-tier-picker');
+    if (picker) picker.style.display = 'none';
+    openFeedingSchedule();
+  } catch(err) {
+    document.getElementById('meal-result').innerHTML = `<div class="p-5 rounded-2xl bg-red-50 border-2 border-red-100"><p class="font-black text-red-600">Could not generate. Check connection.</p></div>`;
+    document.getElementById('meal-result').classList.remove('hidden');
+  } finally {
+    stopMealProg();
+    setTimeout(() => {
+      document.getElementById('meal-loading').classList.add('hidden');
+      document.getElementById('gen-btn').classList.remove('hidden');
+    }, 700);
+  }
+}
+
+function displayMealPlan(plan) {
+  const tc = {premium:'#f59e0b',basic:'var(--accent)',budget:'#6b7280'}[plan.tier||selectedTier];
+  const tl = {premium:'⭐ PREMIUM',basic:'🍖 BASIC',budget:'💰 BUDGET'}[plan.tier||selectedTier];
+  const mealsHTML = (plan.meals||[]).map(meal => {
+    const ingHTML = (meal.ingredients||[]).map(ing => {
+      const item = typeof ing==='string'?ing:ing.item;
+      const why = typeof ing==='object'?ing.why:null;
+      return `<div class="mb-2"><div class="flex items-start gap-2"><div class="w-2 h-2 rounded-full flex-shrink-0 mt-2" style="background:${tc};"></div><p class="text-base font-bold" style="color:var(--dark);">${item}</p></div>${why?`<p class="text-sm font-bold ml-4 mt-0.5 leading-snug" style="color:#9ca3af;">↳ ${why}</p>`:''}</div>`;
+    }).join('');
+    return `<div class="bg-white rounded-[22px] p-5 mb-4" style="border:2px solid #e0e0e0; box-shadow:0 2px 10px rgba(0,0,0,0.07);">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-2xl">${meal.emoji||'🍽'}</span>
+        <div><p class="text-lg font-black" style="color:var(--dark);">${meal.name} <span class="text-sm font-bold" style="color:#9ca3af;">(${meal.time})</span></p><p class="text-sm font-bold" style="color:#9ca3af;">${meal.calories} kcal · ${meal.totalGrams||'—'}g</p></div>
+      </div>
+      <div class="mb-3">${ingHTML}</div>
+      ${meal.prepNote?`<div class="rounded-xl p-3 border-l-4" style="background:var(--secondary);border-color:${tc};"><p class="text-xs font-black mb-1" style="color:var(--dark);">PREP NOTE</p><p class="text-sm font-bold" style="color:#6b7280;">${meal.prepNote}</p></div>`:''}
+    </div>`;
+  }).join('');
+
+  const resultEl = document.getElementById('meal-result');
+  resultEl.innerHTML = `
+    <div class="w-full rounded-[22px] p-5 text-white shadow-xl mb-4 relative overflow-hidden" style="background:linear-gradient(135deg,${tc} 0%,${tc}cc 100%);">
+      <div class="absolute -right-4 -bottom-4 opacity-10"><iconify-icon icon="lucide:utensils" style="font-size:90px;"></iconify-icon></div>
+      <div class="relative z-10">
+        <span class="text-xs font-black opacity-75">${tl} PLAN FOR ${dogProfile.name.toUpperCase()}</span>
+        <p class="text-3xl font-black mt-1">${plan.dailyCalories} kcal/day</p>
+        <div class="flex gap-3 mt-2 text-sm font-bold opacity-85 flex-wrap">
+          <span>🥩 ${plan.proteinPercent||'—'}% protein</span><span>🧈 ${plan.fatPercent||'—'}% fat</span><span>🌾 ${plan.carbPercent||'—'}% carbs</span>
+        </div>
+        <p class="text-sm font-bold opacity-65 mt-1">Est. cost: ${plan.estimatedMonthlyCost||'—'}/month</p>
+      </div>
+    </div>
+    <!-- Start Schedule Button -->
+    <button onclick="openFeedingSchedule()" class="w-full mb-4 py-5 rounded-[24px] font-black text-white text-lg relative overflow-hidden" style="background:linear-gradient(135deg,#1e2235 0%,#3a4066 100%);border:none;cursor:pointer;box-shadow:0 8px 24px rgba(30,34,53,0.4);">
+      <div class="absolute inset-0" style="background:radial-gradient(ellipse at 80% 20%,rgba(255,255,255,0.07) 0%,transparent 60%);"></div>
+      <div class="relative z-10 flex items-center justify-center gap-3"><iconify-icon icon="lucide:bell" class="text-2xl"></iconify-icon><span>START FEEDING SCHEDULE</span></div>
+      <p class="relative z-10 text-sm font-semibold mt-1" style="opacity:0.45;">Live countdown · log meals</p>
+    </button>
+    ${mealsHTML}
+    ${plan.weeklyTip?`<div class="rounded-[20px] p-4 border-2 border-dashed mb-4" style="background:var(--secondary);border-color:#FF7A59;"><p class="text-xs font-black uppercase tracking-widest mb-2" style="color:var(--primary);">💡 TIP FOR ${dogProfile.name.toUpperCase()}</p><p class="text-base font-bold leading-relaxed" style="color:#6b7280;">${plan.weeklyTip}</p></div>`:''}
+    <button onclick="savedMealPlan=null;document.getElementById('meal-result').classList.add('hidden');document.getElementById('meal-result').innerHTML='';" class="w-full py-4 rounded-2xl font-black" style="background:#f3f4f6;color:var(--dark);border:none;cursor:pointer;">← Choose Different Tier</button>
+  `;
+  resultEl.classList.remove('hidden');
+}
+
+// ═══════════════════════════════════════════════════════════
+// FEEDING SCHEDULE
+// ═══════════════════════════════════════════════════════════
+function openFeedingSchedule() {
+  if (!savedMealPlan?.meals?.length) return;
+  buildFeedingSchedule();
+  document.getElementById('screen-feeding').classList.remove('hidden-feed');
+}
+function closeFeedingSchedule() {
+  document.getElementById('screen-feeding').classList.add('hidden-feed');
+  clearInterval(feedTimerInterval);
+  // Go back to home tab — meal tab only ever shows the feeding screen if plan exists
+  switchTab('home');
+}
+function buildFeedingSchedule() {
+  const meals = savedMealPlan.meals;
+  const now = new Date();
+  const nowMins = now.getHours()*60+now.getMinutes();
+  let activeMeal = meals[0], nextMeal = meals[1]||meals[0], secsUntil = 0;
+  for (let i=0;i<meals.length;i++) {
+    const [h,m] = meals[i].time.split(':').map(Number);
+    const diff = (h*60+m) - nowMins;
+    if (diff > 0) { activeMeal=meals[i]; nextMeal=meals[(i+1)%meals.length]; secsUntil=diff*60; break; }
+    else { activeMeal=meals[i]; nextMeal=meals[(i+1)%meals.length]; }
+  }
+  renderFeedingUI(activeMeal, nextMeal, secsUntil);
+  startFeedTimer(activeMeal, secsUntil);
+}
+
+function renderFeedingUI(meal, nextMeal, secsUntil) {
+  const isMorn = meal.name.toLowerCase().includes('breakfast');
+  const feedScreen = document.getElementById('screen-feeding');
+  feedScreen.style.background = isMorn
+    ? 'linear-gradient(180deg,#ffd06e 0%,#ff9a5c 35%,#ff6b6b 65%,#c8446e 100%)'
+    : 'linear-gradient(160deg,#1a1f3a 0%,#2d3357 50%,#3d2a4a 100%)';
+
+  // Stars for night / dinner
+  const starsEl = document.getElementById('feed-stars');
+  if (starsEl) {
+    if (!isMorn) {
+      const STAR_DATA = [
+        [12,8,2.5,'2.1s','0s'],[88,5,1.8,'3.4s','0.5s'],[35,3,3,'2.8s','1.1s'],
+        [67,12,2,'4.2s','0.3s'],[22,18,1.5,'3.1s','1.7s'],[78,9,2.8,'2.6s','0.8s'],
+        [50,6,1.2,'5s','2.1s'],[15,25,2,'3.7s','0.4s'],[90,22,3.5,'2.3s','1.4s'],
+        [42,4,1.8,'4.5s','0.9s'],[72,30,2.2,'3s','2.5s'],[8,35,1.5,'2.7s','1.2s'],
+        [58,2,3,'3.8s','0.6s'],[30,40,2,'4.1s','1.8s'],[85,38,1.8,'2.5s','0.2s'],
+        [20,45,2.5,'3.3s','1s'],[65,42,1.2,'4.8s','2.3s'],[47,20,2,'2.9s','0.7s'],
+        [93,48,3,'3.6s','1.5s'],[5,52,1.8,'2.4s','2s']
       ];
+      starsEl.innerHTML = STAR_DATA.map(([x,y,r,d,delay]) =>
+        `<div class="star" style="left:${x}%;top:${y}%;width:${r}px;height:${r}px;--d:${d};--delay:${delay};"></div>`
+      ).join('');
+    } else {
+      starsEl.innerHTML = '';
+    }
+  }
 
-      const ingredientRules = {
-        chocolate: { level: "danger", icon: "🍫", reason: "Chocolate contains theobromine, which is toxic to dogs and can be life-threatening." },
-        cocoa: { level: "danger", icon: "🍫", reason: "Cocoa products are a major toxic risk for dogs." },
-        xylitol: { level: "danger", icon: "⚠️", reason: "Xylitol can cause severe low blood sugar and liver injury in dogs." },
-        onion: { level: "danger", icon: "🧅", reason: "Onion can damage red blood cells and should not be fed to dogs." },
-        garlic: { level: "danger", icon: "🧄", reason: "Garlic is unsafe for dogs and can cause toxic effects." },
-        grape: { level: "danger", icon: "🍇", reason: "Grapes can cause kidney injury in dogs." },
-        grapes: { level: "danger", icon: "🍇", reason: "Grapes can cause kidney injury in dogs." },
-        raisin: { level: "danger", icon: "🍇", reason: "Raisins are dangerous for dogs and are treated like grape toxicity." },
-        raisins: { level: "danger", icon: "🍇", reason: "Raisins are dangerous for dogs and are treated like grape toxicity." },
-        carrot: { level: "positive", icon: "🥕", reason: "Carrots are generally dog-safe and low calorie." },
-        apple: { level: "positive", icon: "🍎", reason: "Plain apple without seeds is generally dog-safe." },
-        "peanut butter": { level: "positive", icon: "🥜", reason: "Peanut butter can be okay if it does not contain xylitol and is used in moderation." },
-        chicken: { level: "positive", icon: "🍗", reason: "Plain cooked chicken is a common dog-safe protein." },
-        turkey: { level: "positive", icon: "🦃", reason: "Plain turkey is usually safe when unseasoned." },
-        "ground beef": { level: "positive", icon: "🥩", reason: "Plain ground beef can be a useful protein if it is not mixed with onion or heavy seasoning." },
-        beef: { level: "positive", icon: "🥩", reason: "Plain beef can be dog-safe in moderate portions." },
-        salmon: { level: "positive", icon: "🐟", reason: "Cooked salmon can be a strong protein and omega-3 source for dogs." },
-        cheese: { level: "caution", icon: "🧀", reason: "Cheese is not automatically toxic, but it can be rich and hard on some dogs." },
-        bacon: { level: "caution", icon: "🥓", reason: "Bacon is fatty and salty, so it is not a good regular dog food." },
-        broccoli: { level: "caution", icon: "🥦", reason: "Broccoli can be okay in small amounts, but too much may upset digestion." },
-        pizza: { level: "danger", icon: "🍕", reason: "Pizza often combines cheese, salt, grease, onion, or garlic, making it a poor dog choice." }
-      };
+  const initMins = Math.floor(secsUntil/60);
+  const showLog = secsUntil <= 600;
+  const ingHTML = (meal.ingredients||[]).map(i=>{
+    const item = typeof i==='string'?i:i.item;
+    return `<div class="flex items-start gap-2 mb-2.5"><div class="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0" style="background:rgba(255,255,255,0.4);"></div><p style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.88);margin:0;line-height:1.4;">${item}</p></div>`;
+  }).join('');
+  const initDisplay = secsUntil > 0
+    ? `${String(Math.floor(secsUntil/3600)).padStart(2,'0')}:${String(Math.floor((secsUntil%3600)/60)).padStart(2,'0')}:${String(secsUntil%60).padStart(2,'0')}`
+    : '00:00:00';
 
-      const detectionAliases = [
-        { test: /chocolate|brownie|cocoa|candy bar|cookie/, value: "chocolate" },
-        { test: /onion/, value: "onion" },
-        { test: /garlic/, value: "garlic" },
-        { test: /grape/, value: "grapes" },
-        { test: /pizza/, value: "pizza" },
-        { test: /broccoli/, value: "broccoli" },
-        { test: /carrot/, value: "carrot" },
-        { test: /apple/, value: "apple" },
-        { test: /peanut/, value: "peanut butter" },
-        { test: /chicken/, value: "chicken" },
-        { test: /turkey/, value: "turkey" },
-        { test: /salmon|fish/, value: "salmon" },
-        { test: /burger|hamburger|beef|meatloaf/, value: "ground beef" }
-      ];
+  // Build per-meal expandable cards for ALL meals in the plan
+  const allMeals = savedMealPlan ? savedMealPlan.meals : [meal];
+  const allMealCards = allMeals.map((m, idx) => {
+    const isActive = m.name === meal.name;
+    const mIngHTML = (m.ingredients||[]).map(i=>{
+      const item = typeof i==='string'?i:i.item;
+      const why  = typeof i==='object'?i.why:null;
+      return `<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
+        <div style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.45);margin-top:7px;flex-shrink:0;"></div>
+        <div><p style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.9);margin:0;line-height:1.4;">${item}</p>${why?`<p style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.45);margin:2px 0 0;">↳ ${why}</p>`:''}</div>
+      </div>`;
+    }).join('');
+    return `
+    <div class="mx-5 mb-3 rounded-[22px]" style="background:rgba(255,255,255,${isActive?'0.13':'0.07'});backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,${isActive?'0.2':'0.1'});overflow:hidden;">
+      <!-- Tappable header -->
+      <button onclick="toggleMealCard('mc-${idx}')" style="width:100%;padding:16px 18px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;gap:12px;text-align:left;">
+        <span style="font-size:20px;">${m.emoji||'🍽'}</span>
+        <div style="flex:1;">
+          <p style="font-size:15px;font-weight:700;color:#fff;margin:0;">${m.name} <span style="font-weight:500;color:rgba(255,255,255,0.5);font-size:13px;">(${m.time})</span></p>
+          <p style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.4);margin:2px 0 0;">${m.calories} kcal · ${m.totalGrams||'—'}g</p>
+        </div>
+        ${isActive?'<div style="background:rgba(255,255,255,0.15);border-radius:99px;padding:3px 9px;font-size:10px;font-weight:800;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.08em;">NOW</div>':''}
+        <iconify-icon icon="lucide:chevron-down" class="meal-card-chevron${isActive?' open':''}" id="chev-${idx}"></iconify-icon>
+      </button>
+      <!-- Expandable body -->
+      <div class="meal-card-body${isActive?' open':''}" id="mc-${idx}">
+        <div style="padding:0 18px 16px;">
+          <div style="height:1px;background:rgba(255,255,255,0.1);margin-bottom:14px;"></div>
+          ${mIngHTML}
+          ${m.prepNote?`<div style="border-radius:14px;padding:12px 14px;margin-top:10px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);"><p style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;color:rgba(255,255,255,0.35);margin:0 0 5px;">PREP NOTE</p><p style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.65);line-height:1.5;margin:0;">${m.prepNote}</p></div>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 
-      function saveHistory(entry) {
-        const existing = JSON.parse(localStorage.getItem(historyKey) || "[]");
-        existing.unshift({ ...entry, createdAt: new Date().toISOString() });
-        localStorage.setItem(historyKey, JSON.stringify(existing.slice(0, 12)));
-        renderHistory();
-      }
+  document.getElementById('feeding-content').innerHTML = `
+    <!-- Scrollable body -->
+    <div style="padding-bottom:32px;">
+      <!-- Top bar — hamburger only, no back arrow -->
+      <div style="padding:52px 20px 0;display:flex;justify-content:flex-end;align-items:center;position:relative;">
+        <button onclick="toggleHam(event)" style="width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);cursor:pointer;display:flex;align-items:center;justify-content:center;">
+          <iconify-icon icon="lucide:menu" style="color:rgba(255,255,255,0.85);font-size:18px;"></iconify-icon>
+        </button>
+        <!-- Hamburger popup -->
+        <div id="ham-popup" class="hm-popup" style="top:52px;right:20px;">
+          <button class="hm-item" onclick="closeHam();document.getElementById('meal-times-modal').classList.add('open')">
+            <div style="width:34px;height:34px;border-radius:10px;background:rgba(255,122,89,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><iconify-icon icon="lucide:clock" style="color:var(--primary);font-size:16px;"></iconify-icon></div>
+            <div style="text-align:left;"><p style="font-size:14px;font-weight:800;color:var(--dark);margin:0;">Change Meal Times</p><p style="font-size:11px;font-weight:600;color:#9ca3af;margin:2px 0 0;">Adjust breakfast &amp; dinner</p></div>
+          </button>
+          <div class="hm-sep"></div>
+          <button class="hm-item" onclick="closeHam();changeMealPlan()">
+            <div style="width:34px;height:34px;border-radius:10px;background:rgba(112,193,179,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><iconify-icon icon="lucide:utensils" style="color:var(--accent);font-size:16px;"></iconify-icon></div>
+            <div style="text-align:left;"><p style="font-size:14px;font-weight:800;color:var(--dark);margin:0;">Change Meal Plan</p><p style="font-size:11px;font-weight:600;color:#9ca3af;margin:2px 0 0;">Switch tier or regenerate</p></div>
+          </button>
+          <div class="hm-sep"></div>
+          <button class="hm-item" onclick="closeHam();document.getElementById('ai-diet-modal').classList.add('open')">
+            <div style="width:34px;height:34px;border-radius:10px;background:rgba(255,122,89,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><iconify-icon icon="lucide:sparkles" style="color:var(--primary);font-size:16px;"></iconify-icon></div>
+            <div style="text-align:left;"><p style="font-size:14px;font-weight:800;color:var(--dark);margin:0;">AI: Adjust My Diet</p><p style="font-size:11px;font-weight:600;color:#9ca3af;margin:2px 0 0;">Tell AI a concern, it adapts</p></div>
+          </button>
+        </div>
+      </div>
 
-      function renderHistory() {
-        const items = JSON.parse(localStorage.getItem(historyKey) || "[]");
-        if (!items.length) {
-          historyList.innerHTML = `
-            <article class="history-card">
-              <h3>No saved history yet</h3>
-              <p>Create a scan or meal plan and it will appear here.</p>
-            </article>
-          `;
-          return;
-        }
+      <!-- Header -->
+      <div style="text-align:center;padding:10px 24px 16px;">
+        <div style="width:48px;height:48px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);">
+          <iconify-icon icon="lucide:bell" style="font-size:20px;color:rgba(255,255,255,0.9);"></iconify-icon>
+        </div>
+        <h1 style="font-size:20px;font-weight:700;color:#fff;margin:0;">Time to Feed</h1>
+        <p style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.45);margin:3px 0 0;">${dogProfile.name}'s schedule · ${meal.name}</p>
+      </div>
 
-        historyList.innerHTML = items.map((item) => `
-          <article class="history-card">
-            <div class="score-row">
-              <span class="score-pill ${item.levelClass}">${item.kind}</span>
-              <span class="tag">${new Date(item.createdAt).toLocaleString()}</span>
+      <!-- Timeline -->
+      <div style="padding:0 24px;margin-bottom:20px;">
+        <div style="position:relative;height:8px;border-radius:99px;background:rgba(255,255,255,0.12);overflow:visible;">
+          <div id="feed-bar" style="height:100%;border-radius:99px;width:10%;background:linear-gradient(90deg,rgba(255,255,255,0.3),rgba(255,255,255,0.85));transition:width 1s ease;"></div>
+          <div id="feed-dot" style="position:absolute;top:50%;transform:translateY(-50%);width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.25);left:8%;transition:left 1s ease;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:10px;">
+          <p id="feed-left" style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.35);margin:0;">—</p>
+          <p style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.65);margin:0;">${meal.time}</p>
+          <p id="feed-right" style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.35);margin:0;">—</p>
+        </div>
+      </div>
+
+      <!-- Countdown -->
+      <div style="text-align:center;padding:0 24px;margin-bottom:20px;">
+        <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.4);margin:0 0 8px;">Upcoming Meal</p>
+        <p id="feed-countdown" style="font-size:64px;font-weight:900;color:#fff;line-height:1;letter-spacing:-2px;font-variant-numeric:tabular-nums;margin:0;">${initDisplay}</p>
+        <p id="feed-sub" style="font-size:15px;font-weight:600;color:rgba(255,255,255,0.5);margin-top:8px;">${meal.name} ${secsUntil>0?'in '+(initMins>60?Math.floor(initMins/60)+'h ':'')+initMins%60+'m':'— Feed now!'}</p>
+      </div>
+
+      <!-- All meal cards (expandable) -->
+      ${allMealCards}
+
+      <!-- Log meal -->
+      <div style="padding:0 20px 6px;" id="log-section" style="display:${showLog?'block':'none'};">
+        <button id="log-meal-btn" onclick="logMeal()" style="width:100%;padding:18px;border-radius:22px;font-weight:900;font-size:16px;color:#fff;background:linear-gradient(135deg,#FF7A59,#FF9975);border:none;cursor:pointer;box-shadow:0 6px 24px rgba(255,122,89,0.4);">LOG MEAL ✓</button>
+      </div>
+      <div style="padding:0 20px;text-align:center;" id="log-waiting">
+        <p style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.28);margin:0;">Log Meal button appears 10 min before feeding time</p>
+      </div>
+    </div>
+
+  `;
+
+  // Sync log section display after render
+  const ls = document.getElementById('log-section');
+  const lw = document.getElementById('log-waiting');
+  if (ls) ls.style.display = showLog ? 'block' : 'none';
+  if (lw) lw.style.display = showLog ? 'none' : 'block';
+}
+
+// Toggle expandable meal card
+function toggleMealCard(id) {
+  const body = document.getElementById(id);
+  const idx  = id.replace('mc-','');
+  const chev = document.getElementById('chev-' + idx);
+  if (!body) return;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  if (chev) chev.classList.toggle('open', !isOpen);
+}
+
+// Leave feeding screen and go to another tab
+function leaveFeedingTo(tab) {
+  document.getElementById('screen-feeding').classList.add('hidden-feed');
+  clearInterval(feedTimerInterval);
+  switchTab(tab);
+}
+
+function startFeedTimer(meal, initialSecs) {
+  clearInterval(feedTimerInterval);
+  let secs = initialSecs;
+  function tick() {
+    const countdown = document.getElementById('feed-countdown');
+    const sub = document.getElementById('feed-sub');
+    const bar = document.getElementById('feed-bar');
+    const dot = document.getElementById('feed-dot');
+    const left = document.getElementById('feed-left');
+    const right = document.getElementById('feed-right');
+    const logSec = document.getElementById('log-section');
+    const logWait = document.getElementById('log-waiting');
+    if (!countdown) { clearInterval(feedTimerInterval); return; }
+
+    if (secs <= 0) {
+      countdown.textContent = 'Feed Now!';
+      if (sub) sub.textContent = `Time to serve ${meal.name}`;
+      if (logSec) logSec.style.display = 'block';
+      if (logWait) logWait.style.display = 'none';
+      return;
+    }
+    const h=Math.floor(secs/3600), m=Math.floor((secs%3600)/60), s=secs%60;
+    countdown.textContent = h>0 ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if (sub) sub.textContent = h>0 ? `${meal.name} in ${h}h ${m}m` : `${meal.name} in ${m}m ${s}s`;
+    const pct = Math.min(Math.max(((12*3600-secs)/(12*3600))*100, 3), 92);
+    if (bar) bar.style.width = pct+'%';
+    if (dot) dot.style.left = (pct-2)+'%';
+    const mLeft = Math.floor(secs/60);
+    if (left) left.textContent = mLeft>60 ? Math.floor(mLeft/60)+'h ago' : mLeft+'m ago';
+    if (right) right.textContent = mLeft>60 ? Math.floor(mLeft/60)+'h left' : mLeft+'m left';
+    // Show log button within 10 min
+    if (secs <= 600) {
+      if (logSec) { logSec.style.display = 'block'; logSec.style.padding = '0 20px 6px'; }
+      if (logWait) logWait.style.display = 'none';
+    }
+    secs--;
+  }
+  tick();
+  feedTimerInterval = setInterval(tick, 1000);
+}
+
+function logMeal() {
+  const btn = document.getElementById('log-meal-btn');
+  if (btn) {
+    // Phase 1: bounce animation
+    btn.classList.add('log-bounce');
+    btn.style.pointerEvents = 'none';
+    btn.textContent = '✓  MEAL LOGGED!';
+    btn.style.background = 'linear-gradient(135deg, var(--accent), #5db8aa)';
+    btn.style.boxShadow = '0 6px 28px rgba(112,193,179,0.5)';
+
+    // Phase 2: success ripple
+    setTimeout(() => {
+      btn.classList.remove('log-bounce');
+      btn.classList.add('log-success');
+    }, 560);
+  }
+
+  const countdown = document.getElementById('feed-countdown');
+  if (countdown) {
+    countdown.textContent = '✓';
+    countdown.style.color = 'var(--accent)';
+    countdown.style.fontSize = '80px';
+  }
+
+  clearInterval(feedTimerInterval);
+
+  // Advance to next meal after animation settles
+  setTimeout(() => {
+    if (!savedMealPlan?.meals) return;
+    const meals = savedMealPlan.meals;
+    const subText = document.getElementById('feed-sub')?.textContent || '';
+    const curIdx = meals.findIndex(m => subText.includes(m.name));
+    const nextIdx = (curIdx>=0?curIdx+1:1) % meals.length;
+    const next = meals[nextIdx];
+    const afterNext = meals[(nextIdx+1)%meals.length];
+    const now = new Date();
+    const [h,m] = next.time.split(':').map(Number);
+    let diff = (h*60+m) - (now.getHours()*60+now.getMinutes());
+    if (diff < 0) diff += 24*60;
+    renderFeedingUI(next, afterNext, diff*60);
+    startFeedTimer(next, diff*60);
+  }, 1800);
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHANGE MEAL PLAN (from hamburger)
+// ═══════════════════════════════════════════════════════════
+function changeMealPlan() {
+  closeFeedingSchedule();
+  savedMealPlan = null;
+  // Re-show tier picker
+  const picker = document.getElementById('meal-tier-picker');
+  if (picker) picker.style.display = '';
+  switchTab('meal');
+}
+
+// ═══════════════════════════════════════════════════════════
+// HAMBURGER
+// ═══════════════════════════════════════════════════════════
+function toggleHam(e) {
+  e.stopPropagation();
+  const p = document.getElementById('ham-popup');
+  p.classList.toggle('open');
+  if (p.classList.contains('open')) setTimeout(()=>document.addEventListener('click',closeHam,{once:true}),100);
+}
+function closeHam() { document.getElementById('ham-popup')?.classList.remove('open'); }
+
+// ═══════════════════════════════════════════════════════════
+// MEAL TIMES MODAL
+// ═══════════════════════════════════════════════════════════
+function closeMealTimesModal() { document.getElementById('meal-times-modal').classList.remove('open'); }
+function applyMealTimes() {
+  const bt = document.getElementById('bt-input').value || '07:30';
+  const dt = document.getElementById('dt-input').value || '18:30';
+  if (savedMealPlan?.meals) {
+    const b = savedMealPlan.meals.find(m=>m.name.toLowerCase().includes('breakfast'));
+    const d = savedMealPlan.meals.find(m=>!m.name.toLowerCase().includes('breakfast'));
+    if (b) b.time = bt;
+    if (d) d.time = dt;
+  }
+  closeMealTimesModal();
+  buildFeedingSchedule();
+}
+
+// ═══════════════════════════════════════════════════════════
+// AI DIET ADVISOR
+// ═══════════════════════════════════════════════════════════
+function closeAIModal() { document.getElementById('ai-diet-modal').classList.remove('open'); }
+function backToAIInput() {
+  document.getElementById('ai-result-view').style.display = 'none';
+  document.getElementById('ai-input-view').style.display = '';
+  document.getElementById('ai-diet-input').value = '';
+  document.getElementById('ai-diet-result').innerHTML = '';
+}
+function rejectAIDiet() { backToAIInput(); }
+function acceptAIDiet() {
+  // Apply pending changes to savedMealPlan if stored
+  if (window._pendingAIDietPlan) {
+    savedMealPlan = window._pendingAIDietPlan;
+    window._pendingAIDietPlan = null;
+  }
+  closeAIModal();
+  backToAIInput();
+  // Rebuild the feeding schedule with updated plan
+  buildFeedingSchedule();
+}
+
+let aiProgInterval = null;
+const AI_PROG_PHASES = [
+  'Reading current diet plan...',
+  'Analyzing your concern...',
+  'Cross-referencing nutrition data...',
+  'Identifying targeted changes...',
+  'Formulating recommendations...',
+];
+
+async function runAIDietAdvisor() {
+  const input = document.getElementById('ai-diet-input')?.value.trim();
+  if (!input) { alert('Describe your concern first.'); return; }
+  if (!savedMealPlan) { alert('Generate a meal plan first.'); return; }
+
+  // Switch to progress state
+  document.getElementById('ai-diet-btn').style.display = 'none';
+  document.getElementById('ai-prog-wrap').style.display = 'block';
+
+  // Animate progress bar
+  let pct = 0, phaseIdx = 0;
+  const fill = document.getElementById('ai-prog-fill');
+  const pctEl = document.getElementById('ai-prog-pct');
+  const statusEl = document.getElementById('ai-prog-status');
+  const labelEl = document.getElementById('ai-prog-label');
+  clearInterval(aiProgInterval);
+  aiProgInterval = setInterval(() => {
+    if (pct < 88) pct += Math.random() * 3 + 0.8;
+    if (pct > 88) pct = 88;
+    if (fill) fill.style.width = pct + '%';
+    if (pctEl) pctEl.textContent = Math.round(pct) + '%';
+    const np = Math.floor((pct / 88) * AI_PROG_PHASES.length);
+    if (np !== phaseIdx && np < AI_PROG_PHASES.length) { phaseIdx = np; if (statusEl) statusEl.textContent = AI_PROG_PHASES[phaseIdx]; }
+  }, 140);
+
+  const mealSummary = (savedMealPlan.meals||[]).map(m=>m.name+': '+(m.ingredients||[]).map(i=>typeof i==='string'?i:i.item).join(', ')).join(' | ');
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`You are PawPlate, dog nutrition AI. Owner concern: "${input}"\nDog: ${dogProfile.name}, ${dogProfile.breed}, ${dogProfile.weight}kg, ${dogProfile.age}, ${dogProfile.activity}.\nCurrent diet: ${mealSummary}\n\nRespond ONLY in raw JSON (no backticks):\n{"summary":"1-sentence explanation of what you changed and why","changes":[{"ingredient":"ingredient name","action":"add"|"replace"|"increase"|"remove","detail":"exact amount and how to incorporate","why":"1-sentence specific benefit for this dog and this concern"}],"updatedMeals":null}`}]})
+    });
+    const data = await resp.json();
+    const raw = data.content?.[0]?.text || '';
+    let result;
+    try { result = JSON.parse(raw.replace(/```json|```/g,'').trim()); }
+    catch { result = { summary: raw.substring(0, 200), changes: [] }; }
+
+    // Complete progress
+    clearInterval(aiProgInterval);
+    if (fill) fill.style.width = '100%';
+    if (pctEl) pctEl.textContent = '100%';
+    if (labelEl) labelEl.textContent = 'Analysis complete!';
+    if (statusEl) statusEl.textContent = 'Ready to review your changes';
+
+    // Build clean result HTML
+    const changesHTML = (result.changes||[]).map((ch, i) => {
+      const actionColor = ch.action==='remove' ? '#ef4444' : ch.action==='add' ? 'var(--accent)' : 'var(--primary)';
+      const actionLabel = ch.action==='remove' ? 'REMOVE' : ch.action==='add' ? 'ADD' : ch.action==='replace' ? 'SWAP' : 'INCREASE';
+      const actionBg = ch.action==='remove' ? '#fef2f2' : ch.action==='add' ? '#f0fdf4' : 'var(--secondary)';
+      return `<div style="background:#fff;border-radius:20px;padding:16px;margin-bottom:12px;border:2px solid #f3f4f6;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:28px;height:28px;border-radius:99px;background:${actionColor};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="color:#fff;font-size:11px;font-weight:900;">${i+1}</span>
+          </div>
+          <div style="flex:1;">
+            <p style="font-size:15px;font-weight:900;color:var(--dark);margin:0;">${ch.ingredient}</p>
+          </div>
+          <span style="background:${actionBg};color:${actionColor};font-size:10px;font-weight:900;padding:3px 8px;border-radius:99px;text-transform:uppercase;">${actionLabel}</span>
+        </div>
+        <p style="font-size:13px;font-weight:700;color:#6b7280;margin:0 0 8px;">${ch.detail}</p>
+        <div style="background:var(--secondary);border-left:3px solid var(--primary);border-radius:0 12px 12px 0;padding:10px 12px;">
+          <p style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--primary);margin:0 0 3px;">WHY THIS HELPS</p>
+          <p style="font-size:12px;font-weight:700;color:var(--dark);margin:0;line-height:1.4;">${ch.why}</p>
+        </div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('ai-diet-result').innerHTML = `
+      <div style="background:rgba(112,193,179,0.1);border-radius:18px;padding:14px;margin-bottom:16px;border:2px solid rgba(112,193,179,0.25);">
+        <div style="display:flex;items-center;gap:8px;margin-bottom:4px;">
+          <iconify-icon icon="lucide:sparkles" style="color:var(--accent);font-size:16px;"></iconify-icon>
+          <p style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin:0 0 4px;">AI SUMMARY</p>
+        </div>
+        <p style="font-size:14px;font-weight:700;color:var(--dark);margin:0;line-height:1.5;">${result.summary||''}</p>
+      </div>
+      ${changesHTML}
+    `;
+
+    // Show result view
+    setTimeout(() => {
+      document.getElementById('ai-prog-wrap').style.display = 'none';
+      document.getElementById('ai-diet-btn').style.display = '';
+      document.getElementById('ai-input-view').style.display = 'none';
+      document.getElementById('ai-result-view').style.display = '';
+    }, 600);
+
+  } catch(err) {
+    clearInterval(aiProgInterval);
+    document.getElementById('ai-diet-btn').style.display = '';
+    document.getElementById('ai-prog-wrap').style.display = 'none';
+    document.getElementById('ai-diet-result').innerHTML = `<div style="padding:14px;background:#fef2f2;border-radius:16px;"><p style="font-weight:900;color:#ef4444;">Connection error. Please try again.</p></div>`;
+    document.getElementById('ai-input-view').style.display = 'none';
+    document.getElementById('ai-result-view').style.display = '';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// INSIGHTS
+// ═══════════════════════════════════════════════════════════
+const INSIGHTS = [
+  {
+    short: "Grapes can cause kidney failure in dogs — avoid completely.",
+    detail: "Even a small amount of grapes or raisins can cause acute kidney failure in dogs. The exact toxic compound is unknown, making any dose potentially dangerous. No safe threshold has been established — treat grapes as strictly off-limits.",
+    icon: "lucide:alert-octagon", color: "#ef4444", bg: "#fef2f2"
+  },
+  {
+    short: "Chicken liver is nutritious but should be limited to 5% of the diet.",
+    detail: "Chicken liver is packed with Vitamin A, iron, and protein — all great for dogs. However, too much Vitamin A can cause toxicity (hypervitaminosis A). Keep it to a small weekly treat rather than a daily staple.",
+    icon: "lucide:check-circle-2", color: "var(--accent)", bg: "#f0fdf4"
+  },
+  {
+    short: "Fiber helps regulate digestion and prevent loose stools.",
+    detail: "Soluble fiber from pumpkin, sweet potato, and carrots slows digestion and firms up stools. Insoluble fiber speeds things up and prevents constipation. Both types are beneficial — aim for variety in your dog's vegetables.",
+    icon: "lucide:leaf", color: "#16a34a", bg: "#f0fdf4"
+  },
+  {
+    short: "Dogs absorb protein best from cooked meat, not raw.",
+    detail: "Cooking breaks down muscle fibers, making amino acids more bioavailable. Raw meat also carries Salmonella and E. coli risks. For home-cooked meals, lightly boiled or baked chicken and beef are safer and more digestible options.",
+    icon: "lucide:flame", color: "#ea580c", bg: "#fff7ed"
+  },
+  {
+    short: "Omega-3 fatty acids from fish oil reduce joint inflammation.",
+    detail: "EPA and DHA in fish oil actively combat joint inflammation, support brain function, and improve coat quality. A daily dose of 20–55mg EPA+DHA per kg of body weight is a common veterinary recommendation. Salmon and sardines are excellent natural sources.",
+    icon: "lucide:heart-pulse", color: "var(--primary)", bg: "var(--secondary)"
+  },
+  {
+    short: "Xylitol (sugar-free sweetener) is highly toxic to dogs.",
+    detail: "Xylitol triggers a rapid insulin spike in dogs, causing dangerous hypoglycemia within 30 minutes. It's found in sugar-free gum, some peanut butter brands, mouthwash, and baked goods. Always check labels — xylitol toxicity can be fatal.",
+    icon: "lucide:skull", color: "#ef4444", bg: "#fef2f2"
+  },
+  {
+    short: "Blueberries are one of the best low-calorie dog snacks.",
+    detail: "Blueberries are rich in antioxidants, Vitamin C, and Vitamin K. They fight oxidative damage and support cognitive function — especially useful for senior dogs. A handful a day is a great treat that's safe, low in sugar, and anti-inflammatory.",
+    icon: "lucide:smile", color: "#7c3aed", bg: "#fdf4ff"
+  },
+];
+
+function getTodayInsight() {
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(),0,0)) / 86400000);
+  return INSIGHTS[dayOfYear % INSIGHTS.length];
+}
+
+function renderInsight() {
+  const insight = getTodayInsight();
+  const el = document.getElementById("insight-text");
+  if (el) el.textContent = insight.short;
+}
+
+function openInsightModal() {
+  const insight = getTodayInsight();
+  const content = document.getElementById("insight-modal-content");
+  if (content) {
+    content.innerHTML = `
+      <div style="background:${insight.bg};border-radius:16px;padding:16px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px;">
+        <iconify-icon icon="${insight.icon}" style="color:${insight.color};font-size:24px;flex-shrink:0;margin-top:2px;"></iconify-icon>
+        <p style="font-size:15px;font-weight:700;color:var(--dark);margin:0;line-height:1.5;">${insight.short}</p>
+      </div>
+      <p style="font-size:14px;font-weight:600;color:#6b7280;line-height:1.7;margin:0;">${insight.detail}</p>
+    `;
+  }
+  document.getElementById("insight-modal").classList.remove("hidden-modal");
+}
+function closeInsightModal() {
+  document.getElementById("insight-modal").classList.add("hidden-modal");
+}
+
+// ═══════════════════════════════════════════════════════════
+// DAILY STREAK
+// ═══════════════════════════════════════════════════════════
+function getStreakData() {
+  try {
+    const raw = localStorage.getItem("pawplate_streak");
+    if (!raw) return { count: 0, lastDate: null };
+    return JSON.parse(raw);
+  } catch { return { count: 0, lastDate: null }; }
+}
+
+function saveStreakData(data) {
+  try { localStorage.setItem("pawplate_streak", JSON.stringify(data)); } catch {}
+}
+
+function recordScanForStreak() {
+  const today = new Date().toDateString();
+  const data = getStreakData();
+  if (data.lastDate === today) return; // already counted today
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  const newCount = data.lastDate === yesterday ? data.count + 1 : 1;
+  saveStreakData({ count: newCount, lastDate: today });
+  updateStreakUI(newCount, true);
+}
+
+function updateStreakUI(count, animate) {
+  const textEl = document.getElementById("streak-text");
+  const subEl  = document.getElementById("streak-sub");
+  const fireEl = document.getElementById("streak-fire");
+  const badge  = document.getElementById("streak-badge");
+  if (!textEl) return;
+
+  textEl.textContent = count === 0 ? "0 day streak" : `${count} day streak 🔥`;
+
+  if (count === 0) {
+    subEl.textContent = "Scan food today to start your streak!";
+    if (badge) badge.style.display = "none";
+  } else if (count < 3) {
+    subEl.textContent = "Great start! Keep checking " + dogProfile.name + "'s food daily.";
+    if (badge) { badge.style.display = "block"; badge.textContent = "NEW"; }
+  } else if (count < 7) {
+    subEl.textContent = "You're building a great habit! " + count + " days strong.";
+    if (badge) { badge.style.display = "block"; badge.textContent = count + "🔥"; }
+  } else {
+    subEl.textContent = "Incredible! " + dogProfile.name + "'s health is in great hands.";
+    if (badge) { badge.style.display = "block"; badge.textContent = count + " 🏆"; }
+  }
+
+  if (animate && fireEl) {
+    fireEl.classList.remove("streak-pop");
+    void fireEl.offsetWidth; // force reflow
+    fireEl.classList.add("streak-pop");
+  }
+}
+
+function renderStreak() {
+  // Check if a day was missed — reset streak
+  const data = getStreakData();
+  const today = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  if (data.lastDate && data.lastDate !== today && data.lastDate !== yesterday) {
+    saveStreakData({ count: 0, lastDate: null });
+    updateStreakUI(0, false);
+  } else {
+    updateStreakUI(data.count, false);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// QUICK ACTION PILLS
+// ═══════════════════════════════════════════════════════════
+function openPremium() {
+  // Navigate to paywall — reuse onboarding paywall screen or show inline
+  // For now we just show the subscription plans from onboarding
+  const ob = document.getElementById('onboarding');
+  if (ob) {
+    ob.style.display = '';
+    ob.classList.remove('hidden-out');
+    // Jump to slide 4 (feature highlight) then next would be paywall — instead just show a premium upsell overlay
+  }
+  // Simple approach: open paywall sheet
+  if (!document.getElementById('premium-sheet')) {
+    const sheet = document.createElement('div');
+    sheet.id = 'premium-sheet';
+    sheet.style.cssText = 'position:absolute;inset:0;z-index:300;background:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch;';
+    sheet.innerHTML = `
+      <div style="padding:48px 24px 48px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px;">
+          <button onclick="document.getElementById('premium-sheet').remove()" style="width:36px;height:36px;border-radius:50%;background:#f3f4f6;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <iconify-icon icon="lucide:arrow-left" style="color:var(--dark);font-size:18px;"></iconify-icon>
+          </button>
+          <p style="font-size:20px;font-weight:900;color:var(--dark);margin:0;">Super Pet Hero</p>
+        </div>
+        <div style="text-align:center;margin-bottom:28px;">
+          <iconify-icon icon="lucide:crown" style="font-size:52px;color:#7c3aed;"></iconify-icon>
+          <p style="font-size:15px;font-weight:600;color:#6b7280;margin:12px 0 0;">Everything you need for a long, happy life.</p>
+        </div>
+        <div style="background:#fef9c3;border:2px solid #fde68a;border-radius:20px;padding:16px 18px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <p style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#92400e;margin:0 0 2px;">LIMITED TIME</p>
+            <p style="font-size:16px;font-weight:900;color:#78350f;margin:0;">50% OFF — first 3 months</p>
+          </div>
+          <iconify-icon icon="lucide:timer" style="font-size:28px;color:#f59e0b;"></iconify-icon>
+        </div>
+        ${[
+          ['lucide:scan','var(--primary)','Unlimited AI Scanning','Analyze any food instantly'],
+          ['lucide:utensils','var(--accent)','Full Meal Plans','Personalized to breed, weight & age'],
+          ['lucide:heart-pulse','#ec4899','Health Tracking','Monitor weight & diet patterns'],
+          ['lucide:sparkles','#7c3aed','AI Diet Advisor','Tell AI a concern, it adapts your diet'],
+          ['lucide:shield-check','#ea580c','Emergency Checker','Instant vet-grade guidance'],
+        ].map(([ic,col,title,sub]) => `
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #f3f4f6;">
+            <div style="width:42px;height:42px;border-radius:14px;background:${col}18;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <iconify-icon icon="${ic}" style="color:${col};font-size:20px;"></iconify-icon>
             </div>
-            <h3>${item.title}</h3>
-            <p>${item.summary}</p>
-          </article>
-        `).join("");
-      }
+            <div><p style="font-size:15px;font-weight:800;color:var(--dark);margin:0;">${title}</p><p style="font-size:12px;font-weight:600;color:#9ca3af;margin:2px 0 0;">${sub}</p></div>
+          </div>`).join('')}
+        <div style="margin-top:28px;display:flex;flex-direction:column;gap:12px;">
+          <button style="width:100%;padding:18px;border-radius:22px;background:var(--primary);color:#fff;font-weight:900;font-size:16px;border:none;cursor:pointer;box-shadow:0 6px 0 var(--primary-dark);">START FREE TRIAL — 7 DAYS FREE</button>
+          <button style="width:100%;padding:14px;border-radius:22px;background:#f3f4f6;color:var(--dark);font-weight:800;font-size:14px;border:none;cursor:pointer;" onclick="document.getElementById('premium-sheet').remove()">Maybe later</button>
+          <p style="text-align:center;font-size:11px;font-weight:600;color:#9ca3af;margin:0;">No commitment · Cancel anytime · Auto-renews at $9.99/mo</p>
+        </div>
+      </div>
+    `;
+    document.getElementById('phone').appendChild(sheet);
+  }
+}
 
-      function budgetOrder(budget) {
-        if (budget === "budget") return ["budget", "balanced", "premium"];
-        if (budget === "premium") return ["premium", "balanced", "budget"];
-        return ["balanced", "budget", "premium"];
-      }
+function prefillScan(text) {
+  switchTab("scan");
+  setTimeout(() => {
+    const ta = document.getElementById("manual-ingredients");
+    if (ta) {
+      ta.value = text;
+      ta.focus();
+      ta.style.borderColor = "var(--primary)";
+    }
+  }, 100);
+}
 
-      function recommendFoods(profile, dailyCalories) {
-        return productCatalog
-          .map((product) => {
-            let score = 0;
-            if (product.stage.includes(profile.age)) score += 30;
-            if (product.goal.includes(profile.goal)) score += 22;
-            if (product.activity.includes(profile.activity)) score += 12;
-            if (product.texture.includes(profile.style)) score += 10;
-            if (product.sensitivity.includes(profile.sensitivity) || profile.sensitivity === "none") score += 12;
-            score += budgetOrder(profile.budget).includes(product.budget) ? 10 - budgetOrder(profile.budget).indexOf(product.budget) * 4 : 0;
-            const monthlyCost = (dailyCalories / product.kcalPerCup * 30) / (product.bagLb * 453.592 * 0.00220462 / (product.bagLb)) * (product.bagPrice / (product.bagLb * 16));
-            return { ...product, score, monthlyCost: Math.max(22, monthlyCost * 16) };
-          })
-          .sort((a, b) => b.score - a.score)
-          .slice(0, 3);
-      }
+// ═══════════════════════════════════════════════════════════
+// GREETING BY TIME OF DAY
+// ═══════════════════════════════════════════════════════════
+function updateTimeGreeting() {
+  const h = new Date().getHours();
+  const el = document.getElementById("home-time-greeting");
+  if (!el) return;
+  if (h < 12)      el.textContent = "Good morning 🌤";
+  else if (h < 17) el.textContent = "Good afternoon ☀️";
+  else             el.textContent = "Good evening 🌙";
+}
 
-      function mealCount(age, activity) {
-        if (age === "puppy") return 3;
-        if (activity === "high") return 3;
-        return 2;
-      }
+// ═══════════════════════════════════════════════════════════
+// WEIGHT SLIDER
+// ═══════════════════════════════════════════════════════════
+function updateWeightSlider(el) {
+  const val = parseInt(el.value);
+  dogProfile.weight = val;
+  const display = document.getElementById('weight-display');
+  if (display) display.textContent = val;
+  // Update gradient fill to match current value
+  const pct = ((val - 1) / 99) * 100;
+  el.style.background = `linear-gradient(to right, var(--primary) ${pct}%, #e5e7eb ${pct}%)`;
+}
 
-      function mealTimes(count) {
-        if (count === 3) return ["7:00 AM", "1:00 PM", "7:00 PM"];
-        return ["7:00 AM", "6:00 PM"];
-      }
-
-      plannerForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-
-        const profile = {
-          name: document.getElementById("dogName").value.trim(),
-          weight: Number(document.getElementById("dogWeight").value),
-          age: document.getElementById("dogAge").value,
-          activity: document.getElementById("dogActivity").value,
-          goal: document.getElementById("dogGoal").value,
-          sensitivity: document.getElementById("dogSensitivity").value,
-          budget: document.getElementById("budgetTier").value,
-          style: document.getElementById("foodStyle").value
-        };
-
-        if (!profile.weight) return;
-
-        localStorage.setItem(profileKey, JSON.stringify(profile));
-
-        const weightKg = profile.weight / 2.20462;
-        const rer = 70 * Math.pow(weightKg, 0.75);
-        const activityFactor = { low: 0.9, normal: 1, high: 1.2 }[profile.activity];
-        const ageFactor = { puppy: 2.0, adult: 1.6, senior: 1.3 }[profile.age];
-        const goalFactor = { lose: 0.85, maintain: 1, gain: 1.15 }[profile.goal];
-        const dailyCalories = Math.round(rer * activityFactor * ageFactor * goalFactor);
-        const recommendations = recommendFoods(profile, dailyCalories);
-        const primary = recommendations[0];
-        const cupsPerDay = dailyCalories / primary.kcalPerCup;
-        const meals = mealCount(profile.age, profile.activity);
-        const schedule = mealTimes(meals).map((time) => `${time}: ${(cupsPerDay / meals).toFixed(2)} cups of ${primary.name}`);
-
-        planResult.innerHTML = `
-          <div class="score-row">
-            <span class="score-pill score-good">Meal Plan Ready</span>
-            <span class="tag">${profile.name || "Your dog"}</span>
-          </div>
-          <h2 class="section-title">${profile.name ? profile.name + "'s" : "Your"} feeding plan</h2>
-          <p class="section-copy">${profile.name || "Your dog"} is estimated to need about ${dailyCalories.toLocaleString()} kcal each day. PupPlate’s top match is ${primary.name}, which fits the selected needs and budget.</p>
-          <div class="metric-grid">
-            <article class="metric-card">
-              <strong>${dailyCalories}</strong>
-              <span>kcal per day</span>
-            </article>
-            <article class="metric-card">
-              <strong>${cupsPerDay.toFixed(1)} cups</strong>
-              <span>per day</span>
-            </article>
-            <article class="metric-card">
-              <strong>$${primary.monthlyCost.toFixed(0)}</strong>
-              <span>estimated monthly cost</span>
-            </article>
-          </div>
-          <div class="plan-grid">
-            <article class="plan-box">
-              <strong>Feeding schedule</strong>
-              <ul>${schedule.map((item) => `<li>${item}</li>`).join("")}</ul>
-            </article>
-            <article class="plan-box">
-              <strong>What to buy</strong>
-              <ul>
-                <li>${primary.name}</li>
-                <li>Buy at ${primary.buyAt}</li>
-                <li>Bag price used: $${primary.bagPrice.toFixed(2)}</li>
-                <li>Transition slowly over about 7 days if switching food</li>
-              </ul>
-            </article>
-          </div>
-          <div style="margin-top:16px;">
-            <strong style="display:block;margin-bottom:12px;">Recommended foods</strong>
-            <div class="recommend-grid">
-              ${recommendations.map((product) => `
-                <article class="recommend-card">
-                  <div class="recommend-meta">
-                    <span>${product.brand}</span>
-                    <span>${product.buyAt}</span>
-                  </div>
-                  <h4>${product.name}</h4>
-                  <p>${product.reasons.join(". ")}.</p>
-                  <div class="tag-list">
-                    <span class="tag">${product.kcalPerCup} kcal/cup</span>
-                    <span class="tag">$${product.bagPrice.toFixed(2)} bag</span>
-                  </div>
-                  <p style="margin-top:12px;"><a href="${product.link}" target="_blank" rel="noreferrer">Buy now</a></p>
-                </article>
-              `).join("")}
-            </div>
-          </div>
-        `;
-
-        saveHistory({
-          kind: "Meal plan",
-          title: `${profile.name || "Dog profile"} • ${primary.name}`,
-          summary: `${dailyCalories} kcal/day, about ${cupsPerDay.toFixed(1)} cups/day, about $${primary.monthlyCost.toFixed(0)}/month.`,
-          levelClass: "score-good"
-        });
-      });
-
-      foodPhoto.addEventListener("change", (event) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-          previewFrame.innerHTML = `
-            <img src="${reader.result}" id="uploadedPreview" alt="Uploaded food preview" />
-            <div class="camera-guides"></div>
-            <div class="preview-caption">Frame the food clearly</div>
-          `;
-          ocrStatus.textContent = "Photo loaded. Detect the food or read the label next.";
-        };
-        reader.readAsDataURL(file);
-      });
-
-      async function ensureVisionModels() {
-        if (!mobileNetModel && window.mobilenet) {
-          mobileNetModel = await window.mobilenet.load();
-        }
-        if (!cocoModel && window.cocoSsd) {
-          cocoModel = await window.cocoSsd.load();
-        }
-      }
-
-      function normalizeLabel(label) {
-        const lower = label.toLowerCase();
-        for (const alias of detectionAliases) {
-          if (alias.test.test(lower)) return alias.value;
-        }
-        return lower.replace(/[_-]/g, " ");
-      }
-
-      detectPhotoButton.addEventListener("click", async () => {
-        const img = document.getElementById("uploadedPreview");
-        if (!img) {
-          ocrStatus.textContent = "Upload a photo first.";
-          return;
-        }
-
-        detectPhotoButton.disabled = true;
-        ocrStatus.textContent = "Detecting what is in the photo...";
-
-        try {
-          await ensureVisionModels();
-          const guesses = [];
-          if (mobileNetModel) {
-            const classes = await mobileNetModel.classify(img);
-            guesses.push(...classes.map((item) => item.className));
-          }
-          if (cocoModel) {
-            const boxes = await cocoModel.detect(img);
-            guesses.push(...boxes.map((item) => item.class));
-          }
-
-          const normalized = Array.from(new Set(guesses.map(normalizeLabel))).slice(0, 5);
-          confirmItems.value = normalized.join(", ");
-          ocrStatus.textContent = normalized.length
-            ? `Detected: ${normalized.join(", ")}. Correct anything that is wrong or missing.`
-            : "I could not confidently detect the food. Type what you see manually.";
-        } catch (error) {
-          ocrStatus.textContent = "Detection had a problem. You can still type the food manually.";
-        } finally {
-          detectPhotoButton.disabled = false;
-        }
-      });
-
-      ocrButton.addEventListener("click", async () => {
-        const file = foodPhoto.files?.[0];
-        if (!file) {
-          ocrStatus.textContent = "Upload a package or label photo first.";
-          return;
-        }
-
-        if (!window.Tesseract) {
-          ocrStatus.textContent = "OCR library did not load. Paste ingredients manually instead.";
-          return;
-        }
-
-        ocrButton.disabled = true;
-        ocrStatus.textContent = "Reading package label...";
-
-        try {
-          const result = await window.Tesseract.recognize(file, "eng");
-          const text = (result.data.text || "").trim();
-          ingredientText.value = text;
-          ocrStatus.textContent = text ? "Label text added. Review it, then analyze the food." : "OCR finished but found very little text.";
-        } catch (error) {
-          ocrStatus.textContent = "OCR hit a problem. Paste label text manually if needed.";
-        } finally {
-          ocrButton.disabled = false;
-        }
-      });
-
-      function collectTerms(text) {
-        const lower = text.toLowerCase();
-        return Object.keys(ingredientRules).filter((term) => lower.includes(term));
-      }
-
-      function scoreAnalysis(terms) {
-        let score = 72;
-        const explanations = terms.map((term) => ({ term, ...ingredientRules[term] }));
-        explanations.forEach((item) => {
-          if (item.level === "positive") score += 6;
-          if (item.level === "caution") score -= 10;
-          if (item.level === "danger") score -= 38;
-        });
-        score = Math.max(0, Math.min(100, score));
-
-        let level = "Good fit";
-        let levelClass = "score-good";
-        if (explanations.some((item) => item.level === "danger")) {
-          level = "Avoid";
-          levelClass = "score-danger";
-        } else if (explanations.some((item) => item.level === "caution") || score < 68) {
-          level = "Use caution";
-          levelClass = "score-warning";
-        }
-
-        return { score, level, levelClass, explanations };
-      }
-
-      scannerForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const scanType = document.getElementById("scanType").value;
-        const finalText = [confirmItems.value.trim(), ingredientText.value.trim()].filter(Boolean).join(", ");
-
-        if (!finalText) {
-          scanResult.innerHTML = `
-            <h2 class="section-title">Need a confirmed food description</h2>
-            <p class="section-copy">Let PupPlate detect the photo first or type what is in the food manually.</p>
-          `;
-          dangerCard.classList.add("hidden");
-          return;
-        }
-
-        const terms = collectTerms(finalText);
-        const result = scoreAnalysis(terms);
-        const toxic = result.explanations.find((item) => item.level === "danger");
-
-        if (toxic) {
-          dangerCard.classList.remove("hidden");
-          dangerText.textContent = toxic.reason;
-        } else {
-          dangerCard.classList.add("hidden");
-        }
-
-        scanResult.innerHTML = `
-          <div class="score-row">
-            <span class="score-pill ${result.levelClass}">${result.level}</span>
-            <span class="tag">${result.score}/100</span>
-            <span class="tag">${scanType.replace("-", " ")}</span>
-          </div>
-          <h2 class="section-title">Final food verdict</h2>
-          <p class="section-copy">PupPlate analyzed this confirmed description: ${finalText}</p>
-          <div class="metric-grid">
-            <article class="metric-card">
-              <strong>${result.explanations.filter((i) => i.level === "positive").length}</strong>
-              <span>good signals</span>
-            </article>
-            <article class="metric-card">
-              <strong>${result.explanations.filter((i) => i.level === "caution").length}</strong>
-              <span>caution signals</span>
-            </article>
-            <article class="metric-card">
-              <strong>${result.explanations.filter((i) => i.level === "danger").length}</strong>
-              <span>danger signals</span>
-            </article>
-          </div>
-          <div style="margin-top:16px;">
-            <strong style="display:block;margin-bottom:12px;">Ingredient-by-ingredient reasons</strong>
-            <div class="ingredient-grid">
-              ${result.explanations.length ? result.explanations.map((item) => `
-                <article class="ingredient-card ${item.level}">
-                  <h4>${item.icon || "•"} ${item.term}</h4>
-                  <p>${item.reason}</p>
-                </article>
-              `).join("") : `
-                <article class="ingredient-card">
-                  <h4>Not enough detail</h4>
-                  <p>PupPlate needs clearer foods or ingredients to give a confident answer.</p>
-                </article>
-              `}
-            </div>
-          </div>
-        `;
-
-        saveHistory({
-          kind: "Food scan",
-          title: `${result.level} • ${result.score}/100`,
-          summary: finalText.length > 100 ? `${finalText.slice(0, 100)}...` : finalText,
-          levelClass: result.levelClass
-        });
-      });
-
-      function restoreProfile() {
-        const saved = JSON.parse(localStorage.getItem(profileKey) || "null");
-        if (!saved) return;
-        document.getElementById("dogName").value = saved.name || "";
-        document.getElementById("dogWeight").value = saved.weight || 35;
-        document.getElementById("dogAge").value = saved.age || "adult";
-        document.getElementById("dogActivity").value = saved.activity || "normal";
-        document.getElementById("dogGoal").value = saved.goal || "maintain";
-        document.getElementById("dogSensitivity").value = saved.sensitivity || "none";
-        document.getElementById("budgetTier").value = saved.budget || "balanced";
-        document.getElementById("foodStyle").value = saved.style || "dry";
-      }
-
-      document.getElementById("year").textContent = new Date().getFullYear();
-      restoreProfile();
-      renderHistory();
-    </script>
-  </body>
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+window.addEventListener("DOMContentLoaded", () => {
+  selectTier("premium");
+  setupFileInputs();
+  renderInsight();
+  renderStreak();
+  updateTimeGreeting();
+  // Main app starts hidden behind onboarding
+  document.getElementById("main-app").style.opacity = "0";
+  // When onboarding finishes, fade in main app
+  const origFinish = window.finishOnboarding;
+  window.finishOnboarding = function() {
+    origFinish();
+    setTimeout(() => {
+      document.getElementById("main-app").style.opacity = "1";
+      document.getElementById("main-app").style.transition = "opacity 0.4s ease";
+    }, 300);
+    updateUINames();
+    updateHomeScanCount();
+    renderInsight();
+    renderStreak();
+    updateTimeGreeting();
+  };
+});
+</script>
+</body>
 </html>
